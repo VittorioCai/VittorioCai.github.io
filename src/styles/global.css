@@ -63,6 +63,14 @@ p,
 h1,
 h2,
 h3,
+li {
+  overflow-wrap: anywhere;
+}
+
+p,
+h1,
+h2,
+h3,
 ul {
   margin-top: 0;
 }

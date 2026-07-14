@@ -95,6 +95,28 @@ for (const path of homeRoutes) {
   }
 }
 
+test('/de/ reflows enlarged text at 320px without clipping overflow', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 320, height: 900 });
+  await page.goto('/de/');
+  await page.evaluate(() => {
+    document.documentElement.style.fontSize = '200%';
+  });
+
+  const clippedElements = await page.evaluate(() =>
+    [...document.querySelectorAll('body *')]
+      .filter((element) => {
+        const overflowX = getComputedStyle(element).overflowX;
+        return overflowX === 'hidden' || overflowX === 'clip';
+      })
+      .map((element) => element.tagName.toLowerCase()),
+  );
+
+  expect(clippedElements).toEqual([]);
+  await expectNoHorizontalOverflow(page);
+});
+
 for (const path of caseStudyRoutes) {
   test(`${path} has no horizontal overflow at 320px`, async ({ page }) => {
     await page.setViewportSize({ width: 320, height: 900 });
