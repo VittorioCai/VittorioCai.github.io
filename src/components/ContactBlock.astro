@@ -1,0 +1,51 @@
+---
+import type { SiteContent } from '../content';
+
+interface Props {
+  heading: SiteContent['sections']['contact'];
+  actions: SiteContent['actions'];
+}
+
+const { heading, actions } = Astro.props;
+---
+
+<section id="contact" class="contact-block" aria-labelledby="contact-heading">
+  <div>
+    <p class="section-label">{heading}</p>
+    <h2 id="contact-heading">vittorio.cai@tum.de</h2>
+  </div>
+  <div class="text-actions contact-actions">
+    <a href="mailto:vittorio.cai@tum.de">{actions.email}</a>
+    <a
+      class="external"
+      href="https://linkedin.com/in/vittorio-cai"
+      rel="noreferrer"
+    >LinkedIn</a>
+    <a
+      class="external"
+      href="https://github.com/VittorioCai"
+      rel="noreferrer"
+    >GitHub</a>
+    <a href="/Vittorio-Cai-CV-English.pdf" download>{actions.cv}</a>
+  </div>
+</section>
+
+<style>
+  h2 {
+    margin-bottom: 0;
+    overflow-wrap: anywhere;
+    font-size: clamp(1.5rem, 5vw, 3.5rem);
+    line-height: 1.1;
+  }
+
+  .contact-actions {
+    justify-content: flex-end;
+    margin-top: 0;
+  }
+
+  @media (max-width: 760px) {
+    .contact-actions {
+      justify-content: flex-start;
+    }
+  }
+</style>

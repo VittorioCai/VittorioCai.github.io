@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title description">
+  <title id="title">Business insight. Data discipline. Useful AI.</title>
+  <desc id="description">Vittorio Cai portfolio preview</desc>
+  <rect width="1200" height="630" fill="#ffffff" />
+  <path d="M72 64h1056v502H72z" fill="none" stroke="#d7dce2" stroke-width="2" />
+  <path d="M72 64h12v502H72z" fill="#1f5fae" />
+  <text x="128" y="138" fill="#1f5fae" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700" letter-spacing="3">VITTORIO CAI</text>
+  <text x="128" y="265" fill="#15171a" font-family="Arial, Helvetica, sans-serif" font-size="72" font-weight="700" letter-spacing="-2">Business insight.</text>
+  <text x="128" y="355" fill="#15171a" font-family="Arial, Helvetica, sans-serif" font-size="72" font-weight="700" letter-spacing="-2">Data discipline.</text>
+  <text x="128" y="445" fill="#1f5fae" font-family="Arial, Helvetica, sans-serif" font-size="72" font-weight="700" letter-spacing="-2">Useful AI.</text>
+  <text x="128" y="515" fill="#666666" font-family="Arial, Helvetica, sans-serif" font-size="24">Business · Data · Supply Chain Analytics · Applied AI</text>
+</svg>

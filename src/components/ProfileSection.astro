@@ -1,0 +1,64 @@
+---
+import type { SiteContent } from '../content';
+
+interface Props {
+  heading: SiteContent['sections']['profile'];
+  profile: SiteContent['profile'];
+  education: SiteContent['education'];
+}
+
+const { heading, profile, education } = Astro.props;
+---
+
+<section id="profile" class="profile-grid" aria-labelledby="profile-heading">
+  <div class="section-side">
+    <h2 id="profile-heading">{heading}</h2>
+  </div>
+  <div class="section-main">
+    <p class="profile-copy">{profile}</p>
+    <div>
+      {
+        education.map((entry) => (
+          <article class="education-row">
+            <div>
+              <h3>{entry.school}</h3>
+              <p>{entry.location}</p>
+            </div>
+            <p>{entry.degree}</p>
+            <p>{entry.period}</p>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  h2,
+  h3 {
+    margin-bottom: 0;
+  }
+
+  h2 {
+    font-size: clamp(1.4rem, 3vw, 2rem);
+  }
+
+  h3 {
+    font-size: 1rem;
+  }
+
+  .profile-copy {
+    max-width: 65ch;
+    margin-bottom: clamp(2rem, 5vw, 4rem);
+    color: var(--muted);
+    font-size: clamp(1.05rem, 2vw, 1.3rem);
+  }
+
+  .education-row p {
+    overflow-wrap: anywhere;
+  }
+
+  .education-row div p {
+    color: var(--muted);
+  }
+</style>

@@ -1,0 +1,57 @@
+---
+import type { SiteContent } from '../content';
+
+interface Props {
+  heading: SiteContent['sections']['skills'];
+  skillGroups: SiteContent['skillGroups'];
+  languages: SiteContent['languages'];
+  languageHeading: SiteContent['sections']['languages'];
+}
+
+const { heading, skillGroups, languages, languageHeading } = Astro.props;
+---
+
+<section id="skills" aria-labelledby="skills-heading">
+  <div class="section-heading">
+    <h2 id="skills-heading">{heading}</h2>
+  </div>
+  <div class="skills-grid">
+    {
+      skillGroups.map((group) => (
+        <section class="skill-group">
+          <h3>{group.title}</h3>
+          <ul>
+            {group.items.map((item) => <li>{item}</li>)}
+          </ul>
+        </section>
+      ))
+    }
+    <section class="skill-group" data-skill-group="languages">
+      <h3>{languageHeading}</h3>
+      <ul>
+        {languages.map((language) => <li>{language}</li>)}
+      </ul>
+    </section>
+  </div>
+</section>
+
+<style>
+  h2,
+  h3 {
+    margin-bottom: 0;
+  }
+
+  .skill-group h3 {
+    margin-bottom: 1rem;
+    font-size: 1rem;
+  }
+
+  .skill-group ul {
+    margin-bottom: 0;
+    padding-left: 1.2rem;
+  }
+
+  .skill-group li {
+    overflow-wrap: anywhere;
+  }
+</style>

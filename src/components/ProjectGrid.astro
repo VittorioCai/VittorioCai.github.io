@@ -1,0 +1,178 @@
+---
+import type { Locale, SiteContent } from '../content';
+import type { Project } from '../content/types';
+import { getLocalizedPath } from '../i18n/routes';
+import { getSafeProjectAction } from '../utils/external-url';
+import ProjectVisual from './ProjectVisual.astro';
+
+interface Props {
+  locale: Locale;
+  projects: SiteContent['projects'];
+  sections: SiteContent['sections'];
+  visuals: SiteContent['visuals'];
+  actions: SiteContent['actions'];
+}
+
+const { locale, projects, sections, visuals, actions } = Astro.props;
+const [featured, ...supportingProjects] = projects;
+const featuredDemoUrl = getSafeProjectAction(featured.actions, 'demo');
+
+function getCaseStudyPath(project: Project): string | undefined {
+  if (!project.actions.caseStudy) return undefined;
+
+  if (project.id === 'patentpath') {
+    return getLocalizedPath(locale, 'patentpath');
+  }
+
+  if (project.id === 'english-job-agent') {
+    return getLocalizedPath(locale, 'jobAgent');
+  }
+
+  return undefined;
+}
+---
+
+<section id="work" aria-labelledby="work-heading">
+  <div class="section-heading">
+    <h2 id="work-heading">{sections.work}</h2>
+  </div>
+
+  <article
+    class="project-featured"
+    data-project-id={featured.id}
+    data-featured="true"
+  >
+    <div class="project-featured__body">
+      <p class="section-label">{featured.kicker}</p>
+      <h3>{featured.title}</h3>
+      <p class="project-summary">{featured.summary}</p>
+      {
+        featured.contribution && (
+          <p>
+            <strong>{sections.contribution}:</strong>{' '}
+            {featured.contribution}
+          </p>
+        )
+      }
+      <ul class="project-details">
+        {featured.details.map((detail) => <li>{detail}</li>)}
+      </ul>
+      <ul class="project-tags" aria-label={featured.title}>
+        {featured.tags.map((tag) => <li>{tag}</li>)}
+      </ul>
+      <div class="text-actions">
+        {
+          featuredDemoUrl && (
+            <a
+              class="external"
+              href={featuredDemoUrl}
+              rel="noreferrer"
+            >
+              {actions.demo}
+            </a>
+          )
+        }
+        {
+          getCaseStudyPath(featured) && (
+            <a href={getCaseStudyPath(featured)}>{actions.caseStudy}</a>
+          )
+        }
+      </div>
+    </div>
+    <div class="project-featured__visual">
+      {
+        featured.id === 'patentpath' && (
+          <ProjectVisual
+            projectId="patentpath"
+            label={`${featured.title}: ${featured.summary}`}
+          />
+        )
+      }
+    </div>
+  </article>
+
+  <div class="project-grid">
+    {
+      supportingProjects.map((project) => {
+        const caseStudyPath = getCaseStudyPath(project);
+        const sourceUrl = getSafeProjectAction(project.actions, 'source');
+
+        return (
+          <article class="project-card" data-project-id={project.id}>
+            <p class="section-label">{project.kicker}</p>
+            <h3>{project.title}</h3>
+            <p class="project-summary">{project.summary}</p>
+            {project.contribution && (
+              <p>
+                <strong>{sections.contribution}:</strong>{' '}
+                {project.contribution}
+              </p>
+            )}
+            <ul class="project-details">
+              {project.details.map((detail) => <li>{detail}</li>)}
+            </ul>
+            <ul class="project-tags" aria-label={project.title}>
+              {project.tags.map((tag) => <li>{tag}</li>)}
+            </ul>
+            {project.id === 'english-job-agent' && (
+              <ProjectVisual
+                projectId="english-job-agent"
+                label={`${project.title}: ${project.summary}`}
+                stages={visuals.jobAgentStages}
+              />
+            )}
+            {(sourceUrl || caseStudyPath) && (
+              <div class="text-actions">
+                {sourceUrl && (
+                  <a
+                    class="external"
+                    href={sourceUrl}
+                    rel="noreferrer"
+                  >
+                    {actions.source}
+                  </a>
+                )}
+                {caseStudyPath && (
+                  <a href={caseStudyPath}>{actions.caseStudy}</a>
+                )}
+              </div>
+            )}
+          </article>
+        );
+      })
+    }
+  </div>
+</section>
+
+<style>
+  h2,
+  h3 {
+    margin-bottom: 0;
+  }
+
+  h3 {
+    margin-bottom: 1rem;
+    font-size: clamp(1.35rem, 2.5vw, 2rem);
+    line-height: 1.2;
+  }
+
+  .project-summary {
+    color: var(--muted);
+    font-size: 1.05rem;
+  }
+
+  .project-details,
+  .project-tags {
+    padding-left: 1.2rem;
+  }
+
+  .project-tags {
+    color: var(--muted);
+    font-size: 0.88rem;
+  }
+
+  .project-card,
+  .project-featured__body {
+    overflow-wrap: anywhere;
+  }
+</style>

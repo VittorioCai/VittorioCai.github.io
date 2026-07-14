@@ -1,0 +1,230 @@
+---
+import { getContent } from '../content';
+import type { Locale } from '../content';
+import type { Project } from '../content/types';
+import { getLocalizedPath } from '../i18n/routes';
+import type { RouteKey } from '../i18n/routes';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getSafeProjectAction } from '../utils/external-url';
+import ProjectVisual from './ProjectVisual.astro';
+
+type CaseStudyProjectId = 'patentpath' | 'english-job-agent';
+
+interface Props {
+  locale: Locale;
+  projectId: CaseStudyProjectId;
+}
+
+const { locale, projectId } = Astro.props;
+const copy = getContent(locale);
+const project: Project | undefined = copy.projects.find(
+  (entry) => entry.id === projectId,
+);
+
+if (!project) {
+  throw new Error(`Missing case-study project content for "${projectId}".`);
+}
+
+if (!Astro.site) {
+  throw new Error('Astro.site is required to build case-study metadata.');
+}
+
+const route: RouteKey =
+  projectId === 'patentpath' ? 'patentpath' : 'jobAgent';
+const nextProjectId: CaseStudyProjectId =
+  projectId === 'patentpath' ? 'english-job-agent' : 'patentpath';
+const nextRoute: RouteKey =
+  nextProjectId === 'patentpath' ? 'patentpath' : 'jobAgent';
+const nextProject = copy.projects.find(
+  (entry) => entry.id === nextProjectId,
+);
+
+if (!nextProject) {
+  throw new Error(`Missing next-project content for "${nextProjectId}".`);
+}
+
+const caseStudy = copy.caseStudies[projectId];
+const publicLink = getSafeProjectAction(
+  project.actions,
+  projectId === 'patentpath' ? 'demo' : 'source',
+);
+
+const publicLinkLabel =
+  projectId === 'patentpath' ? copy.actions.demo : copy.actions.source;
+const pageUrl = new URL(getLocalizedPath(locale, route), Astro.site);
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'CreativeWork',
+  name: project.title,
+  description: project.summary,
+  url: pageUrl.href,
+  author: {
+    '@type': 'Person',
+    name: 'Vittorio Cai',
+    url: new URL('/', Astro.site).href,
+  },
+  ...(publicLink ? { sameAs: [publicLink] } : {}),
+};
+const serializedStructuredData = JSON.stringify(structuredData).replace(
+  /</g,
+  '\\u003c',
+);
+---
+
+<BaseLayout
+  locale={locale}
+  route={route}
+  title={`${project.title} — ${copy.actions.caseStudy} | Vittorio Cai`}
+  description={project.summary}
+>
+  <article class="case-study">
+    <aside class="case-study__rail">
+      <p class="section-label">{project.kicker}</p>
+      <p class="case-study__project-name">{project.title}</p>
+
+      <div class="case-study__visual">
+        {
+          projectId === 'patentpath' ? (
+            <ProjectVisual
+              projectId="patentpath"
+              label={`${project.title}: ${project.summary}`}
+            />
+          ) : (
+            <ProjectVisual
+              projectId="english-job-agent"
+              label={`${project.title}: ${project.summary}`}
+              stages={copy.visuals.jobAgentStages}
+            />
+          )
+        }
+      </div>
+
+      <div class="text-actions">
+        {
+          publicLink && (
+            <a class="external" href={publicLink} rel="noreferrer">
+              {publicLinkLabel}
+            </a>
+          )
+        }
+      </div>
+    </aside>
+
+    <div class="case-study__body">
+      <header class="case-study__header">
+        <h1>{caseStudy.outcome}</h1>
+        <p class="case-study__intro">{project.summary}</p>
+      </header>
+
+      <section aria-labelledby="case-problem-heading">
+        <h2 id="case-problem-heading">
+          {copy.caseStudyLabels.problem}
+        </h2>
+        <p>{caseStudy.problem}</p>
+      </section>
+
+      <section
+        aria-labelledby="case-responsibility-heading"
+        data-case-section="responsibility"
+      >
+        <h2 id="case-responsibility-heading">
+          {copy.caseStudyLabels.responsibility}
+        </h2>
+        <p>{caseStudy.responsibility}</p>
+      </section>
+
+      <section aria-labelledby="case-build-heading">
+        <h2 id="case-build-heading">{copy.caseStudyLabels.build}</h2>
+        <ul>
+          {caseStudy.build.map((item) => <li>{item}</li>)}
+        </ul>
+      </section>
+
+      <section aria-labelledby="case-evidence-heading">
+        <h2 id="case-evidence-heading">
+          {copy.caseStudyLabels.evidence}
+        </h2>
+        <ul>
+          {caseStudy.evidence.map((item) => <li>{item}</li>)}
+        </ul>
+      </section>
+
+      <nav
+        class="case-study__navigation"
+        aria-label={copy.sections.work}
+      >
+        <a href={`${getLocalizedPath(locale, 'home')}#work`}>
+          ← {copy.caseStudyLabels.backToWork}
+        </a>
+        <a href={getLocalizedPath(locale, nextRoute)}>
+          {copy.caseStudyLabels.nextProject}: {nextProject.title} →
+        </a>
+      </nav>
+    </div>
+
+    <script
+      is:inline
+      type="application/ld+json"
+      set:html={serializedStructuredData}
+    />
+  </article>
+</BaseLayout>
+
+<style>
+  .case-study__project-name {
+    margin-bottom: 2rem;
+    font-size: clamp(1.4rem, 3vw, 2.25rem);
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    line-height: 1.1;
+  }
+
+  .case-study__visual {
+    margin-top: clamp(2rem, 5vw, 4rem);
+  }
+
+  .case-study__header {
+    padding-bottom: clamp(2rem, 5vw, 4rem);
+    margin-bottom: clamp(2rem, 5vw, 4rem);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .case-study__header h1 {
+    max-width: 17ch;
+    margin-bottom: 1.5rem;
+    font-size: clamp(2.2rem, 6vw, 5rem);
+    letter-spacing: -0.055em;
+    line-height: 0.98;
+  }
+
+  .case-study__intro {
+    max-width: 62ch;
+    margin-bottom: 0;
+    color: var(--muted);
+    font-size: clamp(1.05rem, 2vw, 1.3rem);
+  }
+
+  .case-study__body h2 {
+    margin-bottom: 1rem;
+    font-size: clamp(1.25rem, 2vw, 1.6rem);
+  }
+
+  .case-study__body section > :last-child {
+    margin-bottom: 0;
+  }
+
+  .case-study__body ul {
+    padding-left: 1.2rem;
+  }
+
+  .case-study__navigation {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+  }
+
+  .case-study__navigation a {
+    font-weight: 700;
+  }
+</style>

@@ -1,0 +1,122 @@
+---
+import Header from '../components/Header.astro';
+import { getContent } from '../content';
+import type { Locale } from '../content';
+import {
+  getLanguageLinks,
+  getLocalizedPath,
+} from '../i18n/routes';
+import type { RouteKey } from '../i18n/routes';
+import '../styles/global.css';
+
+interface Props {
+  locale: Locale;
+  route: RouteKey;
+  title: string;
+  description: string;
+  noindex?: boolean;
+}
+
+const {
+  locale,
+  route,
+  title,
+  description,
+  noindex = false,
+} = Astro.props;
+
+if (!Astro.site) {
+  throw new Error('Astro.site is required to build absolute metadata URLs.');
+}
+
+const site = Astro.site;
+const copy = getContent(locale);
+const pagePath = noindex
+  ? Astro.url.pathname
+  : getLocalizedPath(locale, route);
+const pageUrl = new URL(pagePath, site);
+const languageLinks = noindex ? [] : getLanguageLinks(route);
+const ogImageUrl = new URL('/og-card.svg', site);
+const siteRoot = new URL('/', site);
+const htmlLanguage = locale === 'zh' ? 'zh-CN' : locale;
+const currentYear = new Date().getFullYear();
+const personData = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Vittorio Cai',
+  url: siteRoot.href,
+  email: 'vittorio.cai@tum.de',
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Heilbronn',
+    addressCountry: 'Germany',
+  },
+  alumniOf: [
+    {
+      '@type': 'CollegeOrUniversity',
+      name: 'Technical University of Munich',
+    },
+    {
+      '@type': 'CollegeOrUniversity',
+      name: 'Wenzhou University',
+    },
+  ],
+  sameAs: [
+    'https://linkedin.com/in/vittorio-cai',
+    'https://github.com/VittorioCai',
+  ],
+};
+---
+
+<!doctype html>
+<html lang={htmlLanguage}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {!noindex && <link rel="canonical" href={pageUrl} />}
+    {
+      languageLinks.map((link) => (
+        <link
+          rel="alternate"
+          hreflang={link.locale === 'zh' ? 'zh-CN' : link.locale}
+          href={new URL(link.href, site)}
+        />
+      ))
+    }
+    {
+      !noindex && (
+        <link
+          rel="alternate"
+          hreflang="x-default"
+          href={new URL(getLocalizedPath('en', route), site)}
+        />
+      )
+    }
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={pageUrl} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta name="twitter:card" content="summary_large_image" />
+    {noindex && <meta name="robots" content="noindex,nofollow" />}
+    <script
+      is:inline
+      type="application/ld+json"
+      set:html={JSON.stringify(personData)}
+    />
+  </head>
+  <body>
+    <div class="accent-rule" aria-hidden="true"></div>
+    <div class="site-shell">
+      <Header locale={locale} route={route} />
+      <main><slot /></main>
+      <footer class="site-footer">
+        <p>{copy.footer}</p>
+        <p>&copy; {currentYear} Vittorio Cai</p>
+      </footer>
+    </div>
+  </body>
+</html>

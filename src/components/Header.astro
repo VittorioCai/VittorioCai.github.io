@@ -1,0 +1,92 @@
+---
+import { getContent } from '../content';
+import type { Locale } from '../content';
+import {
+  getLanguageLinks,
+  getLocalizedPath,
+} from '../i18n/routes';
+import type { RouteKey } from '../i18n/routes';
+
+interface Props {
+  locale: Locale;
+  route: RouteKey;
+}
+
+const { locale, route } = Astro.props;
+const copy = getContent(locale);
+const homePath = getLocalizedPath(locale, 'home');
+const languageLinks = getLanguageLinks(route);
+const languageLabels = {
+  en: 'EN',
+  de: 'DE',
+  zh: '中文',
+} satisfies Record<Locale, string>;
+const navigationLabels = {
+  en: {
+    primary: 'Primary navigation',
+    language: 'Language selection',
+  },
+  de: {
+    primary: 'Hauptnavigation',
+    language: 'Sprachauswahl',
+  },
+  zh: {
+    primary: '主导航',
+    language: '语言选择',
+  },
+} satisfies Record<Locale, { primary: string; language: string }>;
+const navigationLabel = navigationLabels[locale];
+---
+
+<header class="site-header" data-site-header>
+  <a class="wordmark" href={homePath}>Vittorio Cai</a>
+
+  <button
+    class="menu-button"
+    type="button"
+    aria-controls="primary-navigation"
+    aria-expanded="false"
+  >
+    {copy.nav.menu}
+  </button>
+
+  <nav
+    id="primary-navigation"
+    class="site-nav"
+    aria-label={navigationLabel.primary}
+  >
+    <a href={`${homePath}#work`}>{copy.nav.work}</a>
+    <a href={`${homePath}#profile`}>{copy.nav.profile}</a>
+    <a href={`${homePath}#experience`}>{copy.nav.experience}</a>
+    <a href={`${homePath}#contact`}>{copy.nav.contact}</a>
+  </nav>
+
+  <nav class="language-nav" aria-label={navigationLabel.language}>
+    {
+      languageLinks.map((link) => (
+        <a
+          href={link.href}
+          lang={link.locale === 'zh' ? 'zh-CN' : link.locale}
+          aria-current={link.locale === locale ? 'page' : undefined}
+        >
+          {languageLabels[link.locale]}
+        </a>
+      ))
+    }
+  </nav>
+</header>
+
+<script is:inline>
+  document.querySelectorAll('[data-site-header]').forEach((header) => {
+    const button = header.querySelector('.menu-button');
+
+    if (!(button instanceof HTMLButtonElement)) return;
+
+    button.addEventListener('click', () => {
+      const isOpen = button.getAttribute('aria-expanded') !== 'true';
+
+      header.toggleAttribute('data-open', isOpen);
+      button.setAttribute('aria-expanded', String(isOpen));
+    });
+  });
+</script>

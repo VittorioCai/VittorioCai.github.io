@@ -1,0 +1,63 @@
+---
+import type { SiteContent } from '../content';
+
+interface Props {
+  hero: SiteContent['hero'];
+  actions: SiteContent['actions'];
+}
+
+const { hero, actions } = Astro.props;
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero__main">
+    <p class="section-label">{hero.eyebrow}</p>
+    <h1 id="hero-title" class="hero__title">
+      {hero.lines.map((line) => <span class="hero__title-line">{line}</span>)}
+    </h1>
+    <p class="hero__summary">{hero.summary}</p>
+    <div class="text-actions">
+      <a href="#work">{actions.viewProjects}</a>
+      <a href="/Vittorio-Cai-CV-English.pdf" download>{actions.cv}</a>
+    </div>
+  </div>
+
+  <aside class="hero__aside">
+    <div>
+      <p class="section-label">{hero.availabilityLabel}</p>
+      <p>{hero.availability}</p>
+    </div>
+    <div class="hero__focus">
+      <p class="section-label">{hero.focusLabel}</p>
+      <ul>
+        {hero.focus.map((item) => <li>{item}</li>)}
+      </ul>
+    </div>
+  </aside>
+</section>
+
+<style>
+  .hero__title {
+    min-width: 0;
+  }
+
+  .hero__title-line {
+    display: block;
+    min-width: 0;
+    hyphens: auto;
+    overflow-wrap: anywhere;
+  }
+
+  .hero__focus {
+    margin-top: 2.5rem;
+  }
+
+  .hero__focus ul {
+    margin-bottom: 0;
+    padding-left: 1.2rem;
+  }
+
+  .hero__focus li + li {
+    margin-top: 0.35rem;
+  }
+</style>

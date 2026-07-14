@@ -1,0 +1,65 @@
+---
+import type { SiteContent } from '../content';
+
+interface Props {
+  heading: SiteContent['sections']['experience'];
+  experience: SiteContent['experience'];
+}
+
+const { heading, experience } = Astro.props;
+---
+
+<section
+  id="experience"
+  class="experience-grid"
+  aria-labelledby="experience-heading"
+>
+  <div class="section-side">
+    <h2 id="experience-heading">{heading}</h2>
+  </div>
+  <div class="section-main">
+    {
+      experience.map((entry) => (
+        <article class="experience-row">
+          <div>
+            <h3>{entry.role}</h3>
+            <p>{entry.organization}</p>
+          </div>
+          <ul>
+            {entry.bullets.map((bullet) => <li>{bullet}</li>)}
+          </ul>
+          <p>{entry.period}</p>
+        </article>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  h2,
+  h3 {
+    margin-bottom: 0;
+  }
+
+  h2 {
+    font-size: clamp(1.4rem, 3vw, 2rem);
+  }
+
+  h3 {
+    font-size: 1rem;
+  }
+
+  .experience-row ul {
+    margin-bottom: 0;
+    padding-left: 1.2rem;
+  }
+
+  .experience-row p,
+  .experience-row li {
+    overflow-wrap: anywhere;
+  }
+
+  .experience-row div p {
+    color: var(--muted);
+  }
+</style>

@@ -1,0 +1,62 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  locale="en"
+  route="home"
+  title="Page not found | Vittorio Cai"
+  description="Choose a language to return to Vittorio Cai's portfolio."
+  noindex
+>
+  <section class="not-found" aria-labelledby="not-found-heading">
+    <p class="section-label">404</p>
+    <h1 id="not-found-heading">Page not found</h1>
+
+    <div class="not-found__messages">
+      <p>
+        The page may have moved. Return to the English portfolio.
+      </p>
+      <p lang="de">
+        Seite nicht gefunden. Zurück zum deutschen Portfolio.
+      </p>
+      <p lang="zh-CN">
+        页面未找到。返回中文作品集。
+      </p>
+    </div>
+
+    <nav
+      class="text-actions not-found__links"
+      aria-label="Portfolio languages"
+      data-recovery-links
+    >
+      <a href="/">English</a>
+      <a href="/de/" lang="de">Deutsch</a>
+      <a href="/zh/" lang="zh-CN">中文</a>
+    </nav>
+  </section>
+</BaseLayout>
+
+<style>
+  .not-found {
+    min-height: 58vh;
+    padding: clamp(3rem, 10vw, 8rem) clamp(1.25rem, 5vw, 4rem);
+  }
+
+  h1 {
+    max-width: 12ch;
+    margin-bottom: clamp(2rem, 5vw, 4rem);
+    font-size: clamp(3rem, 10vw, 7rem);
+    letter-spacing: -0.055em;
+    line-height: 0.95;
+  }
+
+  .not-found__messages {
+    max-width: 44rem;
+    color: var(--muted);
+  }
+
+  .not-found__links {
+    margin-top: 2rem;
+  }
+</style>

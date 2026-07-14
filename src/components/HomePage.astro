@@ -1,0 +1,50 @@
+---
+import { getContent } from '../content';
+import type { Locale } from '../content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ContactBlock from './ContactBlock.astro';
+import ExperienceList from './ExperienceList.astro';
+import Hero from './Hero.astro';
+import ProfileSection from './ProfileSection.astro';
+import ProjectGrid from './ProjectGrid.astro';
+import SkillGroups from './SkillGroups.astro';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const copy = getContent(locale);
+---
+
+<BaseLayout
+  locale={locale}
+  route="home"
+  title={copy.meta.title}
+  description={copy.meta.description}
+>
+  <Hero hero={copy.hero} actions={copy.actions} />
+  <ProjectGrid
+    locale={locale}
+    projects={copy.projects}
+    sections={copy.sections}
+    visuals={copy.visuals}
+    actions={copy.actions}
+  />
+  <ProfileSection
+    heading={copy.sections.profile}
+    profile={copy.profile}
+    education={copy.education}
+  />
+  <ExperienceList
+    heading={copy.sections.experience}
+    experience={copy.experience}
+  />
+  <SkillGroups
+    heading={copy.sections.skills}
+    skillGroups={copy.skillGroups}
+    languages={copy.languages}
+    languageHeading={copy.sections.languages}
+  />
+  <ContactBlock heading={copy.sections.contact} actions={copy.actions} />
+</BaseLayout>
