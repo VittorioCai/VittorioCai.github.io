@@ -256,7 +256,8 @@ describe('public assets and privacy', () => {
       expect(existsSync(path)).toBe(true);
     }
 
-    expect(readFileSync(faviconPath, 'utf8')).toContain('#1f5fae');
+    expect(readFileSync(faviconPath, 'utf8')).toContain('#1a4e8f');
+    expect(readFileSync(ogCardPath, 'utf8')).toContain('#1a4e8f');
     expect(readFileSync(ogCardPath, 'utf8')).toContain(
       'Business insight. Data discipline. Useful AI.',
     );

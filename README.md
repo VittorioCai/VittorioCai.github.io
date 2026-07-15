@@ -4,7 +4,7 @@ Source for [vittoriocai.github.io](https://vittoriocai.github.io), a multilingua
 
 ## Stack and structure
 
-The site is a static [Astro](https://astro.build/) project written in TypeScript and tested with Vitest, Playwright, and axe-core. It requires Node.js 22.12 or newer; CI uses Node.js 24.
+The site is a static [Astro](https://astro.build/) project written in TypeScript and tested with Vitest, Playwright, and axe-core. Its Schibsted Grotesk Variable typography is self-hosted through Fontsource, so the page does not depend on a third-party font service at runtime. It requires Node.js 22.12 or newer; CI uses Node.js 24.
 
 - `src/content/` owns all English, German, and Chinese content.
 - `src/pages/` defines the localized home and case-study routes.

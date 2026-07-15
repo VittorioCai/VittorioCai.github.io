@@ -28,12 +28,34 @@ describe('editorial shell contract', () => {
 
     expect(rootBlock).toContain('--muted: #666666;');
     expect(rootBlock).toContain('--paper: #ffffff;');
+    expect(rootBlock).toContain('--accent: #1a4e8f;');
     expect(rootBlock).toContain(
-      'font-family: Arial, "Helvetica Neue", "PingFang SC", "Microsoft YaHei", sans-serif;',
+      '--font-body: "Schibsted Grotesk Variable", system-ui, "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;',
     );
+    expect(rootBlock).toContain('--font-display: var(--font-body);');
     expect(rootBlock).toContain('color: var(--ink);');
     expect(rootBlock).toContain('background: var(--paper);');
+    expect(bodyBlock).toContain('font-family: var(--font-body);');
     expect(bodyBlock).toContain('background: var(--paper);');
+  });
+
+  it('uses restrained typography and motion polish without remote font hosts', () => {
+    const linkBlock = globalCss.match(/a\s*\{([\s\S]*?)\}/)?.[1];
+
+    expect(globalCss).toContain(
+      '@import "@fontsource-variable/schibsted-grotesk/wght.css";',
+    );
+    expect(globalCss).toMatch(
+      /h1,\s*h2,\s*h3,\s*\.wordmark\s*\{[^}]*font-family:\s*var\(--font-display\);/s,
+    );
+    expect(globalCss).toMatch(
+      /:lang\(zh-CN\) \.hero__main h1\s*\{[^}]*letter-spacing:\s*-0\.025em;/s,
+    );
+    expect(linkBlock).toContain(
+      'transition: color 150ms cubic-bezier(0.22, 1, 0.36, 1);',
+    );
+    expect(baseLayout).not.toContain('fonts.googleapis.com');
+    expect(baseLayout).not.toContain('fonts.gstatic.com');
   });
 
   it('publishes the approved component selector interface', () => {

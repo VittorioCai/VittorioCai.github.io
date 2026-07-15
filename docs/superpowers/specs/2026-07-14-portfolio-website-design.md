@@ -177,19 +177,19 @@ The approved direction is a minimal editorial grid inspired by a restrained news
 ### Palette
 
 - Primary text: `#171717`
-- Accent blue: `#1F5FAE`
+- Accent blue: `#1A4E8F`
 - Secondary text: `#666666`
 - Borders: `#DEDEDE`
 - Quiet surface: `#FAFAFA`
 - Page background: `#FFFFFF`
 
-Blue replaces the earlier red concept. It appears only in the top rule, small section labels, active language, and primary text links. There are no gradients, glows, large blue panels, or multicolor skill badges.
+Blue replaces the earlier red concept. The slightly darker `#1A4E8F` keeps the restrained news-editorial character and provides at least 7.7:1 contrast on the site's white and quiet surfaces. It appears only in the top rule, small section labels, active language, and primary text links. There are no gradients, glows, large blue panels, or multicolor skill badges.
 
 ### Typography
 
-- Use a fast system sans-serif stack: `Arial`, `Helvetica Neue`, and appropriate platform fallbacks.
+- Self-host Schibsted Grotesk Variable through Fontsource for Latin text; do not make runtime requests to an external font service.
 - Include CJK system fallbacks such as `PingFang SC`, `Microsoft YaHei`, and `Noto Sans CJK SC` when installed.
-- Use weight, size, and whitespace for hierarchy rather than multiple font families.
+- Use one typographic system, with weight, size, and whitespace creating the hierarchy rather than multiple display families.
 - Headings are direct and compact; body copy uses comfortable line height.
 
 ### Layout
@@ -321,5 +321,5 @@ The release is complete when all of the following are true:
 - Additional highlighted project: English Job Agent for Germany
 - Public contact: TUM email, LinkedIn, GitHub, downloadable English CV
 - No portrait in the initial release
-- Minimal editorial grid with blue accent `#1F5FAE`
+- Minimal editorial grid with blue accent `#1A4E8F`
 - Astro static site deployed through GitHub Pages

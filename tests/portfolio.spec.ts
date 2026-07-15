@@ -37,6 +37,51 @@ test('the project language switcher preserves the PatentPATH route', async ({
   await expect(page.locator('html')).toHaveAttribute('lang', 'de');
 });
 
+test('the editorial typeface is self-hosted and applied to body and display text', async ({
+  page,
+}) => {
+  const remoteFontRequests: string[] = [];
+
+  page.on('request', (request) => {
+    if (/fonts\.(?:googleapis|gstatic)\.com/.test(request.url())) {
+      remoteFontRequests.push(request.url());
+    }
+  });
+
+  await page.goto('/');
+  await page.evaluate(() => document.fonts.ready);
+
+  const typography = await page.evaluate(() => ({
+    body: getComputedStyle(document.body).fontFamily,
+    heading: getComputedStyle(document.querySelector('main h1')!).fontFamily,
+    loaded: document.fonts.check('700 64px "Schibsted Grotesk Variable"'),
+  }));
+
+  expect(typography.body).toContain('Schibsted Grotesk Variable');
+  expect(typography.heading).toContain('Schibsted Grotesk Variable');
+  expect(typography.loaded).toBe(true);
+  expect(remoteFontRequests).toEqual([]);
+});
+
+test('the Chinese desktop hero preserves its three authored headline lines', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 1200 });
+  await page.goto('/zh/');
+  await page.evaluate(() => document.fonts.ready);
+
+  const lineCounts = await page.locator('.hero__title-line').evaluateAll(
+    (lines) =>
+      lines.map((line) => {
+        const range = document.createRange();
+        range.selectNodeContents(line);
+        return range.getClientRects().length;
+      }),
+  );
+
+  expect(lineCounts).toEqual([1, 1, 1]);
+});
+
 const mobileNavigationLocales = [
   {
     path: '/',
