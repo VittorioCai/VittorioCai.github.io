@@ -31,11 +31,29 @@ export const en = {
   },
   actions: {
     viewProjects: 'View projects',
+    allProjects: 'All projects',
     cv: 'Download CV',
     demo: 'Live demo',
     source: 'GitHub',
     caseStudy: 'Case study',
     email: 'Email me',
+  },
+  pageMeta: {
+    work: {
+      title: 'Projects — Vittorio Cai',
+      description:
+        'Selected data, analytics and applied AI projects by Vittorio Cai.',
+    },
+    profile: {
+      title: 'Profile & experience — Vittorio Cai',
+      description:
+        'Education, experience, skills and languages of Vittorio Cai.',
+    },
+    contact: {
+      title: 'Contact — Vittorio Cai',
+      description:
+        'Get in touch with Vittorio Cai for working student and internship opportunities in Germany.',
+    },
   },
   sections: {
     work: 'Selected work',

@@ -5,14 +5,21 @@ interface Props {
   heading: SiteContent['sections']['profile'];
   profile: SiteContent['profile'];
   education: SiteContent['education'];
+  headingTag?: 'h1' | 'h2';
 }
 
-const { heading, profile, education } = Astro.props;
+const {
+  heading,
+  profile,
+  education,
+  headingTag = 'h2',
+} = Astro.props;
+const Heading = headingTag;
 ---
 
 <section id="profile" class="profile-grid" aria-labelledby="profile-heading">
   <div class="section-side">
-    <h2 id="profile-heading">{heading}</h2>
+    <Heading id="profile-heading" class="profile-heading">{heading}</Heading>
   </div>
   <div class="section-main">
     <p class="profile-copy">{profile}</p>
@@ -34,12 +41,12 @@ const { heading, profile, education } = Astro.props;
 </section>
 
 <style>
-  h2,
+  .profile-heading,
   h3 {
     margin-bottom: 0;
   }
 
-  h2 {
+  .profile-heading {
     font-size: clamp(1.4rem, 3vw, 2rem);
   }
 

@@ -55,10 +55,12 @@ const navigationLabel = navigationLabels[locale];
     class="site-nav"
     aria-label={navigationLabel.primary}
   >
-    <a href={`${homePath}#work`}>{copy.nav.work}</a>
-    <a href={`${homePath}#profile`}>{copy.nav.profile}</a>
-    <a href={`${homePath}#experience`}>{copy.nav.experience}</a>
-    <a href={`${homePath}#contact`}>{copy.nav.contact}</a>
+    <a href={getLocalizedPath(locale, 'work')}>{copy.nav.work}</a>
+    <a href={getLocalizedPath(locale, 'profile')}>{copy.nav.profile}</a>
+    <a href={`${getLocalizedPath(locale, 'profile')}#experience`}>
+      {copy.nav.experience}
+    </a>
+    <a href={getLocalizedPath(locale, 'contact')}>{copy.nav.contact}</a>
   </nav>
 
   <nav class="language-nav" aria-label={navigationLabel.language}>

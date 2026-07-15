@@ -1,0 +1,39 @@
+---
+import { getContent } from '../content';
+import type { Locale } from '../content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ExperienceList from './ExperienceList.astro';
+import ProfileSection from './ProfileSection.astro';
+import SkillGroups from './SkillGroups.astro';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const copy = getContent(locale);
+---
+
+<BaseLayout
+  locale={locale}
+  route="profile"
+  title={copy.pageMeta.profile.title}
+  description={copy.pageMeta.profile.description}
+>
+  <ProfileSection
+    heading={copy.sections.profile}
+    profile={copy.profile}
+    education={copy.education}
+    headingTag="h1"
+  />
+  <ExperienceList
+    heading={copy.sections.experience}
+    experience={copy.experience}
+  />
+  <SkillGroups
+    heading={copy.sections.skills}
+    skillGroups={copy.skillGroups}
+    languages={copy.languages}
+    languageHeading={copy.sections.languages}
+  />
+</BaseLayout>

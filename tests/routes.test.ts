@@ -18,6 +18,12 @@ describe('localized routes', () => {
     );
   });
 
+  it('maps the section pages to each locale', () => {
+    expect(getLocalizedPath('en', 'work')).toBe('/work/');
+    expect(getLocalizedPath('de', 'profile')).toBe('/de/profile/');
+    expect(getLocalizedPath('zh', 'contact')).toBe('/zh/contact/');
+  });
+
   it('returns route-equivalent language links in locale order', () => {
     expect(getLanguageLinks('jobAgent')).toEqual([
       { locale: 'en', href: '/work/english-job-agent/' },

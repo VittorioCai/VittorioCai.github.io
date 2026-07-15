@@ -2,12 +2,8 @@
 import { getContent } from '../content';
 import type { Locale } from '../content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import ContactBlock from './ContactBlock.astro';
-import ExperienceList from './ExperienceList.astro';
+import FeaturedProject from './FeaturedProject.astro';
 import Hero from './Hero.astro';
-import ProfileSection from './ProfileSection.astro';
-import ProjectGrid from './ProjectGrid.astro';
-import SkillGroups from './SkillGroups.astro';
 
 interface Props {
   locale: Locale;
@@ -15,6 +11,7 @@ interface Props {
 
 const { locale } = Astro.props;
 const copy = getContent(locale);
+const [featured] = copy.projects;
 ---
 
 <BaseLayout
@@ -23,28 +20,23 @@ const copy = getContent(locale);
   title={copy.meta.title}
   description={copy.meta.description}
 >
-  <Hero hero={copy.hero} actions={copy.actions} />
-  <ProjectGrid
-    locale={locale}
-    projects={copy.projects}
-    sections={copy.sections}
-    visuals={copy.visuals}
-    actions={copy.actions}
-  />
-  <ProfileSection
-    heading={copy.sections.profile}
-    profile={copy.profile}
-    education={copy.education}
-  />
-  <ExperienceList
-    heading={copy.sections.experience}
-    experience={copy.experience}
-  />
-  <SkillGroups
-    heading={copy.sections.skills}
-    skillGroups={copy.skillGroups}
-    languages={copy.languages}
-    languageHeading={copy.sections.languages}
-  />
-  <ContactBlock heading={copy.sections.contact} actions={copy.actions} />
+  <Hero hero={copy.hero} actions={copy.actions} locale={locale} />
+  <section id="work" aria-labelledby="work-heading">
+    <div class="section-heading">
+      <h2 id="work-heading">{copy.sections.work}</h2>
+    </div>
+    <FeaturedProject
+      locale={locale}
+      project={featured}
+      sections={copy.sections}
+      actions={copy.actions}
+      allProjectsLink
+    />
+  </section>
 </BaseLayout>
+
+<style>
+  h2 {
+    margin-bottom: 0;
+  }
+</style>

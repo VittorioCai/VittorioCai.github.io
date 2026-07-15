@@ -1,0 +1,29 @@
+---
+import { getContent } from '../content';
+import type { Locale } from '../content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProjectGrid from './ProjectGrid.astro';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const copy = getContent(locale);
+---
+
+<BaseLayout
+  locale={locale}
+  route="work"
+  title={copy.pageMeta.work.title}
+  description={copy.pageMeta.work.description}
+>
+  <ProjectGrid
+    locale={locale}
+    projects={copy.projects}
+    sections={copy.sections}
+    visuals={copy.visuals}
+    actions={copy.actions}
+    headingTag="h1"
+  />
+</BaseLayout>

@@ -26,11 +26,27 @@ export const zh = {
   },
   actions: {
     viewProjects: '查看项目',
+    allProjects: '全部项目',
     cv: '下载英文 CV',
     demo: '在线演示',
     source: 'GitHub',
     caseStudy: '项目详情',
     email: '发送邮件',
+  },
+  pageMeta: {
+    work: {
+      title: '项目 — Vittorio Cai',
+      description: 'Vittorio Cai 的数据、分析与应用 AI 代表项目。',
+    },
+    profile: {
+      title: '背景与经历 — Vittorio Cai',
+      description: 'Vittorio Cai 的教育背景、实践经历、技能与语言。',
+    },
+    contact: {
+      title: '联系 — Vittorio Cai',
+      description:
+        '联系 Vittorio Cai，洽谈德国 Working Student 与实习机会。',
+    },
   },
   sections: {
     work: '代表项目',

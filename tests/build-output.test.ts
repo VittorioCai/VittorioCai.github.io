@@ -21,36 +21,55 @@ const distRoot = fileURLToPath(new URL('../dist/', import.meta.url));
 const siteUrl = 'https://vittoriocai.github.io';
 
 const localizedHomepages = [
+  { file: 'index.html', lang: 'en', workPath: '/work/' },
+  { file: 'de/index.html', lang: 'de', workPath: '/de/work/' },
+  { file: 'zh/index.html', lang: 'zh-CN', workPath: '/zh/work/' },
+] as const;
+
+const workPages = [
   {
-    file: 'index.html',
+    file: 'work/index.html',
     lang: 'en',
     pipelineStages: [
       'Public ATS feeds',
       'Language check',
       'Ranked digest',
     ],
-    languageHeading: 'Languages',
   },
   {
-    file: 'de/index.html',
+    file: 'de/work/index.html',
     lang: 'de',
     pipelineStages: [
       'Öffentliche ATS-Feeds',
       'Sprachprüfung',
       'Priorisierte Übersicht',
     ],
-    languageHeading: 'Sprachen',
   },
   {
-    file: 'zh/index.html',
+    file: 'zh/work/index.html',
     lang: 'zh-CN',
     pipelineStages: [
       '公开 ATS 数据源',
       '语言要求判断',
       '岗位优先级摘要',
     ],
-    languageHeading: '语言',
   },
+] as const;
+
+const profilePages = [
+  { file: 'profile/index.html', lang: 'en', languageHeading: 'Languages' },
+  {
+    file: 'de/profile/index.html',
+    lang: 'de',
+    languageHeading: 'Sprachen',
+  },
+  { file: 'zh/profile/index.html', lang: 'zh-CN', languageHeading: '语言' },
+] as const;
+
+const contactPages = [
+  { file: 'contact/index.html', lang: 'en' },
+  { file: 'de/contact/index.html', lang: 'de' },
+  { file: 'zh/contact/index.html', lang: 'zh-CN' },
 ] as const;
 
 const caseStudyPages = [
@@ -131,47 +150,18 @@ function listHtmlFiles(directory: string): string[] {
 describe.each(localizedHomepages)('$file', ({
   file,
   lang,
-  pipelineStages,
-  languageHeading,
+  workPath,
 }) => {
   it(`renders the ${lang} homepage contract`, () => {
     const $ = loadHomepage(file);
 
     expect($('html').attr('lang')).toBe(lang);
     expect($('main')).toHaveLength(1);
-
-    for (const id of ['work', 'profile', 'experience', 'contact']) {
-      expect($(`#${id}`)).toHaveLength(1);
-    }
-
+    expect($('#work')).toHaveLength(1);
     expect(
       $('[data-project-id="patentpath"]').first().attr('data-featured'),
     ).toBe('true');
-  });
-
-  it(`renders the ${lang} job-agent pipeline labels`, () => {
-    const $ = loadHomepage(file);
-
-    const jobAgentVisual = $(
-      '[data-project-visual="english-job-agent"]',
-    ).first();
-
-    expect(jobAgentVisual).toHaveLength(1);
-    expect(
-      jobAgentVisual
-        .find('.pipeline-stage')
-        .map((_, element) => $(element).text().trim())
-        .get(),
-    ).toEqual(pipelineStages);
-  });
-
-  it(`renders the ${lang} language skill heading`, () => {
-    const $ = loadHomepage(file);
-
-    const languageGroup = $('[data-skill-group="languages"]');
-
-    expect(languageGroup).toHaveLength(1);
-    expect(languageGroup.find('h3').text().trim()).toBe(languageHeading);
+    expect($(`a[href="${workPath}"]`).length).toBeGreaterThan(0);
   });
 
   it(`publishes complete ${lang} discovery and contact metadata`, () => {
@@ -197,10 +187,68 @@ describe.each(localizedHomepages)('$file', ({
     expect($('meta[property="og:image"]').attr('content')).toBe(
       `${siteUrl}/og-card.png`,
     );
-    expect($('a[href="mailto:vittorio.cai@tum.de"]')).toHaveLength(1);
     expect($('a[href="/Vittorio-Cai-CV-English.pdf"]').length).toBeGreaterThan(
       0,
     );
+  });
+});
+
+describe.each(workPages)('$file', ({ file, lang, pipelineStages }) => {
+  it(`renders the ${lang} work-page contract`, () => {
+    const $ = loadHomepage(file);
+
+    expect($('html').attr('lang')).toBe(lang);
+    expect($('#work')).toHaveLength(1);
+    expect($('main h1')).toHaveLength(1);
+    expect($('[data-project-id]')).toHaveLength(4);
+    expect(
+      $('[data-project-id="patentpath"]').first().attr('data-featured'),
+    ).toBe('true');
+  });
+
+  it(`renders the ${lang} job-agent pipeline labels`, () => {
+    const $ = loadHomepage(file);
+
+    const jobAgentVisual = $(
+      '[data-project-visual="english-job-agent"]',
+    ).first();
+
+    expect(jobAgentVisual).toHaveLength(1);
+    expect(
+      jobAgentVisual
+        .find('.pipeline-stage')
+        .map((_, element) => $(element).text().trim())
+        .get(),
+    ).toEqual(pipelineStages);
+  });
+});
+
+describe.each(profilePages)('$file', ({ file, lang, languageHeading }) => {
+  it(`renders the ${lang} profile-page contract`, () => {
+    const $ = loadHomepage(file);
+
+    expect($('html').attr('lang')).toBe(lang);
+    expect($('main h1')).toHaveLength(1);
+
+    for (const id of ['profile', 'experience', 'skills']) {
+      expect($(`#${id}`)).toHaveLength(1);
+    }
+
+    const languageGroup = $('[data-skill-group="languages"]');
+
+    expect(languageGroup).toHaveLength(1);
+    expect(languageGroup.find('h3').text().trim()).toBe(languageHeading);
+  });
+});
+
+describe.each(contactPages)('$file', ({ file, lang }) => {
+  it(`renders the ${lang} contact-page contract`, () => {
+    const $ = loadHomepage(file);
+
+    expect($('html').attr('lang')).toBe(lang);
+    expect($('main h1')).toHaveLength(1);
+    expect($('#contact')).toHaveLength(1);
+    expect($('a[href="mailto:vittorio.cai@tum.de"]')).toHaveLength(1);
   });
 });
 

@@ -12,6 +12,17 @@ const caseStudyRoutes = [
   '/de/work/english-job-agent/',
   '/zh/work/english-job-agent/',
 ] as const;
+const sectionPageRoutes = [
+  '/work/',
+  '/profile/',
+  '/contact/',
+  '/de/work/',
+  '/de/profile/',
+  '/de/contact/',
+  '/zh/work/',
+  '/zh/profile/',
+  '/zh/contact/',
+] as const;
 
 async function expectNoHorizontalOverflow(page: Page) {
   const dimensions = await page.evaluate(() => ({
@@ -162,7 +173,7 @@ test('/de/ reflows enlarged text at 320px without clipping overflow', async ({
   await expectNoHorizontalOverflow(page);
 });
 
-for (const path of caseStudyRoutes) {
+for (const path of [...caseStudyRoutes, ...sectionPageRoutes]) {
   test(`${path} has no horizontal overflow at 320px`, async ({ page }) => {
     await page.setViewportSize({ width: 320, height: 900 });
     await page.goto(path);
@@ -174,6 +185,9 @@ const auditedRoutes = [
   '/',
   '/de/',
   '/zh/',
+  '/work/',
+  '/profile/',
+  '/contact/',
   '/work/patentpath/',
   '/work/english-job-agent/',
 ] as const;

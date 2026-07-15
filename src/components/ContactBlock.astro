@@ -4,15 +4,19 @@ import type { SiteContent } from '../content';
 interface Props {
   heading: SiteContent['sections']['contact'];
   actions: SiteContent['actions'];
+  headingTag?: 'h1' | 'h2';
 }
 
-const { heading, actions } = Astro.props;
+const { heading, actions, headingTag = 'h2' } = Astro.props;
+const Heading = headingTag;
 ---
 
 <section id="contact" class="contact-block" aria-labelledby="contact-heading">
   <div>
     <p class="section-label">{heading}</p>
-    <h2 id="contact-heading">vittorio.cai@tum.de</h2>
+    <Heading id="contact-heading" class="contact-heading"
+      >vittorio.cai@tum.de</Heading
+    >
   </div>
   <div class="text-actions contact-actions">
     <a href="mailto:vittorio.cai@tum.de">{actions.email}</a>
@@ -31,7 +35,7 @@ const { heading, actions } = Astro.props;
 </section>
 
 <style>
-  h2 {
+  .contact-heading {
     margin-bottom: 0;
     overflow-wrap: anywhere;
     font-size: clamp(1.5rem, 5vw, 3.5rem);

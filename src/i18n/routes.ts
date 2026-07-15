@@ -1,10 +1,19 @@
 import { locales } from '../content';
 import type { Locale } from '../content';
 
-export type RouteKey = 'home' | 'patentpath' | 'jobAgent';
+export type RouteKey =
+  | 'home'
+  | 'work'
+  | 'profile'
+  | 'contact'
+  | 'patentpath'
+  | 'jobAgent';
 
 const routeSuffixes = {
   home: '',
+  work: 'work',
+  profile: 'profile',
+  contact: 'contact',
   patentpath: 'work/patentpath',
   jobAgent: 'work/english-job-agent',
 } satisfies Record<RouteKey, string>;

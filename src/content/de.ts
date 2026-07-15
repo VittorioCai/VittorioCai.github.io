@@ -31,11 +31,29 @@ export const de = {
   },
   actions: {
     viewProjects: 'Projekte ansehen',
+    allProjects: 'Alle Projekte',
     cv: 'CV herunterladen (Englisch)',
     demo: 'Live-Demo',
     source: 'GitHub',
     caseStudy: 'Projektbericht',
     email: 'E-Mail senden',
+  },
+  pageMeta: {
+    work: {
+      title: 'Projekte — Vittorio Cai',
+      description:
+        'Ausgewählte Projekte zu Daten, Analytics und angewandter KI von Vittorio Cai.',
+    },
+    profile: {
+      title: 'Profil & Erfahrung — Vittorio Cai',
+      description:
+        'Ausbildung, Erfahrung, Kenntnisse und Sprachen von Vittorio Cai.',
+    },
+    contact: {
+      title: 'Kontakt — Vittorio Cai',
+      description:
+        'Kontakt zu Vittorio Cai für Werkstudentenstellen und Praktika in Deutschland.',
+    },
   },
   sections: {
     work: 'Ausgewählte Projekte',

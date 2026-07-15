@@ -55,11 +55,17 @@ export interface SiteContent {
   };
   actions: {
     viewProjects: string;
+    allProjects: string;
     cv: string;
     demo: string;
     source: string;
     caseStudy: string;
     email: string;
+  };
+  pageMeta: {
+    work: { title: string; description: string };
+    profile: { title: string; description: string };
+    contact: { title: string; description: string };
   };
   sections: {
     work: string;

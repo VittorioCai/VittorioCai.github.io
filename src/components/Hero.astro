@@ -1,12 +1,15 @@
 ---
-import type { SiteContent } from '../content';
+import type { Locale, SiteContent } from '../content';
+import { getLocalizedPath } from '../i18n/routes';
 
 interface Props {
   hero: SiteContent['hero'];
   actions: SiteContent['actions'];
+  locale: Locale;
 }
 
-const { hero, actions } = Astro.props;
+const { hero, actions, locale } = Astro.props;
+const workPath = getLocalizedPath(locale, 'work');
 ---
 
 <section class="hero" aria-labelledby="hero-title">
@@ -17,7 +20,7 @@ const { hero, actions } = Astro.props;
     </h1>
     <p class="hero__summary">{hero.summary}</p>
     <div class="hero-actions">
-      <a class="btn btn--primary" href="#work">{actions.viewProjects}</a>
+      <a class="btn btn--primary" href={workPath}>{actions.viewProjects}</a>
       <a class="btn btn--secondary" href="/Vittorio-Cai-CV-English.pdf" download>{actions.cv}</a>
     </div>
   </div>

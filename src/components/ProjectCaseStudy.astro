@@ -153,7 +153,7 @@ const serializedStructuredData = JSON.stringify(structuredData).replace(
         class="case-study__navigation"
         aria-label={copy.sections.work}
       >
-        <a href={`${getLocalizedPath(locale, 'home')}#work`}>
+        <a href={getLocalizedPath(locale, 'work')}>
           ← {copy.caseStudyLabels.backToWork}
         </a>
         <a href={getLocalizedPath(locale, nextRoute)}>
