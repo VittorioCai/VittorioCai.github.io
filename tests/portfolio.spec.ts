@@ -360,7 +360,9 @@ test('/profile/ keeps the desktop identity panel anchored within the viewport', 
 
     return {
       bottom: box.bottom,
+      clientHeight: element.clientHeight,
       overflowY: style.overflowY,
+      scrollHeight: element.scrollHeight,
       top: box.top,
     };
   });
@@ -369,8 +371,9 @@ test('/profile/ keeps the desktop identity panel anchored within the viewport', 
   );
 
   expect(initial.top).toBeCloseTo(headerBottom, 0);
-  expect(initial.bottom).toBeLessThanOrEqual(760);
-  expect(initial.overflowY).toBe('auto');
+  expect(initial.bottom).toBeCloseTo(760, 0);
+  expect(initial.scrollHeight).toBeLessThanOrEqual(initial.clientHeight);
+  expect(initial.overflowY).toBe('visible');
 
   await page.evaluate(() => window.scrollTo(0, 600));
 
@@ -390,10 +393,21 @@ test('/profile/ fits the identity rail without internal scrolling on a short des
 
   const panel = page.locator('.profile-identity__sticky');
   const name = page.locator('.profile-identity__heading h1');
-  const panelDimensions = await panel.evaluate((element) => ({
-    clientHeight: element.clientHeight,
-    scrollHeight: element.scrollHeight,
-  }));
+  const panelDimensions = await panel.evaluate((element) => {
+    const box = element.getBoundingClientRect();
+    const first = element.querySelector('.profile-identity__monogram');
+    const last = element.querySelector('[data-profile-journey]');
+    const firstBox = first?.getBoundingClientRect();
+    const lastBox = last?.getBoundingClientRect();
+
+    return {
+      bottom: box.bottom,
+      bottomGap: lastBox ? box.bottom - lastBox.bottom : Number.NaN,
+      clientHeight: element.clientHeight,
+      scrollHeight: element.scrollHeight,
+      topGap: firstBox ? firstBox.top - box.top : Number.NaN,
+    };
+  });
   const nameMetrics = await name.evaluate((element) => {
     const range = document.createRange();
     range.selectNodeContents(element);
@@ -409,6 +423,8 @@ test('/profile/ fits the identity rail without internal scrolling on a short des
   expect(panelDimensions.scrollHeight).toBeLessThanOrEqual(
     panelDimensions.clientHeight,
   );
+  expect(panelDimensions.bottom).toBeCloseTo(720, 0);
+  expect(panelDimensions.topGap).toBeCloseTo(panelDimensions.bottomGap, 0);
   expect(nameMetrics.fontSize).toBeLessThanOrEqual(40);
   expect(nameMetrics.lineCount).toBe(1);
   expect(nameMetrics.scrollWidth).toBeLessThanOrEqual(nameMetrics.clientWidth);

@@ -122,9 +122,12 @@ const { profileRail, actions } = Astro.props;
   .profile-identity__sticky {
     position: sticky;
     top: 75px;
-    max-height: calc(100svh - 75px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: calc(100svh - 75px);
     padding: clamp(2rem, 5vw, 4rem) var(--pad);
-    overflow-y: auto;
+    overflow-y: visible;
   }
 
   .profile-identity__monogram {
@@ -245,6 +248,8 @@ const { profileRail, actions } = Astro.props;
   @media (max-width: 760px) {
     .profile-identity__sticky {
       position: static;
+      display: block;
+      height: auto;
       max-height: none;
       overflow-y: visible;
     }
