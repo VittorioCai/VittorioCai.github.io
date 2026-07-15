@@ -93,6 +93,88 @@ test('the Chinese desktop hero preserves its three authored headline lines', asy
   expect(lineCounts).toEqual([1, 1, 1]);
 });
 
+test('the hero title entrance keeps text fully opaque', async ({ page }) => {
+  await page.goto('/');
+
+  const animatedOpacityKeyframes = await page
+    .locator('.hero__title-line')
+    .first()
+    .evaluate((line) =>
+      line
+        .getAnimations()
+        .flatMap((animation) =>
+          animation.effect instanceof KeyframeEffect
+            ? animation.effect.getKeyframes()
+            : [],
+        )
+        .map((keyframe) => keyframe.opacity)
+        .filter((opacity) => opacity !== undefined),
+    );
+
+  expect(animatedOpacityKeyframes).toEqual([]);
+});
+
+test('the mobile menu opens with short transform and opacity feedback', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+
+  const siteHeader = page.locator('[data-site-header]');
+  const menuButton = siteHeader.getByRole('button', {
+    name: 'Menu',
+    exact: true,
+  });
+  const navigation = siteHeader.getByRole('navigation', {
+    name: 'Primary navigation',
+  });
+
+  await menuButton.click();
+
+  const motion = await navigation.evaluate((element) => {
+    const style = getComputedStyle(element);
+
+    return {
+      properties: style.transitionProperty
+        .split(',')
+        .map((value) => value.trim()),
+      durations: style.transitionDuration
+        .split(',')
+        .map((value) => Number.parseFloat(value) * 1000),
+    };
+  });
+
+  expect(motion.properties).toEqual(
+    expect.arrayContaining(['opacity', 'transform']),
+  );
+  expect(
+    motion.durations.every((duration) => duration > 0 && duration <= 200),
+  ).toBe(true);
+});
+
+test('the primary call to action acknowledges pointer press', async ({
+  page,
+}) => {
+  await page.goto('/');
+
+  const primaryAction = page.getByRole('link', {
+    name: 'View projects',
+    exact: true,
+  });
+
+  await primaryAction.hover();
+  await page.mouse.down();
+  await page.waitForTimeout(120);
+
+  const translateY = await primaryAction.evaluate((element) => {
+    const transform = getComputedStyle(element).transform;
+    return transform === 'none' ? 0 : new DOMMatrixReadOnly(transform).m42;
+  });
+
+  await page.mouse.up();
+  expect(translateY).toBeCloseTo(1, 1);
+});
+
 const mobileNavigationLocales = [
   {
     path: '/',
