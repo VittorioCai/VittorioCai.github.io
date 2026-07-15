@@ -382,6 +382,38 @@ test('/profile/ keeps the desktop identity panel anchored within the viewport', 
   await expect(header).toHaveCSS('position', 'sticky');
 });
 
+test('/profile/ fits the identity rail without internal scrolling on a short desktop', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await page.goto('/profile/');
+
+  const panel = page.locator('.profile-identity__sticky');
+  const name = page.locator('.profile-identity__heading h1');
+  const panelDimensions = await panel.evaluate((element) => ({
+    clientHeight: element.clientHeight,
+    scrollHeight: element.scrollHeight,
+  }));
+  const nameMetrics = await name.evaluate((element) => {
+    const range = document.createRange();
+    range.selectNodeContents(element);
+
+    return {
+      clientWidth: element.clientWidth,
+      fontSize: Number.parseFloat(getComputedStyle(element).fontSize),
+      lineCount: range.getClientRects().length,
+      scrollWidth: element.scrollWidth,
+    };
+  });
+
+  expect(panelDimensions.scrollHeight).toBeLessThanOrEqual(
+    panelDimensions.clientHeight,
+  );
+  expect(nameMetrics.fontSize).toBeLessThanOrEqual(40);
+  expect(nameMetrics.lineCount).toBe(1);
+  expect(nameMetrics.scrollWidth).toBeLessThanOrEqual(nameMetrics.clientWidth);
+});
+
 test('/profile/ stacks the identity rail without overflow on mobile', async ({
   page,
 }) => {

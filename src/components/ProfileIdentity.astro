@@ -146,7 +146,7 @@ const { profileRail, actions } = Astro.props;
 
   .profile-identity__heading h1 {
     margin-bottom: 0.7rem;
-    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-size: clamp(1.85rem, 3vw, 2.75rem);
     line-height: 0.98;
     letter-spacing: -0.045em;
   }
@@ -213,6 +213,33 @@ const { profileRail, actions } = Astro.props;
   .profile-identity__links a:hover .profile-identity__action-icon {
     color: var(--accent);
     transform: translateY(-2px);
+  }
+
+  @media (min-width: 761px) {
+    .profile-identity__heading h1 {
+      white-space: nowrap;
+    }
+  }
+
+  @media (min-width: 761px) and (max-height: 820px) {
+    .profile-identity__sticky {
+      padding-block: clamp(1rem, 3vh, 1.5rem);
+    }
+
+    .profile-identity__monogram {
+      width: clamp(6.5rem, 11vw, 8rem);
+      margin-bottom: 1rem;
+      font-size: clamp(2.25rem, 4vw, 3rem);
+    }
+
+    .profile-identity__heading h1 {
+      margin-bottom: 0.55rem;
+      font-size: clamp(1.85rem, 2.5vw, 2.25rem);
+    }
+
+    .profile-identity__links {
+      margin-block: 1rem;
+    }
   }
 
   @media (max-width: 760px) {
