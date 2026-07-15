@@ -113,6 +113,31 @@ const personData = {
     <div class="site-shell">
       <Header locale={locale} route={route} />
       <main><slot /></main>
+      <script>
+        const reduceMotion = window.matchMedia(
+          '(prefers-reduced-motion: reduce)',
+        ).matches;
+
+        if (!reduceMotion && 'IntersectionObserver' in window) {
+          const observer = new IntersectionObserver(
+            (entries) => {
+              for (const entry of entries) {
+                if (entry.isIntersecting) {
+                  entry.target.classList.add('reveal--visible');
+                  observer.unobserve(entry.target);
+                }
+              }
+            },
+            { threshold: 0.08 },
+          );
+
+          for (const element of document.querySelectorAll('main > *')) {
+            if (element.classList.contains('hero')) continue;
+            element.classList.add('reveal');
+            observer.observe(element);
+          }
+        }
+      </script>
       <footer class="site-footer">
         <p>{copy.footer}</p>
         <p>&copy; {currentYear} Vittorio Cai</p>
