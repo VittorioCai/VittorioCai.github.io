@@ -195,7 +195,7 @@ describe.each(localizedHomepages)('$file', ({
     });
     expect($('link[rel="icon"]').attr('href')).toBe('/favicon.svg');
     expect($('meta[property="og:image"]').attr('content')).toBe(
-      `${siteUrl}/og-card.svg`,
+      `${siteUrl}/og-card.png`,
     );
     expect($('a[href="mailto:vittorio.cai@tum.de"]')).toHaveLength(1);
     expect($('a[href="/Vittorio-Cai-CV-English.pdf"]').length).toBeGreaterThan(
@@ -249,10 +249,17 @@ describe('public assets and privacy', () => {
   it('emits the branded assets, crawler policy, and English CV', () => {
     const faviconPath = join(distRoot, 'favicon.svg');
     const ogCardPath = join(distRoot, 'og-card.svg');
+    const ogCardPngPath = join(distRoot, 'og-card.png');
     const robotsPath = join(distRoot, 'robots.txt');
     const cvPath = join(distRoot, 'Vittorio-Cai-CV-English.pdf');
 
-    for (const path of [faviconPath, ogCardPath, robotsPath, cvPath]) {
+    for (const path of [
+      faviconPath,
+      ogCardPath,
+      ogCardPngPath,
+      robotsPath,
+      cvPath,
+    ]) {
       expect(existsSync(path)).toBe(true);
     }
 

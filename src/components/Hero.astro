@@ -16,9 +16,9 @@ const { hero, actions } = Astro.props;
       {hero.lines.map((line) => <span class="hero__title-line">{line}</span>)}
     </h1>
     <p class="hero__summary">{hero.summary}</p>
-    <div class="text-actions">
-      <a href="#work">{actions.viewProjects}</a>
-      <a href="/Vittorio-Cai-CV-English.pdf" download>{actions.cv}</a>
+    <div class="hero-actions">
+      <a class="btn btn--primary" href="#work">{actions.viewProjects}</a>
+      <a class="btn btn--secondary" href="/Vittorio-Cai-CV-English.pdf" download>{actions.cv}</a>
     </div>
   </div>
 
@@ -44,8 +44,6 @@ const { hero, actions } = Astro.props;
   .hero__title-line {
     display: block;
     min-width: 0;
-    hyphens: auto;
-    overflow-wrap: anywhere;
   }
 
   .hero__focus {

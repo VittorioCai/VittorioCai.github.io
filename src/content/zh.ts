@@ -4,7 +4,7 @@ export const zh = {
   locale: 'zh',
   meta: {
     title: 'Vittorio Cai — 业务、数据与应用 AI',
-    description: 'TUM MMDT 学生，用数据分析与 AI 解决真实业务问题。',
+    description: 'TUM MMDT 学生，财务背景出身，用数据分析与 AI 解决真实业务问题。',
   },
   nav: {
     work: '项目',
@@ -17,9 +17,10 @@ export const zh = {
     eyebrow: 'TUM MMDT · 德国海尔布隆',
     lines: ['理解业务。', '尊重数据。', '让 AI 真正有用。'],
     summary:
-      '我把业务问题与数据分析、机器学习和软件开发连接起来，并将结果做成真正可以使用的工具。',
+      '我有财务管理背景，目前在 TUM 攻读 Management and Digital Technology。我把业务问题与数据分析、机器学习和软件开发连接起来，并将结果做成真正可以使用的工具。',
     availabilityLabel: '目前',
-    availability: '正在寻找德国的实习与 Working Student 机会。',
+    availability:
+      '正在寻找德国的 Working Student（每周最多 20 小时）与实习机会。',
     focusLabel: '方向',
     focus: ['数据与商业智能', '供应链分析', '应用 AI'],
   },
@@ -113,7 +114,7 @@ export const zh = {
     },
   ],
   profile:
-    '我本科主修财务管理，目前在 TUM 学习 Management and Digital Technology，致力于把定量分析、业务决策和软件实现结合起来。',
+    '我本科主修财务管理，目前在 TUM 学习 Management and Digital Technology——这个组合让我既能读懂业务数字、质疑数字，也能把分析落地成软件。',
   education: [
     {
       school: '慕尼黑工业大学（TUM）',
@@ -167,7 +168,7 @@ export const zh = {
       items: ['交互式数据看板', 'Matplotlib', 'Microsoft 365'],
     },
   ],
-  languages: ['中文（普通话）· 母语', '英语 · C1', '德语 · A1'],
+  languages: ['中文（普通话）· 母语', '英语 · C1', '德语 · A1（持续学习中）'],
   caseStudies: {
     patentpath: {
       outcome: '将专利分析转化为非技术用户可以据此采取行动的工作流。',

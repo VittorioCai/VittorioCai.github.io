@@ -5,7 +5,7 @@ export const de = {
   meta: {
     title: 'Vittorio Cai — Wirtschaft, Daten & angewandte KI',
     description:
-      'TUM-MMDT-Student, der nützliche Analyse- und KI-Produkte für reale Geschäftsprobleme entwickelt.',
+      'TUM-MMDT-Student mit Finance-Hintergrund, der nützliche Analyse- und KI-Produkte für reale Geschäftsprobleme entwickelt.',
   },
   nav: {
     work: 'Projekte',
@@ -18,10 +18,10 @@ export const de = {
     eyebrow: 'TUM MMDT · Heilbronn, Deutschland',
     lines: ['Geschäftsverständnis.', 'Datendisziplin.', 'Nützliche KI.'],
     summary:
-      'Ich verbinde betriebswirtschaftliche Fragestellungen mit Datenanalyse, Machine Learning und Softwareentwicklung und überführe die Ergebnisse in praktisch nutzbare Lösungen.',
+      'Mit einem Hintergrund im Finanzmanagement studiere ich heute Management and Digital Technology an der TUM. Ich verbinde betriebswirtschaftliche Fragestellungen mit Datenanalyse, Machine Learning und Softwareentwicklung und überführe die Ergebnisse in praktisch nutzbare Lösungen.',
     availabilityLabel: 'Aktuell',
     availability:
-      'Offen für Werkstudentenstellen und Praktika in Deutschland.',
+      'Offen für Werkstudentenstellen (bis zu 20 Std./Woche) und Praktika in Deutschland.',
     focusLabel: 'Schwerpunkte',
     focus: [
       'Daten & Business Intelligence',
@@ -121,7 +121,7 @@ export const de = {
     },
   ],
   profile:
-    'Mein fachlicher Ausgangspunkt ist das Finanzmanagement. Heute studiere ich Management and Digital Technology an der TUM und verbinde quantitative Analysen mit Geschäftsentscheidungen und Softwareentwicklung.',
+    'Mein fachlicher Ausgangspunkt ist das Finanzmanagement. Heute studiere ich Management and Digital Technology an der TUM — diese Kombination erlaubt mir, Zahlen zu verstehen, sie zu hinterfragen und die Software zu bauen, die daraus Entscheidungen macht.',
   education: [
     {
       school: 'Technical University of Munich (TUM)',
@@ -178,7 +178,7 @@ export const de = {
   languages: [
     'Mandarin · Muttersprache',
     'Englisch · C1',
-    'Deutsch · A1',
+    'Deutsch · A1 (aktiv lernend)',
   ],
   caseStudies: {
     patentpath: {

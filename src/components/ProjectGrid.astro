@@ -161,14 +161,27 @@ function getCaseStudyPath(project: Project): string | undefined {
     font-size: 1.05rem;
   }
 
-  .project-details,
-  .project-tags {
+  .project-details {
     padding-left: 1.2rem;
   }
 
   .project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0;
+    padding-left: 0;
+    list-style: none;
+  }
+
+  .project-tags li {
+    padding: 0.15rem 0.7rem;
     color: var(--muted);
-    font-size: 0.88rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--surface);
   }
 
   .project-card,

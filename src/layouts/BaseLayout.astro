@@ -36,7 +36,7 @@ const pagePath = noindex
   : getLocalizedPath(locale, route);
 const pageUrl = new URL(pagePath, site);
 const languageLinks = noindex ? [] : getLanguageLinks(route);
-const ogImageUrl = new URL('/og-card.svg', site);
+const ogImageUrl = new URL('/og-card.png', site);
 const siteRoot = new URL('/', site);
 const htmlLanguage = locale === 'zh' ? 'zh-CN' : locale;
 const currentYear = new Date().getFullYear();

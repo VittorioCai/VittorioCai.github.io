@@ -208,17 +208,17 @@ ul {
 }
 
 .hero__main h1 {
-  max-width: 11ch;
   margin-bottom: clamp(1.5rem, 4vw, 3rem);
-  font-size: clamp(2.75rem, 7vw, 6.5rem);
+  font-size: clamp(2.4rem, 5.2vw, 4.75rem);
   font-weight: 700;
-  letter-spacing: -0.055em;
-  line-height: 0.92;
+  letter-spacing: -0.045em;
+  line-height: 1.02;
 }
 
 :lang(zh-CN) .hero__main h1 {
-  max-width: 8em;
+  font-size: clamp(2.2rem, 4.8vw, 4.25rem);
   letter-spacing: -0.025em;
+  line-height: 1.15;
 }
 
 .hero__summary {
@@ -230,7 +230,8 @@ ul {
 .hero__aside {
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: flex-start;
+  gap: 2.5rem;
   background: var(--surface);
 }
 
@@ -243,6 +244,48 @@ ul {
 
 .text-actions a {
   font-weight: 700;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1rem;
+  margin-top: 2rem;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0.65rem 1.5rem;
+  font-weight: 700;
+  text-decoration: none;
+  border: 2px solid var(--accent);
+  transition:
+    background-color 150ms cubic-bezier(0.22, 1, 0.36, 1),
+    color 150ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.btn--primary {
+  color: var(--paper);
+  background: var(--accent);
+}
+
+.btn--primary:hover {
+  color: var(--paper);
+  background: #143c6e;
+  border-color: #143c6e;
+}
+
+.btn--secondary {
+  color: var(--accent);
+  background: transparent;
+}
+
+.btn--secondary:hover {
+  color: var(--paper);
+  background: var(--accent);
 }
 
 .section-heading {
@@ -287,9 +330,16 @@ ul {
 }
 
 .project-card {
+  display: flex;
+  flex-direction: column;
   min-width: 0;
   padding: clamp(1.5rem, 4vw, 3rem) var(--pad);
   border-right: 1px solid var(--line);
+}
+
+.project-card .text-actions {
+  margin-top: auto;
+  padding-top: 2rem;
 }
 
 .project-card:last-child {

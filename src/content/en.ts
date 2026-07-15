@@ -5,7 +5,7 @@ export const en = {
   meta: {
     title: 'Vittorio Cai — Business, Data & Applied AI',
     description:
-      'TUM MMDT student building useful analytics and AI products for real business problems.',
+      'Finance-trained TUM MMDT student building useful analytics and AI products for real business problems.',
   },
   nav: {
     work: 'Work',
@@ -18,10 +18,10 @@ export const en = {
     eyebrow: 'TUM MMDT · Heilbronn, Germany',
     lines: ['Business insight.', 'Data discipline.', 'Useful AI.'],
     summary:
-      'I connect business questions with analytics, machine learning and software — then turn the result into something people can actually use.',
+      'Trained in finance, now studying Management and Digital Technology at TUM — I connect business questions with analytics, machine learning and software, then turn the result into something people can actually use.',
     availabilityLabel: 'Currently',
     availability:
-      'Open to working student and internship opportunities in Germany.',
+      'Open to working student roles (up to 20 h/week) and internships in Germany.',
     focusLabel: 'Focus fields',
     focus: [
       'Data & Business Intelligence',
@@ -121,7 +121,7 @@ export const en = {
     },
   ],
   profile:
-    'I started in financial management and now study Management and Digital Technology at TUM, connecting quantitative analysis, business decisions and software implementation.',
+    'I started in financial management and now study Management and Digital Technology at TUM. That combination lets me read the numbers, question them, and build the software that acts on them.',
   education: [
     {
       school: 'Technical University of Munich (TUM)',
@@ -175,7 +175,7 @@ export const en = {
       items: ['Interactive dashboards', 'Matplotlib', 'Microsoft 365'],
     },
   ],
-  languages: ['Mandarin · Native', 'English · C1', 'German · A1'],
+  languages: ['Mandarin · Native', 'English · C1', 'German · A1 (improving)'],
   caseStudies: {
     patentpath: {
       outcome:
