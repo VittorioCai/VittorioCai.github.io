@@ -175,6 +175,101 @@ test('the primary call to action acknowledges pointer press', async ({
   expect(translateY).toBeCloseTo(1, 1);
 });
 
+test('the homepage stages its hero through masked kinetic lines', async ({
+  page,
+}) => {
+  await page.goto('/');
+
+  const titleClips = page.locator('.hero__title-clip');
+  await expect(titleClips).toHaveCount(3);
+
+  const motion = await titleClips.first().evaluate((clip) => {
+    const line = clip.querySelector('.hero__title-line');
+    const keyframes = line
+      ?.getAnimations()
+      .flatMap((animation) =>
+        animation.effect instanceof KeyframeEffect
+          ? animation.effect.getKeyframes()
+          : [],
+      );
+
+    return {
+      clipPath: getComputedStyle(clip).clipPath,
+      firstTransform: keyframes?.[0]?.transform,
+    };
+  });
+
+  expect(motion.clipPath).toContain('inset');
+  expect(motion.firstTransform).toContain('110%');
+});
+
+test('the homepage motion controller responds to scroll and pointer position', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await page.waitForFunction(
+    () => document.documentElement.dataset.motion === 'ready',
+  );
+
+  const hero = page.locator('[data-hero-motion]');
+  await expect(hero).toHaveCount(1);
+
+  const heroBox = await hero.boundingBox();
+  expect(heroBox).not.toBeNull();
+  await page.mouse.move(heroBox!.x + heroBox!.width * 0.8, heroBox!.y + 160);
+  await page.waitForTimeout(50);
+
+  const pointerX = await hero.evaluate((element) =>
+    Number.parseFloat(getComputedStyle(element).getPropertyValue('--pointer-x')),
+  );
+  expect(Math.abs(pointerX)).toBeGreaterThan(0.2);
+
+  await page.evaluate(() =>
+    window.scrollTo(0, document.documentElement.scrollHeight),
+  );
+  await page.waitForFunction(
+    () =>
+      Number.parseFloat(
+        getComputedStyle(document.querySelector('.accent-rule')!).getPropertyValue(
+          '--scroll-progress',
+        ),
+      ) > 0.95,
+  );
+});
+
+test('the featured project visual offers a pointer-follow case study cue', async ({
+  page,
+}) => {
+  await page.goto('/');
+
+  const visualLink = page.locator('[data-project-pointer-link]');
+  await expect(visualLink).toHaveCount(1);
+  await expect(visualLink).toHaveAttribute('href', '/work/patentpath/');
+  await expect(visualLink.locator('[data-project-pointer-pill]')).toHaveText(
+    'Case study',
+  );
+  await expect(visualLink.locator('[data-project-motion-layer]')).toHaveCount(2);
+
+  await visualLink.scrollIntoViewIfNeeded();
+  const box = await visualLink.boundingBox();
+  expect(box).not.toBeNull();
+  await page.mouse.move(box!.x + box!.width * 0.65, box!.y + box!.height * 0.45);
+  await page.waitForTimeout(80);
+
+  const pointerX = await visualLink.evaluate((element) =>
+    Number.parseFloat(element.style.getPropertyValue('--pointer-x')),
+  );
+  expect(pointerX).toBeGreaterThan(box!.width * 0.5);
+
+  const pillScale = await visualLink
+    .locator('[data-project-pointer-pill]')
+    .evaluate(
+      (element) =>
+        new DOMMatrixReadOnly(getComputedStyle(element).transform).a,
+    );
+  expect(pillScale).toBeGreaterThan(0.8);
+});
+
 const mobileNavigationLocales = [
   {
     path: '/',

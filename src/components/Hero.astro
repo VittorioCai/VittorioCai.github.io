@@ -12,11 +12,17 @@ const { hero, actions, locale } = Astro.props;
 const workPath = getLocalizedPath(locale, 'work');
 ---
 
-<section class="hero" aria-labelledby="hero-title">
+<section class="hero" data-hero-motion aria-labelledby="hero-title">
   <div class="hero__main">
     <p class="section-label">{hero.eyebrow}</p>
     <h1 id="hero-title" class="hero__title">
-      {hero.lines.map((line) => <span class="hero__title-line">{line}</span>)}
+      {
+        hero.lines.map((line) => (
+          <span class="hero__title-clip">
+            <span class="hero__title-line">{line}</span>
+          </span>
+        ))
+      }
     </h1>
     <p class="hero__summary">{hero.summary}</p>
     <div class="hero-actions">
@@ -26,15 +32,19 @@ const workPath = getLocalizedPath(locale, 'work');
   </div>
 
   <aside class="hero__aside">
-    <div>
-      <p class="section-label">{hero.availabilityLabel}</p>
-      <p>{hero.availability}</p>
+    <div class="hero__aside-card hero__aside-card--status" data-parallax-layer>
+      <div class="hero__aside-content">
+        <p class="section-label">{hero.availabilityLabel}</p>
+        <p>{hero.availability}</p>
+      </div>
     </div>
-    <div class="hero__focus">
-      <p class="section-label">{hero.focusLabel}</p>
-      <ul>
-        {hero.focus.map((item) => <li>{item}</li>)}
-      </ul>
+    <div class="hero__aside-card hero__focus" data-parallax-layer>
+      <div class="hero__aside-content">
+        <p class="section-label">{hero.focusLabel}</p>
+        <ul>
+          {hero.focus.map((item) => <li>{item}</li>)}
+        </ul>
+      </div>
     </div>
   </aside>
 </section>
@@ -42,6 +52,14 @@ const workPath = getLocalizedPath(locale, 'work');
 <style>
   .hero__title {
     min-width: 0;
+  }
+
+  .hero__title-clip {
+    display: block;
+    min-width: 0;
+    margin-bottom: -0.06em;
+    padding-bottom: 0.06em;
+    clip-path: inset(0);
   }
 
   .hero__title-line {
@@ -53,6 +71,82 @@ const workPath = getLocalizedPath(locale, 'work');
 
   .hero__focus {
     margin-top: 2.5rem;
+  }
+
+  .hero__aside-card {
+    transform: translate3d(
+      calc(var(--pointer-x, 0) * 10px),
+      calc(var(--pointer-y, 0) * 7px),
+      0
+    );
+    transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .hero__aside-card--status {
+    transform: translate3d(
+      calc(var(--pointer-x, 0) * -7px),
+      calc(var(--pointer-y, 0) * -5px),
+      0
+    );
+  }
+
+  .hero__aside-content {
+    animation: aside-card-in 780ms cubic-bezier(0.16, 1, 0.3, 1) 260ms both;
+  }
+
+  .hero__focus .hero__aside-content {
+    animation-delay: 360ms;
+    animation-name: aside-card-in-reverse;
+  }
+
+  @keyframes aside-card-in {
+    from {
+      transform: translate3d(70px, -42px, 0) rotate(3deg);
+    }
+
+    to {
+      transform: none;
+    }
+  }
+
+  @keyframes aside-card-in-reverse {
+    from {
+      transform: translate3d(-54px, 48px, 0) rotate(-3deg);
+    }
+
+    to {
+      transform: none;
+    }
+  }
+
+  @keyframes aside-card-in-narrow {
+    from {
+      transform: translate3d(0, 3rem, 0);
+    }
+
+    to {
+      transform: none;
+    }
+  }
+
+  @keyframes aside-card-in-narrow-reverse {
+    from {
+      transform: translate3d(0, -3rem, 0);
+    }
+
+    to {
+      transform: none;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .hero__aside-content {
+      animation-name: aside-card-in-narrow;
+    }
+
+    .hero__focus .hero__aside-content {
+      animation-name: aside-card-in-narrow-reverse;
+    }
   }
 
   .hero__focus ul {

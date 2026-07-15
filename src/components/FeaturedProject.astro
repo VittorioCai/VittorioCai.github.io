@@ -70,7 +70,39 @@ const caseStudyPath =
   </div>
   <div class="project-featured__visual">
     {
-      project.id === 'patentpath' && (
+      project.id === 'patentpath' && caseStudyPath && (
+        <a
+          class="project-featured__visual-link"
+          data-project-pointer-link
+          href={caseStudyPath}
+          aria-label={`${actions.caseStudy}: ${project.title}`}
+        >
+          <span
+            class="project-featured__motion-layer project-featured__motion-layer--back"
+            data-project-motion-layer
+            aria-hidden="true"
+          ></span>
+          <span
+            class="project-featured__motion-layer project-featured__motion-layer--mid"
+            data-project-motion-layer
+            aria-hidden="true"
+          ></span>
+          <ProjectVisual
+            projectId="patentpath"
+            label={`${project.title}: ${project.summary}`}
+          />
+          <span
+            class="project-featured__pointer-pill"
+            data-project-pointer-pill
+            aria-hidden="true"
+          >
+            {actions.caseStudy}
+          </span>
+        </a>
+      )
+    }
+    {
+      project.id === 'patentpath' && !caseStudyPath && (
         <ProjectVisual
           projectId="patentpath"
           label={`${project.title}: ${project.summary}`}
@@ -117,5 +149,154 @@ const caseStudyPath =
 
   .project-featured__body {
     overflow-wrap: anywhere;
+  }
+
+  .project-featured__visual-link {
+    --pointer-x: 50%;
+    --pointer-y: 50%;
+    position: relative;
+    display: block;
+    width: 100%;
+    color: inherit;
+    text-decoration: none;
+    isolation: isolate;
+    contain: paint;
+    transition: transform 360ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .project-featured__visual-link:hover {
+    transform: scale(1.025) rotate(0.4deg);
+  }
+
+  .project-featured__visual-link :global(.patent-visual) {
+    position: relative;
+    z-index: 2;
+    width: 88%;
+    margin: 8% auto 3%;
+    box-shadow: 0 1.5rem 3rem rgb(23 23 23 / 10%);
+  }
+
+  .project-featured__motion-layer {
+    position: absolute;
+    z-index: 0;
+    border: 1px solid var(--accent);
+    pointer-events: none;
+    transform-origin: 50% 70%;
+  }
+
+  .project-featured__motion-layer--back {
+    inset: 5% 5% 4% 7%;
+    background: color-mix(in srgb, var(--accent) 18%, var(--paper));
+    transform: translate3d(-2.5%, 3%, 0) rotate(-5deg);
+  }
+
+  .project-featured__motion-layer--mid {
+    inset: 7% 7% 2% 5%;
+    z-index: 1;
+    background: color-mix(in srgb, var(--accent) 9%, var(--paper));
+    transform: translate3d(2.5%, 2%, 0) rotate(4deg);
+  }
+
+  .project-featured__pointer-pill {
+    position: absolute;
+    top: var(--pointer-y);
+    left: var(--pointer-x);
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: 6.5rem;
+    aspect-ratio: 1;
+    padding: 0.75rem;
+    border-radius: 50%;
+    color: var(--paper);
+    background: var(--accent);
+    font-size: 0.78rem;
+    font-weight: 700;
+    line-height: 1.15;
+    text-align: center;
+    pointer-events: none;
+    transform: translate3d(-50%, -50%, 0) scale(0);
+    transition: transform 260ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .project-featured__visual-link:hover .project-featured__pointer-pill,
+    .project-featured__visual-link:focus-visible .project-featured__pointer-pill {
+      transform: translate3d(-50%, -50%, 0) scale(1);
+    }
+  }
+
+  @keyframes project-unfold {
+    from {
+      transform: translate3d(0, 7rem, 0) rotate(-8deg) scale(0.82);
+    }
+
+    to {
+      transform: none;
+    }
+  }
+
+  @keyframes project-layer-back-unfold {
+    from {
+      transform: translate3d(-16%, 14%, 0) rotate(-18deg) scale(0.82);
+    }
+
+    to {
+      transform: translate3d(-2.5%, 3%, 0) rotate(-5deg);
+    }
+  }
+
+  @keyframes project-layer-mid-unfold {
+    from {
+      transform: translate3d(18%, 10%, 0) rotate(16deg) scale(0.86);
+    }
+
+    to {
+      transform: translate3d(2.5%, 2%, 0) rotate(4deg);
+    }
+  }
+
+  @supports (animation-timeline: view()) {
+    .project-featured__visual-link :global(.patent-visual) {
+      transform-origin: 50% 70%;
+      animation-name: project-unfold;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: view(block);
+      animation-range: entry 0% cover 45%;
+    }
+
+    .project-featured__motion-layer--back {
+      animation-name: project-layer-back-unfold;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: view(block);
+      animation-range: entry 0% cover 45%;
+    }
+
+    .project-featured__motion-layer--mid {
+      animation-name: project-layer-mid-unfold;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: view(block);
+      animation-range: entry 0% cover 45%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .project-featured__visual-link,
+    .project-featured__motion-layer,
+    .project-featured__visual-link :global(.patent-visual) {
+      animation: none;
+    }
+
+    .project-featured__visual-link,
+    .project-featured__visual-link :global(.patent-visual) {
+      transform: none;
+    }
+
+    .project-featured__pointer-pill {
+      display: none;
+    }
   }
 </style>

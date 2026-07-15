@@ -114,6 +114,10 @@ const personData = {
       <Header locale={locale} route={route} />
       <main><slot /></main>
       <script>
+        import { initMotion } from '../scripts/motion';
+
+        initMotion();
+
         const reduceMotion = window.matchMedia(
           '(prefers-reduced-motion: reduce)',
         ).matches;
