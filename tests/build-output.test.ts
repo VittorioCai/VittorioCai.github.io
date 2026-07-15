@@ -263,6 +263,18 @@ describe.each(profilePages)('$file', ({
         .map((_, element) => $(element).text().trim())
         .get(),
     ).toEqual(journeyStops);
+    expect($('[data-journey-land] path').length).toBeGreaterThan(3);
+    expect(
+      $('[data-journey-land] path').first().attr('d')?.length,
+    ).toBeGreaterThan(1000);
+    expect($('[data-journey-route-leg]')).toHaveLength(2);
+    expect($('[data-journey-map-stop]')).toHaveLength(3);
+    expect($('[data-current-stop]')).toHaveLength(1);
+    expect(
+      $(
+        '[data-profile-journey] img, [data-profile-journey] iframe, [data-profile-journey] script',
+      ),
+    ).toHaveLength(0);
     expect($('a[href="mailto:vittorio.cai@tum.de"]')).toHaveLength(1);
     expect(
       $('a[href="https://linkedin.com/in/vittorio-cai"]'),

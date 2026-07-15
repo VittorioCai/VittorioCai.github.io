@@ -285,11 +285,37 @@ test('/profile/ presents a sticky identity rail and animated journey on desktop'
     'sticky',
   );
 
-  const journeyAnimation = await page
-    .locator('[data-journey-route]')
-    .evaluate((element) => getComputedStyle(element).animationName);
+  const journeyAnimations = await page
+    .locator('[data-journey-route-leg]')
+    .evaluateAll((legs) =>
+      legs.map((leg) => getComputedStyle(leg).animationName),
+    );
 
-  expect(journeyAnimation).toContain('journey-route-in');
+  expect(journeyAnimations).toHaveLength(2);
+  expect(
+    journeyAnimations.every((name) => name.includes('journey-route-in')),
+  ).toBe(true);
+
+  const markersContained = await page
+    .locator('[data-profile-journey] svg')
+    .evaluate((svg) => {
+      const frame = svg.getBoundingClientRect();
+
+      return [...svg.querySelectorAll('[data-journey-map-stop]')].every(
+        (marker) => {
+          const box = marker.getBoundingClientRect();
+
+          return (
+            box.left >= frame.left &&
+            box.right <= frame.right &&
+            box.top >= frame.top &&
+            box.bottom <= frame.bottom
+          );
+        },
+      );
+    });
+
+  expect(markersContained).toBe(true);
 });
 
 test('/profile/ stacks the identity rail without overflow on mobile', async ({
@@ -341,18 +367,24 @@ test('/profile/ keeps the journey visible with reduced motion', async ({
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/profile/');
 
-  const routeState = await page
-    .locator('[data-journey-route]')
-    .evaluate((element) => {
-      const style = getComputedStyle(element);
-      return {
-        animationName: style.animationName,
-        strokeDashoffset: style.strokeDashoffset,
-      };
-    });
+  const routeStates = await page
+    .locator('[data-journey-route-leg]')
+    .evaluateAll((legs) =>
+      legs.map((leg) => {
+        const style = getComputedStyle(leg);
 
-  expect(routeState.animationName).toBe('none');
-  expect(Number.parseFloat(routeState.strokeDashoffset)).toBe(0);
+        return {
+          animationName: style.animationName,
+          strokeDashoffset: style.strokeDashoffset,
+        };
+      }),
+    );
+
+  expect(routeStates).toHaveLength(2);
+  for (const routeState of routeStates) {
+    expect(routeState.animationName).toBe('none');
+    expect(Number.parseFloat(routeState.strokeDashoffset)).toBe(0);
+  }
 });
 
 const mobileNavigationLocales = [

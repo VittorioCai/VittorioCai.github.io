@@ -1,5 +1,6 @@
 ---
 import type { SiteContent } from '../content';
+import JourneyMap from './JourneyMap.astro';
 
 interface Props {
   profileRail: SiteContent['profileRail'];
@@ -52,47 +53,10 @@ const { profileRail, actions } = Astro.props;
       </a>
     </nav>
 
-    <figure class="profile-journey" data-profile-journey>
-      <figcaption>{profileRail.journeyHeading}</figcaption>
-      <svg
-        class="profile-journey__map"
-        viewBox="0 0 320 170"
-        aria-hidden="true"
-      >
-        <g class="profile-journey__grid">
-          <path d="M0 42.5H320M0 85H320M0 127.5H320" />
-          <path d="M64 0V170M128 0V170M192 0V170M256 0V170" />
-        </g>
-        <path
-          class="profile-journey__land"
-          d="M34 45 64 24l46 4 18 25-24 21-18 39-42 8-22-32Z"
-        />
-        <path
-          class="profile-journey__land"
-          d="m157 32 45-17 55 8 42 30-15 38-40 8-19 35-43-13-18-34-29-22Z"
-        />
-        <path
-          class="profile-journey__route"
-          data-journey-route
-          d="M70 110C130 28 246 42 270 108C220 18 126 24 88 62"
-        />
-        <g class="profile-journey__stops">
-          <circle cx="70" cy="110" r="6" />
-          <circle cx="270" cy="108" r="6" />
-          <circle cx="88" cy="62" r="6" />
-        </g>
-      </svg>
-      <ol class="profile-journey__stops-list">
-        {
-          profileRail.journeyStops.map((stop, index) => (
-            <li>
-              <span aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
-              <span data-journey-stop>{stop}</span>
-            </li>
-          ))
-        }
-      </ol>
-    </figure>
+    <JourneyMap
+      heading={profileRail.journeyHeading}
+      stops={profileRail.journeyStops}
+    />
   </div>
 </aside>
 
@@ -177,91 +141,6 @@ const { profileRail, actions } = Astro.props;
     border-bottom: 1px solid var(--line);
   }
 
-  .profile-journey {
-    margin: 0;
-  }
-
-  .profile-journey figcaption {
-    margin-bottom: 0.75rem;
-    color: var(--accent);
-    font-size: 0.75rem;
-    font-weight: 750;
-    letter-spacing: 0.09em;
-    text-transform: uppercase;
-  }
-
-  .profile-journey__map {
-    display: block;
-    width: 100%;
-    height: auto;
-    border: 1px solid var(--line);
-    background: var(--paper);
-  }
-
-  .profile-journey__grid {
-    fill: none;
-    stroke: var(--line);
-    stroke-width: 0.7;
-  }
-
-  .profile-journey__land {
-    fill: color-mix(in srgb, var(--accent) 8%, var(--paper));
-    stroke: color-mix(in srgb, var(--accent) 32%, var(--line));
-    stroke-width: 0.8;
-  }
-
-  .profile-journey__route {
-    fill: none;
-    stroke: var(--accent);
-    stroke-width: 2.5;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-dasharray: 480;
-    stroke-dashoffset: 0;
-    animation: journey-route-in 1.3s cubic-bezier(0.16, 1, 0.3, 1) 180ms both;
-  }
-
-  .profile-journey__stops circle {
-    fill: var(--paper);
-    stroke: var(--accent);
-    stroke-width: 3;
-  }
-
-  .profile-journey__stops-list {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 0.75rem;
-    margin: 0.8rem 0 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .profile-journey__stops-list li {
-    min-width: 0;
-    overflow-wrap: anywhere;
-    font-size: 0.75rem;
-    font-weight: 650;
-    line-height: 1.25;
-  }
-
-  .profile-journey__stops-list li > span:first-child {
-    display: block;
-    margin-bottom: 0.25rem;
-    color: var(--accent);
-    font-size: 0.65rem;
-    letter-spacing: 0.08em;
-  }
-
-  @keyframes journey-route-in {
-    from {
-      stroke-dashoffset: 480;
-    }
-
-    to {
-      stroke-dashoffset: 0;
-    }
-  }
-
   @media (max-width: 760px) {
     .profile-identity__sticky {
       position: static;
@@ -276,10 +155,4 @@ const { profileRail, actions } = Astro.props;
     }
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .profile-journey__route {
-      stroke-dashoffset: 0;
-      animation: none;
-    }
-  }
 </style>
