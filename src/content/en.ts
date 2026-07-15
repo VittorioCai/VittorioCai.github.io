@@ -71,6 +71,13 @@ export const en = {
       'Ranked digest',
     ],
   },
+  profileRail: {
+    role: 'Business × Data × Applied AI',
+    currentLocation: 'Based in Heilbronn, Germany',
+    journeyHeading: 'Journey',
+    linksHeading: 'Professional links',
+    journeyStops: ['Florence', 'Wenzhou', 'Heilbronn'],
+  },
   projects: [
     {
       id: 'patentpath',
@@ -142,12 +149,14 @@ export const en = {
     'I started in financial management and now study Management and Digital Technology at TUM. That combination lets me read the numbers, question them, and build the software that acts on them.',
   education: [
     {
+      institution: 'tum',
       school: 'Technical University of Munich (TUM)',
       degree: 'M.Sc. Management and Digital Technology',
       period: '2025–present',
       location: 'Heilbronn',
     },
     {
+      institution: 'wzu',
       school: 'Wenzhou University',
       degree: 'B.A. Financial Management',
       period: '2021–2025',

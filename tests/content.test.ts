@@ -111,6 +111,32 @@ describe('localized portfolio content', () => {
     expect(content.zh.actions.cv).toContain('英文');
   });
 
+  it('defines the localized Florence to Wenzhou to Heilbronn journey', () => {
+    expect(content.en.profileRail.journeyStops).toEqual([
+      'Florence',
+      'Wenzhou',
+      'Heilbronn',
+    ]);
+
+    for (const locale of locales) {
+      const profileRail = content[locale].profileRail;
+
+      expect(profileRail.role).toBeTruthy();
+      expect(profileRail.currentLocation).toBeTruthy();
+      expect(profileRail.journeyHeading).toBeTruthy();
+      expect(profileRail.linksHeading).toBeTruthy();
+      expect(profileRail.journeyStops).toHaveLength(3);
+    }
+  });
+
+  it('maps each verified education entry to a school identity', () => {
+    for (const locale of locales) {
+      expect(
+        content[locale].education.map((entry) => entry.institution),
+      ).toEqual(['tum', 'wzu']);
+    }
+  });
+
   it('owns homepage supporting labels in the typed content registry', () => {
     expect(content.en.sections.languages).toBe('Languages');
     expect(content.de.sections.languages).toBe('Sprachen');

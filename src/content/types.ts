@@ -79,9 +79,17 @@ export interface SiteContent {
   visuals: {
     jobAgentStages: [string, string, string];
   };
+  profileRail: {
+    role: string;
+    currentLocation: string;
+    journeyHeading: string;
+    linksHeading: string;
+    journeyStops: [string, string, string];
+  };
   projects: [Project, Project, Project, Project];
   profile: string;
   education: Array<{
+    institution: 'tum' | 'wzu';
     school: string;
     degree: string;
     period: string;

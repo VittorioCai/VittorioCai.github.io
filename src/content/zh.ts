@@ -64,6 +64,13 @@ export const zh = {
       '岗位优先级摘要',
     ],
   },
+  profileRail: {
+    role: '业务 × 数据 × 应用 AI',
+    currentLocation: '现居德国海尔布隆',
+    journeyHeading: '经历地图',
+    linksHeading: '职业链接',
+    journeyStops: ['佛罗伦萨', '温州', '海尔布隆'],
+  },
   projects: [
     {
       id: 'patentpath',
@@ -133,12 +140,14 @@ export const zh = {
     '我本科主修财务管理，目前在 TUM 学习 Management and Digital Technology——这个组合让我既能读懂业务数字、质疑数字，也能把分析落地成软件。',
   education: [
     {
+      institution: 'tum',
       school: '慕尼黑工业大学（TUM）',
       degree: '管理与数字技术硕士（M.Sc.）',
       period: '2025–至今',
       location: '海尔布隆',
     },
     {
+      institution: 'wzu',
       school: '温州大学',
       degree: '财务管理学士（B.A.）',
       period: '2021–2025',

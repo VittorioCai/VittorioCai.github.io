@@ -270,6 +270,91 @@ test('the featured project visual offers a pointer-follow case study cue', async
   expect(pillScale).toBeGreaterThan(0.8);
 });
 
+test('/profile/ presents a sticky identity rail and animated journey on desktop', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/profile/');
+
+  await expect(page.locator('[data-profile-page]')).toHaveCSS(
+    'display',
+    'grid',
+  );
+  await expect(page.locator('.profile-identity__sticky')).toHaveCSS(
+    'position',
+    'sticky',
+  );
+
+  const journeyAnimation = await page
+    .locator('[data-journey-route]')
+    .evaluate((element) => getComputedStyle(element).animationName);
+
+  expect(journeyAnimation).toContain('journey-route-in');
+});
+
+test('/profile/ stacks the identity rail without overflow on mobile', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 320, height: 900 });
+  await page.goto('/profile/');
+
+  await expect(page.locator('.profile-identity__sticky')).toHaveCSS(
+    'position',
+    'static',
+  );
+  await expectNoHorizontalOverflow(page);
+});
+
+test('/profile/ aligns school logos with school copy on mobile', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/profile/');
+
+  const alignments = await page
+    .locator('.profile-timeline__institution')
+    .evaluateAll((entries) =>
+      entries.map((entry) => {
+        const logo = entry.querySelector('.profile-timeline__logo');
+        const content = entry.querySelector('.profile-timeline__content');
+
+        return {
+          logoTop: logo?.getBoundingClientRect().top,
+          contentTop: content?.getBoundingClientRect().top,
+        };
+      }),
+    );
+
+  expect(alignments).toHaveLength(2);
+  for (const alignment of alignments) {
+    expect(alignment.logoTop).toBeDefined();
+    expect(alignment.contentTop).toBeDefined();
+    expect(Math.abs(alignment.logoTop! - alignment.contentTop!)).toBeLessThan(
+      4,
+    );
+  }
+});
+
+test('/profile/ keeps the journey visible with reduced motion', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/profile/');
+
+  const routeState = await page
+    .locator('[data-journey-route]')
+    .evaluate((element) => {
+      const style = getComputedStyle(element);
+      return {
+        animationName: style.animationName,
+        strokeDashoffset: style.strokeDashoffset,
+      };
+    });
+
+  expect(routeState.animationName).toBe('none');
+  expect(Number.parseFloat(routeState.strokeDashoffset)).toBe(0);
+});
+
 const mobileNavigationLocales = [
   {
     path: '/',

@@ -11,14 +11,18 @@ interface Props {
 const { heading, skillGroups, languages, languageHeading } = Astro.props;
 ---
 
-<section id="skills" aria-labelledby="skills-heading">
-  <div class="section-heading">
+<section
+  id="skills"
+  class="profile-content-section"
+  aria-labelledby="skills-heading"
+>
+  <header class="profile-content-section__header">
     <h2 id="skills-heading">{heading}</h2>
-  </div>
-  <div class="skills-grid">
+  </header>
+  <div class="profile-content-section__body profile-skills">
     {
       skillGroups.map((group) => (
-        <section class="skill-group">
+        <section class="profile-skill-group">
           <h3>{group.title}</h3>
           <ul>
             {group.items.map((item) => <li>{item}</li>)}
@@ -26,7 +30,7 @@ const { heading, skillGroups, languages, languageHeading } = Astro.props;
         </section>
       ))
     }
-    <section class="skill-group" data-skill-group="languages">
+    <section class="profile-skill-group" data-skill-group="languages">
       <h3>{languageHeading}</h3>
       <ul>
         {languages.map((language) => <li>{language}</li>)}
@@ -34,33 +38,3 @@ const { heading, skillGroups, languages, languageHeading } = Astro.props;
     </section>
   </div>
 </section>
-
-<style>
-  h2,
-  h3 {
-    margin-bottom: 0;
-  }
-
-  .skill-group h3 {
-    margin-bottom: 1rem;
-    font-size: 1rem;
-  }
-
-  .skill-group ul {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-bottom: 0;
-    padding-left: 0;
-    list-style: none;
-  }
-
-  .skill-group li {
-    padding: 0.15rem 0.7rem;
-    overflow-wrap: anywhere;
-    font-size: 0.85rem;
-    border: 1px solid var(--line);
-    border-radius: 999px;
-    background: var(--paper);
-  }
-</style>

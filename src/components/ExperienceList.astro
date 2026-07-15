@@ -11,55 +11,27 @@ const { heading, experience } = Astro.props;
 
 <section
   id="experience"
-  class="experience-grid"
+  class="profile-content-section"
   aria-labelledby="experience-heading"
 >
-  <div class="section-side">
+  <header class="profile-content-section__header">
     <h2 id="experience-heading">{heading}</h2>
-  </div>
-  <div class="section-main">
+  </header>
+  <div class="profile-content-section__body profile-timeline">
     {
       experience.map((entry) => (
-        <article class="experience-row">
-          <div>
+        <article class="profile-timeline__entry">
+          <p class="profile-timeline__period">{entry.period}</p>
+          <span class="profile-timeline__dot" aria-hidden="true"></span>
+          <div class="profile-timeline__content">
             <h3>{entry.role}</h3>
             <p>{entry.organization}</p>
+            <ul>
+              {entry.bullets.map((bullet) => <li>{bullet}</li>)}
+            </ul>
           </div>
-          <ul>
-            {entry.bullets.map((bullet) => <li>{bullet}</li>)}
-          </ul>
-          <p>{entry.period}</p>
         </article>
       ))
     }
   </div>
 </section>
-
-<style>
-  h2,
-  h3 {
-    margin-bottom: 0;
-  }
-
-  h2 {
-    font-size: clamp(1.4rem, 3vw, 2rem);
-  }
-
-  h3 {
-    font-size: 1rem;
-  }
-
-  .experience-row ul {
-    margin-bottom: 0;
-    padding-left: 1.2rem;
-  }
-
-  .experience-row p,
-  .experience-row li {
-    overflow-wrap: anywhere;
-  }
-
-  .experience-row div p {
-    color: var(--muted);
-  }
-</style>

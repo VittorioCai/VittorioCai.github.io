@@ -57,13 +57,24 @@ const workPages = [
 ] as const;
 
 const profilePages = [
-  { file: 'profile/index.html', lang: 'en', languageHeading: 'Languages' },
+  {
+    file: 'profile/index.html',
+    lang: 'en',
+    languageHeading: 'Languages',
+    journeyStops: ['Florence', 'Wenzhou', 'Heilbronn'],
+  },
   {
     file: 'de/profile/index.html',
     lang: 'de',
     languageHeading: 'Sprachen',
+    journeyStops: ['Florenz', 'Wenzhou', 'Heilbronn'],
   },
-  { file: 'zh/profile/index.html', lang: 'zh-CN', languageHeading: '语言' },
+  {
+    file: 'zh/profile/index.html',
+    lang: 'zh-CN',
+    languageHeading: '语言',
+    journeyStops: ['佛罗伦萨', '温州', '海尔布隆'],
+  },
 ] as const;
 
 const contactPages = [
@@ -223,7 +234,12 @@ describe.each(workPages)('$file', ({ file, lang, pipelineStages }) => {
   });
 });
 
-describe.each(profilePages)('$file', ({ file, lang, languageHeading }) => {
+describe.each(profilePages)('$file', ({
+  file,
+  lang,
+  languageHeading,
+  journeyStops,
+}) => {
   it(`renders the ${lang} profile-page contract`, () => {
     const $ = loadHomepage(file);
 
@@ -238,6 +254,48 @@ describe.each(profilePages)('$file', ({ file, lang, languageHeading }) => {
 
     expect(languageGroup).toHaveLength(1);
     expect(languageGroup.find('h3').text().trim()).toBe(languageHeading);
+
+    expect($('[data-profile-identity]')).toHaveLength(1);
+    expect($('[data-profile-monogram]').text().trim()).toBe('VC');
+    expect($('[data-profile-journey]')).toHaveLength(1);
+    expect(
+      $('[data-journey-stop]')
+        .map((_, element) => $(element).text().trim())
+        .get(),
+    ).toEqual(journeyStops);
+    expect($('a[href="mailto:vittorio.cai@tum.de"]')).toHaveLength(1);
+    expect(
+      $('a[href="https://linkedin.com/in/vittorio-cai"]'),
+    ).toHaveLength(1);
+    expect($('a[href="https://github.com/VittorioCai"]')).toHaveLength(1);
+    const cvLink = $('a[href="/Vittorio-Cai-CV-English.pdf"]');
+
+    expect(cvLink).toHaveLength(1);
+    expect(cvLink.text().trim()).toBe('CV · EN');
+    expect(cvLink.attr('aria-label')).toBeTruthy();
+
+    const educationLogos = $('[data-education-logo]');
+
+    expect(educationLogos).toHaveLength(2);
+    expect(
+      educationLogos
+        .map((_, element) => $(element).attr('src'))
+        .get(),
+    ).toEqual([
+      '/institutions/tum-logo.svg',
+      '/institutions/wenzhou-university-logo.svg',
+    ]);
+    expect(
+      educationLogos
+        .map((_, element) => $(element).attr('alt'))
+        .get(),
+    ).toEqual(['', '']);
+
+    for (const src of educationLogos
+      .map((_, element) => $(element).attr('src'))
+      .get()) {
+      expect(existsSync(join(distRoot, src.slice(1)))).toBe(true);
+    }
   });
 });
 

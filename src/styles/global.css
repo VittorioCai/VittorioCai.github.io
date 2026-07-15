@@ -452,66 +452,6 @@ ul {
   border-right: 0;
 }
 
-.profile-grid,
-.experience-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 0.8fr) minmax(0, 2.2fr);
-  border-bottom: 1px solid var(--line);
-}
-
-.section-side,
-.section-main {
-  min-width: 0;
-  padding: clamp(2rem, 5vw, 4rem) var(--pad);
-}
-
-.section-side {
-  border-right: 1px solid var(--line);
-  background: var(--surface);
-}
-
-.education-row,
-.experience-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) auto;
-  gap: 1rem;
-  padding: 1.25rem 0;
-  border-bottom: 1px solid var(--line);
-}
-
-.education-row:first-child,
-.experience-row:first-child {
-  padding-top: 0;
-}
-
-.education-row:last-child,
-.experience-row:last-child {
-  padding-bottom: 0;
-  border-bottom: 0;
-}
-
-.education-row > *,
-.experience-row > * {
-  min-width: 0;
-  margin-bottom: 0;
-}
-
-.skills-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  border-bottom: 1px solid var(--line);
-}
-
-.skill-group {
-  min-width: 0;
-  padding: clamp(1.5rem, 4vw, 3rem) var(--pad);
-  border-right: 1px solid var(--line);
-}
-
-.skill-group:last-child {
-  border-right: 0;
-}
-
 .contact-block {
   display: flex;
   align-items: flex-end;
@@ -654,9 +594,6 @@ ul {
   .hero,
   .project-featured,
   .project-grid,
-  .profile-grid,
-  .experience-grid,
-  .skills-grid,
   .case-study {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -664,21 +601,13 @@ ul {
   .hero__main,
   .project-featured__body,
   .project-card,
-  .section-side,
-  .skill-group,
   .case-study__rail {
     border-right: 0;
     border-bottom: 1px solid var(--line);
   }
 
-  .project-card:last-child,
-  .skill-group:last-child {
+  .project-card:last-child {
     border-bottom: 0;
-  }
-
-  .education-row,
-  .experience-row {
-    grid-template-columns: minmax(0, 1fr);
   }
 
   .contact-block,

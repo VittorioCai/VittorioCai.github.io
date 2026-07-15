@@ -3,6 +3,7 @@ import { getContent } from '../content';
 import type { Locale } from '../content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ExperienceList from './ExperienceList.astro';
+import ProfileIdentity from './ProfileIdentity.astro';
 import ProfileSection from './ProfileSection.astro';
 import SkillGroups from './SkillGroups.astro';
 
@@ -20,20 +21,273 @@ const copy = getContent(locale);
   title={copy.pageMeta.profile.title}
   description={copy.pageMeta.profile.description}
 >
-  <ProfileSection
-    heading={copy.sections.profile}
-    profile={copy.profile}
-    education={copy.education}
-    headingTag="h1"
-  />
-  <ExperienceList
-    heading={copy.sections.experience}
-    experience={copy.experience}
-  />
-  <SkillGroups
-    heading={copy.sections.skills}
-    skillGroups={copy.skillGroups}
-    languages={copy.languages}
-    languageHeading={copy.sections.languages}
-  />
+  <div class="profile-page" data-profile-page>
+    <ProfileIdentity
+      profileRail={copy.profileRail}
+      actions={copy.actions}
+    />
+    <div class="profile-page__content">
+      <ProfileSection
+        heading={copy.sections.profile}
+        profile={copy.profile}
+        education={copy.education}
+      />
+      <ExperienceList
+        heading={copy.sections.experience}
+        experience={copy.experience}
+      />
+      <SkillGroups
+        heading={copy.sections.skills}
+        skillGroups={copy.skillGroups}
+        languages={copy.languages}
+        languageHeading={copy.sections.languages}
+      />
+    </div>
+  </div>
 </BaseLayout>
+
+<style>
+  .profile-page {
+    display: grid;
+    grid-template-columns: minmax(18rem, 0.8fr) minmax(0, 2.2fr);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .profile-page__content {
+    min-width: 0;
+    border-left: 1px solid var(--line);
+  }
+
+  .profile-page__content > :global(section) {
+    padding: clamp(2rem, 5vw, 4rem) var(--pad);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .profile-page__content > :global(section:last-child) {
+    border-bottom: 0;
+  }
+
+  :global(.profile-content-section__header) {
+    margin-bottom: clamp(1.75rem, 4vw, 3rem);
+  }
+
+  :global(.profile-content-section__header h2) {
+    max-width: 18ch;
+    margin-bottom: 0;
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+    letter-spacing: -0.035em;
+  }
+
+  :global(.profile-copy) {
+    max-width: 64ch;
+    margin-bottom: clamp(2rem, 5vw, 3.5rem);
+    color: var(--muted);
+    font-size: clamp(1.05rem, 2vw, 1.28rem);
+  }
+
+  :global(.profile-timeline) {
+    --timeline-period: 6.25rem;
+    --timeline-dot: 1rem;
+    position: relative;
+  }
+
+  :global(.profile-timeline::before) {
+    position: absolute;
+    top: 0.75rem;
+    bottom: 0.75rem;
+    left: calc(var(--timeline-period) + var(--timeline-dot) / 2);
+    width: 1px;
+    background: var(--line);
+    content: '';
+  }
+
+  :global(.profile-timeline__entry) {
+    position: relative;
+    display: grid;
+    grid-template-columns:
+      var(--timeline-period) var(--timeline-dot)
+      minmax(0, 1fr);
+    gap: 0.75rem;
+    padding: 0 0 2rem;
+  }
+
+  :global(.profile-timeline__entry:last-child) {
+    padding-bottom: 0;
+  }
+
+  :global(.profile-timeline__period) {
+    min-width: 0;
+    margin: 0;
+    color: var(--accent);
+    font-size: 0.78rem;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+
+  :global(.profile-timeline__dot) {
+    z-index: 1;
+    width: 0.58rem;
+    height: 0.58rem;
+    margin: 0.18rem auto 0;
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+    background: var(--paper);
+  }
+
+  :global(.profile-timeline__content) {
+    min-width: 0;
+  }
+
+  :global(.profile-timeline__institution) {
+    display: grid;
+    grid-template-columns: 4rem minmax(0, 1fr);
+    gap: 1rem;
+    min-width: 0;
+    align-items: start;
+  }
+
+  :global(.profile-timeline__logo) {
+    display: grid;
+    width: 4rem;
+    height: 4rem;
+    overflow: hidden;
+    place-items: center;
+  }
+
+  :global(.profile-timeline__logo img) {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+
+  :global(.profile-timeline__logo--tum) {
+    height: 3rem;
+    margin-top: 0.1rem;
+    padding: 0.65rem 0.5rem;
+    background: #0065bd;
+  }
+
+  :global(.profile-timeline__logo--tum img) {
+    width: 100%;
+  }
+
+  :global(.profile-timeline__logo--wzu img) {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  :global(.profile-timeline__content h3) {
+    margin-bottom: 0.35rem;
+    overflow-wrap: anywhere;
+    font-size: clamp(1.05rem, 2vw, 1.25rem);
+    line-height: 1.25;
+  }
+
+  :global(.profile-timeline__content p),
+  :global(.profile-timeline__content li) {
+    overflow-wrap: anywhere;
+  }
+
+  :global(.profile-timeline__content p) {
+    margin-bottom: 0.25rem;
+    color: var(--muted);
+  }
+
+  :global(.profile-timeline__content ul) {
+    margin: 0.75rem 0 0;
+    padding-left: 1.1rem;
+  }
+
+  :global(.profile-skills) {
+    border-top: 1px solid var(--line);
+  }
+
+  :global(.profile-skill-group) {
+    display: grid;
+    grid-template-columns: minmax(8rem, 0.75fr) minmax(0, 2.25fr);
+    gap: 1.5rem;
+    padding: 1.2rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  :global(.profile-skill-group h3) {
+    margin-bottom: 0;
+    font-size: 0.9rem;
+  }
+
+  :global(.profile-skill-group ul) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.6rem;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  :global(.profile-skill-group li) {
+    overflow-wrap: anywhere;
+    color: var(--muted);
+    font-size: 0.88rem;
+  }
+
+  :global(.profile-skill-group li:not(:last-child)::after) {
+    margin-left: 0.6rem;
+    color: var(--accent);
+    content: '·';
+  }
+
+  @media (max-width: 760px) {
+    .profile-page {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .profile-page__content {
+      border-left: 0;
+    }
+  }
+
+  @media (max-width: 480px) {
+    :global(.profile-timeline::before) {
+      left: calc(var(--timeline-dot) / 2);
+    }
+
+    :global(.profile-timeline__entry) {
+      grid-template-columns: var(--timeline-dot) minmax(0, 1fr);
+      gap: 0.65rem 0.75rem;
+    }
+
+    :global(.profile-timeline__period) {
+      grid-column: 2;
+      grid-row: 1;
+    }
+
+    :global(.profile-timeline__dot) {
+      grid-column: 1;
+      grid-row: 1 / span 2;
+    }
+
+    :global(.profile-timeline__institution) {
+      grid-column: 2;
+      grid-row: 2;
+      grid-template-columns: 3.5rem minmax(0, 1fr);
+      gap: 0.85rem;
+    }
+
+    :global(.profile-timeline__logo) {
+      width: 3.5rem;
+      height: 3.5rem;
+    }
+
+    :global(.profile-timeline__logo--tum) {
+      height: 2.75rem;
+      padding: 0.6rem 0.45rem;
+    }
+
+    :global(.profile-skill-group) {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.75rem;
+    }
+  }
+</style>

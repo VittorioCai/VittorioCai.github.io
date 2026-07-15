@@ -71,6 +71,13 @@ export const de = {
       'Priorisierte Übersicht',
     ],
   },
+  profileRail: {
+    role: 'Business × Daten × angewandte KI',
+    currentLocation: 'In Heilbronn, Deutschland',
+    journeyHeading: 'Stationen',
+    linksHeading: 'Berufliche Profile',
+    journeyStops: ['Florenz', 'Wenzhou', 'Heilbronn'],
+  },
   projects: [
     {
       id: 'patentpath',
@@ -142,12 +149,14 @@ export const de = {
     'Mein fachlicher Ausgangspunkt ist das Finanzmanagement. Heute studiere ich Management and Digital Technology an der TUM — diese Kombination erlaubt mir, Zahlen zu verstehen, sie zu hinterfragen und die Software zu bauen, die daraus Entscheidungen macht.',
   education: [
     {
+      institution: 'tum',
       school: 'Technical University of Munich (TUM)',
       degree: 'M.Sc. Management and Digital Technology',
       period: '2025–heute',
       location: 'Heilbronn',
     },
     {
+      institution: 'wzu',
       school: 'Wenzhou University',
       degree: 'B.A. Financial Management',
       period: '2021–2025',
