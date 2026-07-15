@@ -318,6 +318,34 @@ test('/profile/ presents a sticky identity rail and animated journey on desktop'
   expect(markersContained).toBe(true);
 });
 
+test('/profile/ presents its contact actions as one aligned icon row', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/profile/');
+
+  const actions = page.locator('[data-profile-action]');
+
+  await expect(actions).toHaveCount(4);
+  await expect(actions.locator('[data-profile-action-icon]')).toHaveCount(4);
+
+  const geometry = await actions.evaluateAll((links) =>
+    links.map((link) => {
+      const box = link.getBoundingClientRect();
+
+      return {
+        height: box.height,
+        top: box.top,
+        width: box.width,
+      };
+    }),
+  );
+
+  expect(Math.max(...geometry.map(({ top }) => top)) - Math.min(...geometry.map(({ top }) => top))).toBeLessThan(1);
+  expect(Math.max(...geometry.map(({ width }) => width)) - Math.min(...geometry.map(({ width }) => width))).toBeLessThan(1);
+  expect(geometry.every(({ height }) => height >= 44)).toBe(true);
+});
+
 test('/profile/ keeps the desktop identity panel anchored within the viewport', async ({
   page,
 }) => {

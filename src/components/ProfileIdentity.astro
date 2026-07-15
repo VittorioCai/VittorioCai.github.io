@@ -29,27 +29,80 @@ const { profileRail, actions } = Astro.props;
       class="profile-identity__links"
       aria-label={profileRail.linksHeading}
     >
-      <a href="mailto:vittorio.cai@tum.de">{actions.email}</a>
       <a
-        class="external"
-        href="https://linkedin.com/in/vittorio-cai"
-        rel="noreferrer"
+        href="mailto:vittorio.cai@tum.de"
+        aria-label={actions.email}
+        data-profile-action="email"
       >
-        LinkedIn
+        <svg
+          class="profile-identity__action-icon"
+          data-profile-action-icon
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path d="M3.5 6.5h17v11h-17z"></path>
+          <path d="m4 7 8 6 8-6"></path>
+        </svg>
+        <span>{actions.email}</span>
       </a>
       <a
-        class="external"
+        href="https://linkedin.com/in/vittorio-cai"
+        rel="noreferrer"
+        aria-label="LinkedIn"
+        data-profile-action="linkedin"
+      >
+        <svg
+          class="profile-identity__action-icon profile-identity__action-icon--fill"
+          data-profile-action-icon
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path
+            d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V8.99h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.29ZM5.32 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13ZM7.1 20.45H3.54V8.99H7.1v11.46Z"
+          ></path>
+        </svg>
+        <span>LinkedIn</span>
+      </a>
+      <a
         href="https://github.com/VittorioCai"
         rel="noreferrer"
+        aria-label="GitHub"
+        data-profile-action="github"
       >
-        GitHub
+        <svg
+          class="profile-identity__action-icon"
+          data-profile-action-icon
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path
+            d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3.3-.4 6.8-1.6 6.8-7A5.4 5.4 0 0 0 19.4 4 5 5 0 0 0 19.3.5S18.2.1 15 1.9a13.4 13.4 0 0 0-7 0C4.8.1 3.7.5 3.7.5A5 5 0 0 0 3.6 4a5.4 5.4 0 0 0-1.4 3.7c0 5.4 3.5 6.6 6.8 7A4.8 4.8 0 0 0 8 18v4"
+          ></path>
+          <path d="M8 19c-3 .9-3-1.5-4-2"></path>
+        </svg>
+        <span>GitHub</span>
       </a>
       <a
         href="/Vittorio-Cai-CV-English.pdf"
         aria-label={actions.cv}
+        data-profile-action="cv"
         download
       >
-        CV · EN
+        <svg
+          class="profile-identity__action-icon"
+          data-profile-action-icon
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path d="M6 2.75h8l4 4v14.5H6z"></path>
+          <path d="M14 2.75v4h4"></path>
+          <path d="M12 10v6m0 0-2.5-2.5M12 16l2.5-2.5M9 19h6"></path>
+        </svg>
+        <span>CV · EN</span>
       </a>
     </nav>
 
@@ -112,7 +165,7 @@ const { profileRail, actions } = Astro.props;
 
   .profile-identity__links {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     margin-block: clamp(1.5rem, 4vw, 2.5rem);
     border-top: 1px solid var(--line);
     border-bottom: 1px solid var(--line);
@@ -120,27 +173,46 @@ const { profileRail, actions } = Astro.props;
 
   .profile-identity__links a {
     display: flex;
+    flex-direction: column;
     align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
     min-width: 0;
-    min-height: 44px;
-    padding: 0.65rem 0.5rem 0.65rem 0;
+    min-height: 72px;
+    padding: 0.7rem 0.2rem 0.65rem;
     overflow-wrap: anywhere;
-    font-size: 0.82rem;
+    font-size: clamp(0.64rem, 1.5vw, 0.72rem);
     font-weight: 650;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 0.22em;
+    line-height: 1.1;
+    text-align: center;
+    text-decoration: none;
   }
 
-  .profile-identity__links a:nth-child(odd) {
-    border-right: 1px solid var(--line);
+  .profile-identity__links a + a {
+    border-left: 1px solid var(--line);
   }
 
-  .profile-identity__links a:nth-child(even) {
-    padding-left: 0.75rem;
+  .profile-identity__action-icon {
+    width: 1.3rem;
+    height: 1.3rem;
+    fill: none;
+    stroke: currentcolor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.7;
+    transition:
+      color 160ms ease,
+      transform 160ms ease;
   }
 
-  .profile-identity__links a:nth-child(-n + 2) {
-    border-bottom: 1px solid var(--line);
+  .profile-identity__action-icon--fill {
+    fill: currentcolor;
+    stroke: none;
+  }
+
+  .profile-identity__links a:hover .profile-identity__action-icon {
+    color: var(--accent);
+    transform: translateY(-2px);
   }
 
   @media (max-width: 760px) {

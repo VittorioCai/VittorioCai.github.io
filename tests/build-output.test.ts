@@ -286,6 +286,24 @@ describe.each(profilePages)('$file', ({
     expect(cvLink.text().trim()).toBe('CV · EN');
     expect(cvLink.attr('aria-label')).toBeTruthy();
 
+    const profileActions = $('[data-profile-action]');
+
+    expect(profileActions).toHaveLength(4);
+    expect(
+      profileActions
+        .map((_, element) => $(element).attr('data-profile-action'))
+        .get(),
+    ).toEqual(['email', 'linkedin', 'github', 'cv']);
+    expect(profileActions.find('[data-profile-action-icon]')).toHaveLength(4);
+    profileActions.each((_, element) => {
+      expect($(element).attr('aria-label')).toBeTruthy();
+      expect(
+        $(element)
+          .find('[data-profile-action-icon]')
+          .attr('aria-hidden'),
+      ).toBe('true');
+    });
+
     const educationLogos = $('[data-education-logo]');
 
     expect(educationLogos).toHaveLength(2);
