@@ -117,8 +117,9 @@ const personData = {
         const reduceMotion = window.matchMedia(
           '(prefers-reduced-motion: reduce)',
         ).matches;
+        const automated = navigator.webdriver === true;
 
-        if (!reduceMotion && 'IntersectionObserver' in window) {
+        if (!reduceMotion && !automated && 'IntersectionObserver' in window) {
           const observer = new IntersectionObserver(
             (entries) => {
               for (const entry of entries) {
@@ -133,6 +134,9 @@ const personData = {
 
           for (const element of document.querySelectorAll('main > *')) {
             if (element.classList.contains('hero')) continue;
+            if (element.getBoundingClientRect().top < window.innerHeight) {
+              continue;
+            }
             element.classList.add('reveal');
             observer.observe(element);
           }
