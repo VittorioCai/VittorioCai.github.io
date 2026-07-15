@@ -238,6 +238,15 @@ const copy = getContent(locale);
     content: '·';
   }
 
+  @media (min-width: 761px) {
+    :global(.site-header) {
+      position: sticky;
+      top: 3px;
+      z-index: 90;
+      background: var(--paper);
+    }
+  }
+
   @media (max-width: 760px) {
     .profile-page {
       grid-template-columns: minmax(0, 1fr);

@@ -318,6 +318,42 @@ test('/profile/ presents a sticky identity rail and animated journey on desktop'
   expect(markersContained).toBe(true);
 });
 
+test('/profile/ keeps the desktop identity panel anchored within the viewport', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 760 });
+  await page.goto('/profile/');
+
+  const header = page.locator('.site-header');
+  const panel = page.locator('.profile-identity__sticky');
+  const initial = await panel.evaluate((element) => {
+    const box = element.getBoundingClientRect();
+    const style = getComputedStyle(element);
+
+    return {
+      bottom: box.bottom,
+      overflowY: style.overflowY,
+      top: box.top,
+    };
+  });
+  const headerBottom = await header.evaluate(
+    (element) => element.getBoundingClientRect().bottom,
+  );
+
+  expect(initial.top).toBeCloseTo(headerBottom, 0);
+  expect(initial.bottom).toBeLessThanOrEqual(760);
+  expect(initial.overflowY).toBe('auto');
+
+  await page.evaluate(() => window.scrollTo(0, 600));
+
+  const scrolledTop = await panel.evaluate(
+    (element) => element.getBoundingClientRect().top,
+  );
+
+  expect(scrolledTop).toBeCloseTo(initial.top, 0);
+  await expect(header).toHaveCSS('position', 'sticky');
+});
+
 test('/profile/ stacks the identity rail without overflow on mobile', async ({
   page,
 }) => {
