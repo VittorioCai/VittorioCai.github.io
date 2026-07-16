@@ -84,9 +84,9 @@ export const de = {
       kicker: 'Hauptprojekt · TUM × Fuyao',
       title: 'PatentPATH',
       summary:
-        'Ein KI-gestütztes Produkt zur Patentanalyse, das aus einer Designbeschreibung einen Bericht zum Überschneidungsrisiko erstellt.',
+        'Ein KI-gestütztes Produkt zum Patent-Screening: Aus einer frei formulierten Designbeschreibung entstehen Überschneidungsbefunde auf Anspruchsebene samt Design-around-Vorschlägen.',
       contribution:
-        'Frontend-Entwicklung sowie Konzeption und Umsetzung der PostgreSQL/pgvector-Datenbank.',
+        'Verantwortlich für das PostgreSQL/pgvector-Datenbankmodul und das Web-Frontend; Integration der Team-Pipeline in das produktiv bereitgestellte Produkt.',
       details: [
         'Strukturierte Speicherung von Patentkorpus und Embeddings für die semantische Suche.',
         'Eine nutzerorientierte Anwendung, die technische Analysen für nichttechnische Entscheidungen zugänglich macht.',
@@ -214,11 +214,12 @@ export const de = {
       problem:
         'Bei einem umfangreichen Patentkorpus für HUD-Windschutzscheiben ist das potenzielle Überschneidungsrisiko einer neuen Designbeschreibung schwer zu beurteilen.',
       responsibility:
-        'Innerhalb des Teamprojekts war ich ausdrücklich für das Web-Frontend sowie für die Konzeption und Umsetzung der PostgreSQL/pgvector-Datenbank verantwortlich.',
+        'Innerhalb des Teamprojekts verantwortete ich das PostgreSQL/pgvector-Datenbankmodul und das Web-Frontend und integrierte die Extraktions- und Screening-Pipeline des Teams in das produktiv bereitgestellte Produkt.',
       build: [
         'Strukturierung von Patenttexten und Embeddings für die semantische Suche.',
-        'Entwicklung einer Oberfläche, die von der Designeingabe zum Bericht über das Überschneidungsrisiko führt.',
+        'Entwicklung der Oberfläche von der Designeingabe bis zu Überschneidungsbefunden auf Anspruchsebene und Design-around-Vorschlägen.',
         'Gestaltung eines klaren Nutzerflusses für eine technisch komplexe Analyse.',
+        'Deployment und Betrieb des Produkts: Vercel-Frontend, FastAPI-Backend, Neon Postgres.',
       ],
       evidence: [
         'Öffentlich zugängliche Live-Demo.',

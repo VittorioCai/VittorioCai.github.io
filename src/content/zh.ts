@@ -77,9 +77,9 @@ export const zh = {
       kicker: '重点项目 · TUM × Fuyao',
       title: 'PatentPATH',
       summary:
-        '一个 AI 辅助的专利分析产品，可将设计描述转化为专利重叠风险报告。',
+        '一个 AI 辅助的专利筛查产品：用自然语言描述设计，即可获得权利要求级的重叠比对结果与规避设计建议。',
       contribution:
-        '负责前端开发，以及 PostgreSQL/pgvector 数据库的设计与实现。',
+        '负责 PostgreSQL/pgvector 数据库模块与 Web 前端，并将团队的解析与筛查管线整合部署为线上产品。',
       details: [
         '存储结构化专利语料与 Embeddings，支持语义搜索。',
         '面向用户设计工作流，让非技术人员可以据此做出判断。',
@@ -200,11 +200,12 @@ export const zh = {
       problem:
         '面对大规模 HUD 挡风玻璃专利语料，用户难以根据新的设计描述判断潜在的专利重叠风险。',
       responsibility:
-        '在团队项目中，我明确负责 Web 前端，以及 PostgreSQL/pgvector 数据库的设计与实现。',
+        '在团队项目中，我负责 PostgreSQL/pgvector 数据库模块与 Web 前端，并将团队的解析与筛查管线整合部署为线上产品。',
       build: [
         '整理专利文本与 Embeddings，用于语义检索。',
-        '开发从设计输入到专利重叠风险报告的界面。',
+        '开发从设计输入到权利要求级重叠比对与规避建议的完整界面。',
         '为技术复杂的分析设计清晰的用户流程。',
+        '完成产品部署与运维：Vercel 前端、FastAPI 后端、Neon Postgres。',
       ],
       evidence: [
         '公开的在线演示。',

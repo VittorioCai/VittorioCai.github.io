@@ -84,9 +84,9 @@ export const en = {
       kicker: 'Featured · TUM × Fuyao',
       title: 'PatentPATH',
       summary:
-        'An AI-assisted patent analysis product that turns a design description into an overlap-risk report.',
+        'An AI-assisted patent screening product that turns a plain-language design description into claim-level overlap findings and design-around suggestions.',
       contribution:
-        'Frontend development and PostgreSQL/pgvector database design and implementation.',
+        "Owned the PostgreSQL/pgvector database module and the web frontend, and integrated the team's extraction and screening pipeline into the deployed product.",
       details: [
         'Structured patent corpus and embedding storage for semantic search.',
         'A user-facing workflow that makes technical analysis useful for nontechnical decisions.',
@@ -210,11 +210,12 @@ export const en = {
       problem:
         'A large HUD windshield patent corpus makes potential overlap risk difficult to assess from a new design description.',
       responsibility:
-        'Within the team project, I explicitly owned the web frontend and the design and implementation of the PostgreSQL/pgvector database.',
+        "Within the team project, I owned the PostgreSQL/pgvector database module and the web frontend, and integrated the team's extraction and screening pipeline into the deployed product.",
       build: [
         'Structured patent text and embeddings for semantic retrieval.',
-        'Built an interface that moves from design input to an overlap-risk report.',
+        'Built the interface from design input to claim-level overlap findings and design-around suggestions.',
         'Created a clear user flow for a technically complex analysis.',
+        'Deployed and operated the product: Vercel frontend, FastAPI backend, Neon Postgres.',
       ],
       evidence: [
         'Public live demo.',
