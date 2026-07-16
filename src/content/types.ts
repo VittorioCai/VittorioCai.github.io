@@ -107,10 +107,7 @@ export interface SiteContent {
     items: string[];
   }>;
   languages: string[];
-  caseStudies: Record<
-    'patentpath' | 'english-job-agent',
-    CaseStudy
-  >;
+  caseStudies: Record<ProjectId, CaseStudy>;
   caseStudyLabels: {
     problem: string;
     responsibility: string;

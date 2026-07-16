@@ -129,7 +129,7 @@ export const de = {
         'Validierung der Portfolioergebnisse mit Fama-French-Faktoren.',
       ],
       tags: ['Python', 'Versuchsdesign', 'Empirische Finanzforschung'],
-      actions: {},
+      actions: { caseStudy: true },
     },
     {
       id: 'water-quality',
@@ -144,7 +144,7 @@ export const de = {
         'Vergleich von F1, PR-AUC und ROC-AUC über alle Modelle hinweg.',
       ],
       tags: ['scikit-learn', 'SVM', 'AdaBoost'],
-      actions: {},
+      actions: { caseStudy: true },
     },
   ],
   profile:
@@ -243,6 +243,40 @@ export const de = {
       evidence: [
         'Öffentliches Repository unter der MIT-Lizenz.',
         'Automatisierte Tests und tägliche Ausführung über GitHub Actions.',
+      ],
+    },
+    'news-sentiment': {
+      outcome:
+        'Prompt-Design und nachgelagerte Portfolioergebnisse wurden in einem kontrollierten Ablauf geprüft.',
+      problem:
+        'Prompt-Bedingungen müssen von Datenaufbereitung und finanzieller Validierung getrennt werden, damit Sentiment-Ergebnisse vergleichbar bleiben.',
+      responsibility:
+        'Ich war an der Entwicklung der Nachrichtenbeschaffung, des Firm-Day-Panels und der Datenzusammenführung beteiligt.',
+      build: [
+        'Aufbau eines Firm-Day-Panels mit etwa 59.000 Beobachtungen.',
+        'Vergleich mehrerer Prompt-Bedingungen in einem kontrollierten experimentellen Design.',
+        'Validierung der Portfolioergebnisse mit Fama-French-Faktoren.',
+      ],
+      evidence: [
+        'Kontrolliertes Prompt-Experiment mit etwa 59.000 Firm-Day-Beobachtungen.',
+        'Evaluation der Portfolioergebnisse mit Fama-French-Faktoren.',
+      ],
+    },
+    'water-quality': {
+      outcome:
+        'Sechs Klassifikatoren wurden mit einer auf unausgeglichene Wasserqualitätsdaten abgestimmten Evaluation verglichen.',
+      problem:
+        'Bei unausgeglichenen Klassen reicht Accuracy allein nicht aus, um Wasserqualitätsklassifikatoren zu vergleichen.',
+      responsibility:
+        'Ich implementierte und optimierte SVM und AdaBoost und wirkte an der modellübergreifenden Evaluation mit.',
+      build: [
+        'Einsatz stratifizierter k-fold-Kreuzvalidierung.',
+        'Implementierung und Optimierung von SVM und AdaBoost.',
+        'Vergleich von F1, PR-AUC und ROC-AUC über alle Modelle hinweg.',
+      ],
+      evidence: [
+        'Benchmark mit sechs Modellen.',
+        'Evaluation anhand von F1, PR-AUC und ROC-AUC.',
       ],
     },
   },

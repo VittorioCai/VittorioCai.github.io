@@ -77,8 +77,9 @@ describe('localized portfolio content', () => {
         source: 'https://github.com/VittorioCai/english-job-agent-germany',
         caseStudy: true,
       });
-      expect(newsSentiment?.actions).toEqual({});
-      expect(waterQuality?.actions).toEqual({});
+      expect(newsSentiment?.actions).toEqual({ caseStudy: true });
+      expect(waterQuality?.actions).toEqual({ caseStudy: true });
+      expect(Object.keys(content[locale].caseStudies)).toEqual(projectIds);
     }
   });
 

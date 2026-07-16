@@ -1,14 +1,27 @@
 ---
 import { getContent } from '../content';
 import type { Locale } from '../content';
-import type { Project } from '../content/types';
+import type { Project, ProjectId } from '../content/types';
 import { getLocalizedPath } from '../i18n/routes';
 import type { RouteKey } from '../i18n/routes';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getSafeProjectAction } from '../utils/external-url';
 import ProjectVisual from './ProjectVisual.astro';
 
-type CaseStudyProjectId = 'patentpath' | 'english-job-agent';
+type CaseStudyProjectId = ProjectId;
+
+const caseStudyRoutes = {
+  patentpath: 'patentpath',
+  'english-job-agent': 'jobAgent',
+  'news-sentiment': 'newsSentiment',
+  'water-quality': 'waterQuality',
+} satisfies Record<CaseStudyProjectId, RouteKey>;
+const caseStudyOrder: CaseStudyProjectId[] = [
+  'patentpath',
+  'english-job-agent',
+  'news-sentiment',
+  'water-quality',
+];
 
 interface Props {
   locale: Locale;
@@ -29,12 +42,11 @@ if (!Astro.site) {
   throw new Error('Astro.site is required to build case-study metadata.');
 }
 
-const route: RouteKey =
-  projectId === 'patentpath' ? 'patentpath' : 'jobAgent';
-const nextProjectId: CaseStudyProjectId =
-  projectId === 'patentpath' ? 'english-job-agent' : 'patentpath';
-const nextRoute: RouteKey =
-  nextProjectId === 'patentpath' ? 'patentpath' : 'jobAgent';
+const route = caseStudyRoutes[projectId];
+const currentProjectIndex = caseStudyOrder.indexOf(projectId);
+const nextProjectId =
+  caseStudyOrder[(currentProjectIndex + 1) % caseStudyOrder.length];
+const nextRoute = caseStudyRoutes[nextProjectId];
 const nextProject = copy.projects.find(
   (entry) => entry.id === nextProjectId,
 );
@@ -82,32 +94,35 @@ const serializedStructuredData = JSON.stringify(structuredData).replace(
       <p class="section-label">{project.kicker}</p>
       <p class="case-study__project-name">{project.title}</p>
 
-      <div class="case-study__visual">
-        {
-          projectId === 'patentpath' ? (
-            <ProjectVisual
-              projectId="patentpath"
-              label={`${project.title}: ${project.summary}`}
-            />
-          ) : (
-            <ProjectVisual
-              projectId="english-job-agent"
-              label={`${project.title}: ${project.summary}`}
-              stages={copy.visuals.jobAgentStages}
-            />
-          )
-        }
-      </div>
+      {
+        (projectId === 'patentpath' ||
+          projectId === 'english-job-agent') && (
+          <div class="case-study__visual">
+            {projectId === 'patentpath' ? (
+              <ProjectVisual
+                projectId="patentpath"
+                label={`${project.title}: ${project.summary}`}
+              />
+            ) : (
+              <ProjectVisual
+                projectId="english-job-agent"
+                label={`${project.title}: ${project.summary}`}
+                stages={copy.visuals.jobAgentStages}
+              />
+            )}
+          </div>
+        )
+      }
 
-      <div class="text-actions">
-        {
-          publicLink && (
+      {
+        publicLink && (
+          <div class="text-actions">
             <a class="external" href={publicLink} rel="noreferrer">
               {publicLinkLabel}
             </a>
-          )
-        }
-      </div>
+          </div>
+        )
+      }
     </aside>
 
     <div class="case-study__body">

@@ -37,6 +37,14 @@ function getCaseStudyPath(project: Project): string | undefined {
     return getLocalizedPath(locale, 'jobAgent');
   }
 
+  if (project.id === 'news-sentiment') {
+    return getLocalizedPath(locale, 'newsSentiment');
+  }
+
+  if (project.id === 'water-quality') {
+    return getLocalizedPath(locale, 'waterQuality');
+  }
+
   return undefined;
 }
 ---

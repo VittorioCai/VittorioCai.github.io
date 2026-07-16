@@ -7,7 +7,9 @@ export type RouteKey =
   | 'profile'
   | 'contact'
   | 'patentpath'
-  | 'jobAgent';
+  | 'jobAgent'
+  | 'newsSentiment'
+  | 'waterQuality';
 
 const routeSuffixes = {
   home: '',
@@ -16,6 +18,8 @@ const routeSuffixes = {
   contact: 'contact',
   patentpath: 'work/patentpath',
   jobAgent: 'work/english-job-agent',
+  newsSentiment: 'work/news-sentiment',
+  waterQuality: 'work/water-quality',
 } satisfies Record<RouteKey, string>;
 
 export function getLocalizedPath(

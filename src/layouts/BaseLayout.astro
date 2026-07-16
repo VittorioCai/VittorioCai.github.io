@@ -37,35 +37,20 @@ const pagePath = noindex
 const pageUrl = new URL(pagePath, site);
 const languageLinks = noindex ? [] : getLanguageLinks(route);
 const ogImageUrl = new URL('/og-card.png', site);
-const siteRoot = new URL('/', site);
 const htmlLanguage = locale === 'zh' ? 'zh-CN' : locale;
 const currentYear = new Date().getFullYear();
 const showIntro = route === 'home' && !noindex;
+const showPersonData = route === 'home' && !noindex;
 const personData = {
   '@context': 'https://schema.org',
   '@type': 'Person',
   name: 'Vittorio Cai',
-  url: siteRoot.href,
-  email: 'vittorio.cai@tum.de',
-  address: {
-    '@type': 'PostalAddress',
-    addressLocality: 'Heilbronn',
-    addressCountry: 'Germany',
-  },
-  alumniOf: [
-    {
-      '@type': 'CollegeOrUniversity',
-      name: 'Technical University of Munich',
-    },
-    {
-      '@type': 'CollegeOrUniversity',
-      name: 'Wenzhou University',
-    },
-  ],
+  url: site.origin,
   sameAs: [
-    'https://linkedin.com/in/vittorio-cai',
     'https://github.com/VittorioCai',
+    'https://linkedin.com/in/vittorio-cai',
   ],
+  jobTitle: 'M.Sc. student, Management and Digital Technology (TUM)',
 };
 ---
 
@@ -103,11 +88,15 @@ const personData = {
     <meta property="og:image" content={ogImageUrl} />
     <meta name="twitter:card" content="summary_large_image" />
     {noindex && <meta name="robots" content="noindex,nofollow" />}
-    <script
-      is:inline
-      type="application/ld+json"
-      set:html={JSON.stringify(personData)}
-    />
+    {
+      showPersonData && (
+        <script
+          is:inline
+          type="application/ld+json"
+          set:html={JSON.stringify(personData)}
+        />
+      )
+    }
     <noscript>
       <style is:inline>
         .intro { display: none !important; }

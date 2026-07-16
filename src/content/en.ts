@@ -128,7 +128,7 @@ export const en = {
         'Validated portfolio results with Fama-French factors.',
       ],
       tags: ['Python', 'Experimental design', 'Empirical finance'],
-      actions: {},
+      actions: { caseStudy: true },
     },
     {
       id: 'water-quality',
@@ -143,7 +143,7 @@ export const en = {
         'Compared F1, PR-AUC and ROC-AUC across models.',
       ],
       tags: ['scikit-learn', 'SVM', 'AdaBoost'],
-      actions: {},
+      actions: { caseStudy: true },
     },
   ],
   profile:
@@ -238,6 +238,40 @@ export const en = {
       evidence: [
         'Public repository under the MIT license.',
         'Automated tests and daily GitHub Actions runs.',
+      ],
+    },
+    'news-sentiment': {
+      outcome:
+        'Tested prompt design against downstream portfolio evidence in one controlled workflow.',
+      problem:
+        'Prompt conditions need to be held apart from data preparation and financial validation to make sentiment results comparable.',
+      responsibility:
+        'I co-built the news sourcing, firm-day panel and data-merging pipeline.',
+      build: [
+        'Built a firm-day panel covering about 59,000 observations.',
+        'Compared prompt conditions through a controlled experimental design.',
+        'Validated portfolio results with Fama-French factors.',
+      ],
+      evidence: [
+        'Controlled prompt experiment across about 59,000 firm-day observations.',
+        'Portfolio results evaluated with Fama-French factors.',
+      ],
+    },
+    'water-quality': {
+      outcome:
+        'Compared six classifiers with an evaluation setup designed for imbalanced water-quality data.',
+      problem:
+        'Class imbalance makes accuracy alone insufficient for comparing water-quality classifiers.',
+      responsibility:
+        'I implemented and tuned SVM and AdaBoost, then contributed to the cross-model evaluation.',
+      build: [
+        'Used stratified k-fold cross-validation.',
+        'Implemented and tuned SVM and AdaBoost.',
+        'Compared F1, PR-AUC and ROC-AUC across models.',
+      ],
+      evidence: [
+        'Six-model benchmark.',
+        'Evaluation with F1, PR-AUC and ROC-AUC.',
       ],
     },
   },

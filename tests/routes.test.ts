@@ -18,6 +18,19 @@ describe('localized routes', () => {
     );
   });
 
+  it('maps the additional project case studies in every locale', () => {
+    expect(getLanguageLinks('newsSentiment')).toEqual([
+      { locale: 'en', href: '/work/news-sentiment/' },
+      { locale: 'de', href: '/de/work/news-sentiment/' },
+      { locale: 'zh', href: '/zh/work/news-sentiment/' },
+    ]);
+    expect(getLanguageLinks('waterQuality')).toEqual([
+      { locale: 'en', href: '/work/water-quality/' },
+      { locale: 'de', href: '/de/work/water-quality/' },
+      { locale: 'zh', href: '/zh/work/water-quality/' },
+    ]);
+  });
+
   it('maps the section pages to each locale', () => {
     expect(getLocalizedPath('en', 'work')).toBe('/work/');
     expect(getLocalizedPath('de', 'profile')).toBe('/de/profile/');

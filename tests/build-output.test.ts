@@ -5,7 +5,7 @@ import {
   readdirSync,
   statSync,
 } from 'node:fs';
-import { extname, join } from 'node:path';
+import { extname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { load } from 'cheerio';
@@ -19,6 +19,17 @@ import {
 const projectRoot = fileURLToPath(new URL('..', import.meta.url));
 const distRoot = fileURLToPath(new URL('../dist/', import.meta.url));
 const siteUrl = 'https://vittoriocai.github.io';
+const personData = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Vittorio Cai',
+  url: 'https://vittoriocai.github.io',
+  sameAs: [
+    'https://github.com/VittorioCai',
+    'https://linkedin.com/in/vittorio-cai',
+  ],
+  jobTitle: 'M.Sc. student, Management and Digital Technology (TUM)',
+};
 
 const localizedHomepages = [
   {
@@ -40,6 +51,18 @@ const localizedHomepages = [
     demoNote: '演示后端为免费实例，首次打开约需 40 秒唤醒。',
   },
 ] as const;
+
+const caseStudyActionLabels = {
+  en: 'Case study',
+  de: 'Projektbericht',
+  'zh-CN': '项目详情',
+} as const;
+const caseStudySlugs = {
+  patentpath: 'patentpath',
+  'english-job-agent': 'english-job-agent',
+  'news-sentiment': 'news-sentiment',
+  'water-quality': 'water-quality',
+} as const;
 
 const workPages = [
   {
@@ -138,7 +161,54 @@ const caseStudyPages = [
     publicLink:
       'https://github.com/VittorioCai/english-job-agent-germany',
   },
+  {
+    file: 'work/news-sentiment/index.html',
+    lang: 'en',
+    project: 'news-sentiment',
+    publicLink: null,
+  },
+  {
+    file: 'de/work/news-sentiment/index.html',
+    lang: 'de',
+    project: 'news-sentiment',
+    publicLink: null,
+  },
+  {
+    file: 'zh/work/news-sentiment/index.html',
+    lang: 'zh-CN',
+    project: 'news-sentiment',
+    publicLink: null,
+  },
+  {
+    file: 'work/water-quality/index.html',
+    lang: 'en',
+    project: 'water-quality',
+    publicLink: null,
+  },
+  {
+    file: 'de/work/water-quality/index.html',
+    lang: 'de',
+    project: 'water-quality',
+    publicLink: null,
+  },
+  {
+    file: 'zh/work/water-quality/index.html',
+    lang: 'zh-CN',
+    project: 'water-quality',
+    publicLink: null,
+  },
 ] as const;
+
+const caseStudySectionLabels = {
+  en: ['The problem', 'My responsibility', 'What I built', 'Evidence & results'],
+  de: [
+    'Die Herausforderung',
+    'Meine Verantwortung',
+    'Was ich umgesetzt habe',
+    'Belege & Ergebnisse',
+  ],
+  'zh-CN': ['问题', '我的职责', '实现内容', '依据与结果'],
+} as const;
 
 beforeAll(() => {
   execFileSync('npm', ['run', 'build'], {
@@ -205,6 +275,7 @@ describe.each(localizedHomepages)('$file', ({
         'a[href="https://new-patent-path.vercel.app"] + .demo-note',
       ),
     ).toHaveLength(1);
+
   });
 
   it(`publishes complete ${lang} discovery and contact metadata`, () => {
@@ -233,6 +304,15 @@ describe.each(localizedHomepages)('$file', ({
     expect($('a[href="/Vittorio-Cai-CV-English.pdf"]').length).toBeGreaterThan(
       0,
     );
+    expect(
+      parseJsonLdScripts($).filter(
+        (entry) =>
+          typeof entry === 'object' &&
+          entry !== null &&
+          '@type' in entry &&
+          entry['@type'] === 'Person',
+      ),
+    ).toEqual([personData]);
   });
 });
 
@@ -247,6 +327,18 @@ describe.each(workPages)('$file', ({ file, lang, pipelineStages }) => {
     expect(
       $('[data-project-id="patentpath"]').first().attr('data-featured'),
     ).toBe('true');
+
+    const localePrefix = lang === 'en' ? '' : lang === 'de' ? '/de' : '/zh';
+
+    for (const [projectId, slug] of Object.entries(caseStudySlugs)) {
+      const path = `${localePrefix}/work/${slug}/`;
+      const caseStudyLink = $(
+        `[data-project-id="${projectId}"] .text-actions a[href="${path}"]`,
+      );
+
+      expect(caseStudyLink).toHaveLength(1);
+      expect(caseStudyLink.text().trim()).toBe(caseStudyActionLabels[lang]);
+    }
   });
 
   it(`renders the ${lang} job-agent pipeline labels`, () => {
@@ -385,6 +477,12 @@ describe.each(caseStudyPages)('$file', ({
     expect($('html').attr('lang')).toBe(lang);
     expect(article).toHaveLength(1);
     expect(
+      article
+        .find('.case-study__body > section > h2')
+        .map((_, element) => $(element).text().trim())
+        .get(),
+    ).toEqual(caseStudySectionLabels[lang]);
+    expect(
       article.find('[data-case-section="responsibility"]').text().trim()
         .length,
     ).toBeGreaterThan(20);
@@ -403,7 +501,7 @@ describe.each(caseStudyPages)('$file', ({
       .map((_, element) => $(element).attr('href'))
       .get();
 
-    expect(externalLinks).toEqual([publicLink]);
+    expect(externalLinks).toEqual(publicLink ? [publicLink] : []);
 
     if (project === 'patentpath') {
       expect(article.find('a[href*="github.com"]')).toHaveLength(0);
@@ -414,6 +512,30 @@ describe.each(caseStudyPages)('$file', ({
 });
 
 describe('public assets and privacy', () => {
+  it('publishes Person JSON-LD only on localized homepages', () => {
+    const homepageFiles = new Set<string>(
+      localizedHomepages.map(({ file }) => file),
+    );
+
+    for (const htmlPath of listHtmlFiles(distRoot)) {
+      const file = relative(distRoot, htmlPath);
+      const $ = load(readFileSync(htmlPath, 'utf8'));
+      const people = parseJsonLdScripts($).filter(
+        (entry) =>
+          typeof entry === 'object' &&
+          entry !== null &&
+          '@type' in entry &&
+          entry['@type'] === 'Person',
+      );
+
+      expect(people, file).toEqual(homepageFiles.has(file) ? [personData] : []);
+    }
+  });
+
+  it('builds the complete 25-page localized site', () => {
+    expect(listHtmlFiles(distRoot)).toHaveLength(25);
+  });
+
   it('emits the branded assets, crawler policy, and English CV', () => {
     const faviconPath = join(distRoot, 'favicon.svg');
     const ogCardPath = join(distRoot, 'og-card.svg');

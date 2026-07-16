@@ -120,7 +120,7 @@ export const zh = {
         '使用 Fama-French 因子验证投资组合结果。',
       ],
       tags: ['Python', '实验设计', '实证金融'],
-      actions: {},
+      actions: { caseStudy: true },
     },
     {
       id: 'water-quality',
@@ -134,7 +134,7 @@ export const zh = {
         '使用 F1、PR-AUC 和 ROC-AUC 比较各模型。',
       ],
       tags: ['scikit-learn', 'SVM', 'AdaBoost'],
-      actions: {},
+      actions: { caseStudy: true },
     },
   ],
   profile:
@@ -226,6 +226,37 @@ export const zh = {
       evidence: [
         '采用 MIT 许可证的公开代码仓库。',
         '自动化测试与每日 GitHub Actions 运行。',
+      ],
+    },
+    'news-sentiment': {
+      outcome: '在同一受控流程中检验 Prompt 设计与后续投资组合结果。',
+      problem:
+        '只有将 Prompt 条件、数据准备与金融验证分别控制，才能比较不同情绪分析结果。',
+      responsibility:
+        '我共同完成了新闻数据获取、firm-day 面板构建与数据合并流程。',
+      build: [
+        '构建包含约 59,000 个观测值的 firm-day 面板。',
+        '通过受控实验设计比较不同 Prompt 条件。',
+        '使用 Fama-French 因子验证投资组合结果。',
+      ],
+      evidence: [
+        '涵盖约 59,000 个 firm-day 观测值的受控 Prompt 实验。',
+        '使用 Fama-French 因子评估投资组合结果。',
+      ],
+    },
+    'water-quality': {
+      outcome: '采用适合类别不平衡数据的评估方法比较六种水质分类模型。',
+      problem: '类别不平衡时，仅看准确率不足以比较水质分类模型。',
+      responsibility:
+        '我负责 SVM 和 AdaBoost 的实现与调优，并参与跨模型评估。',
+      build: [
+        '采用分层 k-fold 交叉验证。',
+        '实现并调优 SVM 和 AdaBoost。',
+        '使用 F1、PR-AUC 和 ROC-AUC 比较各模型。',
+      ],
+      evidence: [
+        '六模型基准比较。',
+        '使用 F1、PR-AUC 和 ROC-AUC 完成评估。',
       ],
     },
   },
