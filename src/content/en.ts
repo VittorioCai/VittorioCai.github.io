@@ -85,13 +85,14 @@ export const en = {
       title: 'PatentPATH',
       summary:
         'An AI-assisted patent screening product that turns a plain-language design description into claim-level overlap findings and design-around suggestions.',
+      demoNote: 'Free-tier backend — first load may take up to 40 s to wake.',
       contribution:
         "Owned the PostgreSQL/pgvector database module and the web frontend, and integrated the team's extraction and screening pipeline into the deployed product.",
       details: [
         'Structured patent corpus and embedding storage for semantic search.',
         'A user-facing workflow that makes technical analysis useful for nontechnical decisions.',
       ],
-      tags: ['Frontend', 'PostgreSQL', 'pgvector'],
+      tags: ['Frontend', 'PostgreSQL', 'pgvector', 'FastAPI'],
       actions: {
         demo: 'https://new-patent-path.vercel.app',
         caseStudy: true,

@@ -78,13 +78,14 @@ export const zh = {
       title: 'PatentPATH',
       summary:
         '一个 AI 辅助的专利筛查产品：用自然语言描述设计，即可获得权利要求级的重叠比对结果与规避设计建议。',
+      demoNote: '演示后端为免费实例，首次打开约需 40 秒唤醒。',
       contribution:
         '负责 PostgreSQL/pgvector 数据库模块与 Web 前端，并将团队的解析与筛查管线整合部署为线上产品。',
       details: [
         '存储结构化专利语料与 Embeddings，支持语义搜索。',
         '面向用户设计工作流，让非技术人员可以据此做出判断。',
       ],
-      tags: ['Frontend', 'PostgreSQL', 'pgvector'],
+      tags: ['Frontend', 'PostgreSQL', 'pgvector', 'FastAPI'],
       actions: {
         demo: 'https://new-patent-path.vercel.app',
         caseStudy: true,

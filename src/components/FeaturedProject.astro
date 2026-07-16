@@ -66,6 +66,11 @@ const caseStudyPath =
           </a>
         )
       }
+      {
+        demoUrl && project.demoNote ? (
+          <p class="demo-note">{project.demoNote}</p>
+        ) : null
+      }
       {caseStudyPath && <a href={caseStudyPath}>{actions.caseStudy}</a>}
       {
         allProjectsLink && (
@@ -130,6 +135,13 @@ const caseStudyPath =
   .project-summary {
     color: var(--muted);
     font-size: 1.05rem;
+  }
+
+  .demo-note {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.78rem;
+    line-height: 1.4;
   }
 
   .project-details {

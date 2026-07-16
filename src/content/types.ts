@@ -13,6 +13,7 @@ export interface Project {
   kicker: string;
   title: string;
   summary: string;
+  demoNote?: string;
   contribution?: string;
   details: string[];
   tags: string[];

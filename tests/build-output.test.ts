@@ -21,9 +21,24 @@ const distRoot = fileURLToPath(new URL('../dist/', import.meta.url));
 const siteUrl = 'https://vittoriocai.github.io';
 
 const localizedHomepages = [
-  { file: 'index.html', lang: 'en', workPath: '/work/' },
-  { file: 'de/index.html', lang: 'de', workPath: '/de/work/' },
-  { file: 'zh/index.html', lang: 'zh-CN', workPath: '/zh/work/' },
+  {
+    file: 'index.html',
+    lang: 'en',
+    workPath: '/work/',
+    demoNote: 'Free-tier backend — first load may take up to 40 s to wake.',
+  },
+  {
+    file: 'de/index.html',
+    lang: 'de',
+    workPath: '/de/work/',
+    demoNote: 'Backend im Free-Tier — der erste Aufruf kann bis zu 40 s dauern.',
+  },
+  {
+    file: 'zh/index.html',
+    lang: 'zh-CN',
+    workPath: '/zh/work/',
+    demoNote: '演示后端为免费实例，首次打开约需 40 秒唤醒。',
+  },
 ] as const;
 
 const workPages = [
@@ -162,6 +177,7 @@ describe.each(localizedHomepages)('$file', ({
   file,
   lang,
   workPath,
+  demoNote,
 }) => {
   it(`renders the ${lang} homepage contract`, () => {
     const $ = loadHomepage(file);
@@ -173,6 +189,22 @@ describe.each(localizedHomepages)('$file', ({
       $('[data-project-id="patentpath"]').first().attr('data-featured'),
     ).toBe('true');
     expect($(`a[href="${workPath}"]`).length).toBeGreaterThan(0);
+
+    const demoNotes = $('.demo-note');
+    const patentpathActions = $('[data-project-id="patentpath"]')
+      .first()
+      .find('.text-actions');
+
+    expect(demoNotes).toHaveLength(1);
+    expect(demoNotes.text().trim()).toBe(demoNote);
+    expect(
+      demoNotes.closest('[data-project-id]').attr('data-project-id'),
+    ).toBe('patentpath');
+    expect(
+      patentpathActions.find(
+        'a[href="https://new-patent-path.vercel.app"] + .demo-note',
+      ),
+    ).toHaveLength(1);
   });
 
   it(`publishes complete ${lang} discovery and contact metadata`, () => {

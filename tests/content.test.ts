@@ -35,6 +35,11 @@ describe('localized portfolio content', () => {
       de: [/Frontend/i, /Datenbank/i],
       zh: [/前端/, /数据库/],
     } as const;
+    const demoNotes = {
+      en: 'Free-tier backend — first load may take up to 40 s to wake.',
+      de: 'Backend im Free-Tier — der erste Aufruf kann bis zu 40 s dauern.',
+      zh: '演示后端为免费实例，首次打开约需 40 秒唤醒。',
+    } as const;
 
     for (const locale of locales) {
       const patentpath = content[locale].projects.find(
@@ -52,10 +57,22 @@ describe('localized portfolio content', () => {
 
       expect(patentpath?.contribution).toMatch(contributionTerms[locale][0]);
       expect(patentpath?.contribution).toMatch(contributionTerms[locale][1]);
+      expect(patentpath?.demoNote).toBe(demoNotes[locale]);
+      expect(patentpath?.tags).toEqual([
+        'Frontend',
+        'PostgreSQL',
+        'pgvector',
+        'FastAPI',
+      ]);
       expect(patentpath?.actions).toEqual({
         demo: 'https://new-patent-path.vercel.app',
         caseStudy: true,
       });
+      expect(
+        content[locale].projects
+          .filter((project) => 'demoNote' in project)
+          .map((project) => project.id),
+      ).toEqual(['patentpath']);
       expect(jobAgent?.actions).toEqual({
         source: 'https://github.com/VittorioCai/english-job-agent-germany',
         caseStudy: true,
