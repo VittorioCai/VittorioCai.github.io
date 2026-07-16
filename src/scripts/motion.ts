@@ -1,6 +1,78 @@
 const reducedMotionQuery = '(prefers-reduced-motion: reduce)';
 const finePointerQuery = '(hover: hover) and (pointer: fine)';
 const visitedSessionKey = 'vittorio-portfolio-visited';
+const INTRO_KEY = 'vc-intro-played';
+const EASE_OUT = 'cubic-bezier(0.16, 1, 0.3, 1)';
+const EASE_SETTLE = 'cubic-bezier(0.22, 1, 0.36, 1)';
+
+function skipIntro(intro: HTMLElement, shell: HTMLElement) {
+  intro.remove();
+  shell.removeAttribute('data-intro-wait');
+}
+
+function initIntro(reduceMotion: boolean) {
+  const intro = document.querySelector<HTMLElement>('[data-intro]');
+  const shell = document.querySelector<HTMLElement>('[data-intro-wait]');
+  if (!intro || !shell) return;
+
+  let played = false;
+  try {
+    played = window.sessionStorage.getItem(INTRO_KEY) === '1';
+  } catch {
+    // If storage is unavailable, the intro plays on each homepage visit.
+  }
+
+  if (reduceMotion || played) {
+    skipIntro(intro, shell);
+    return;
+  }
+
+  try {
+    window.sessionStorage.setItem(INTRO_KEY, '1');
+  } catch {
+    // The animation can still run without persisting its session state.
+  }
+
+  const words = intro.querySelectorAll<HTMLElement>('[data-intro-word]');
+  const name = intro.querySelector<HTMLElement>('[data-intro-name]');
+  const wordmark = document.querySelector<HTMLElement>('[data-wordmark]');
+  if (!name || !wordmark) {
+    skipIntro(intro, shell);
+    return;
+  }
+
+  wordmark.style.animation = 'none';
+  wordmark.style.opacity = '0';
+
+  window.requestAnimationFrame(() => {
+    window.requestAnimationFrame(() => {
+      words.forEach((word, index) => {
+        word.style.transition =
+          `transform 700ms ${EASE_OUT} ${index * 90}ms`;
+        word.style.transform = 'none';
+      });
+    });
+  });
+
+  window.setTimeout(() => {
+    const from = name.getBoundingClientRect();
+    const to = wordmark.getBoundingClientRect();
+    name.style.transition = `transform 650ms ${EASE_SETTLE}`;
+    name.style.transform = `translate(${to.left - from.left}px, ${
+      to.top - from.top
+    }px) scale(${to.width / from.width})`;
+    intro.style.transition = 'background-color 450ms ease 180ms';
+    intro.style.backgroundColor = 'transparent';
+
+    window.setTimeout(() => {
+      shell.removeAttribute('data-intro-wait');
+    }, 430);
+    window.setTimeout(() => {
+      wordmark.style.opacity = '1';
+      intro.remove();
+    }, 700);
+  }, 1200);
+}
 
 function initVisitedState() {
   try {
@@ -140,6 +212,9 @@ function initReveals(reduceMotion: boolean) {
 
 export function initMotion() {
   const reduceMotion = window.matchMedia(reducedMotionQuery).matches;
+
+  initIntro(reduceMotion);
+
   const finePointer = window.matchMedia(finePointerQuery).matches;
   const accentRule = document.querySelector<HTMLElement>('.accent-rule');
 

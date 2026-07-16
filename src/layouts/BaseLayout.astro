@@ -40,6 +40,7 @@ const ogImageUrl = new URL('/og-card.png', site);
 const siteRoot = new URL('/', site);
 const htmlLanguage = locale === 'zh' ? 'zh-CN' : locale;
 const currentYear = new Date().getFullYear();
+const showIntro = route === 'home' && !noindex;
 const personData = {
   '@context': 'https://schema.org',
   '@type': 'Person',
@@ -107,10 +108,30 @@ const personData = {
       type="application/ld+json"
       set:html={JSON.stringify(personData)}
     />
+    <noscript>
+      <style is:inline>
+        .intro { display: none !important; }
+        [data-intro-wait] * { animation-play-state: running !important; }
+      </style>
+    </noscript>
   </head>
   <body>
+    {
+      showIntro && (
+        <div class="intro" data-intro aria-hidden="true">
+          <div class="intro__name" data-intro-name>
+            <span class="intro__clip">
+              <span class="intro__word" data-intro-word>Vittorio</span>
+            </span>
+            <span class="intro__clip">
+              <span class="intro__word" data-intro-word>Cai</span>
+            </span>
+          </div>
+        </div>
+      )
+    }
     <div class="accent-rule" aria-hidden="true"></div>
-    <div class="site-shell">
+    <div class="site-shell" data-intro-wait={showIntro ? '' : undefined}>
       <Header locale={locale} route={route} />
       <main><slot /></main>
       <script>
