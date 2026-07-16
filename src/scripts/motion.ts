@@ -1,5 +1,19 @@
 const reducedMotionQuery = '(prefers-reduced-motion: reduce)';
 const finePointerQuery = '(hover: hover) and (pointer: fine)';
+const visitedSessionKey = 'vittorio-portfolio-visited';
+
+function initVisitedState() {
+  try {
+    if (window.sessionStorage.getItem(visitedSessionKey)) {
+      document.documentElement.dataset.visited = 'true';
+      return;
+    }
+
+    window.sessionStorage.setItem(visitedSessionKey, 'true');
+  } catch {
+    // Storage can be unavailable in privacy-restricted browsing contexts.
+  }
+}
 
 function initScrollProgress(accentRule: HTMLElement, reduceMotion: boolean) {
   if (reduceMotion) {
@@ -74,12 +88,74 @@ function initProjectPointer(link: HTMLElement) {
   link.addEventListener('pointermove', update);
 }
 
+function initTimeline(timeline: HTMLElement) {
+  const observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+
+        timeline.classList.add('timeline--visible');
+        observer.disconnect();
+      }
+    },
+    { threshold: 0.25 },
+  );
+
+  observer.observe(timeline);
+}
+
+function initReveals(reduceMotion: boolean) {
+  const targets = document.querySelectorAll<HTMLElement>('.reveal');
+
+  if (reduceMotion || !('IntersectionObserver' in window)) {
+    for (const element of targets) {
+      element.classList.add('reveal--visible');
+    }
+    return;
+  }
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+
+        const element = entry.target as HTMLElement;
+        element.style.transitionDelay = `${element.dataset.revealDelay ?? 0}ms`;
+        element.classList.add('reveal--visible');
+        element.addEventListener(
+          'transitionend',
+          () => {
+            element.style.transitionDelay = '0ms';
+          },
+          { once: true },
+        );
+        observer.unobserve(element);
+      }
+    },
+    { threshold: 0.12 },
+  );
+
+  for (const element of targets) observer.observe(element);
+}
+
 export function initMotion() {
   const reduceMotion = window.matchMedia(reducedMotionQuery).matches;
   const finePointer = window.matchMedia(finePointerQuery).matches;
   const accentRule = document.querySelector<HTMLElement>('.accent-rule');
 
+  initVisitedState();
   document.documentElement.dataset.motion = 'ready';
+  initReveals(reduceMotion || navigator.webdriver === true);
+
+  for (const timeline of document.querySelectorAll<HTMLElement>(
+    '[data-timeline]',
+  )) {
+    if (reduceMotion || !('IntersectionObserver' in window)) {
+      timeline.classList.add('timeline--visible');
+    } else {
+      initTimeline(timeline);
+    }
+  }
 
   if (accentRule) initScrollProgress(accentRule, reduceMotion);
   if (reduceMotion || !finePointer) return;

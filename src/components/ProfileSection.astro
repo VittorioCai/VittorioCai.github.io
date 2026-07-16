@@ -28,18 +28,24 @@ const educationLogos = {
   class="profile-content-section"
   aria-labelledby="profile-heading"
 >
-  <header class="profile-content-section__header">
+  <header
+    class="profile-content-section__header reveal"
+    data-reveal-delay="0"
+  >
     <h2 id="profile-heading">{heading}</h2>
   </header>
   <div class="profile-content-section__body">
-    <p class="profile-copy">{profile}</p>
+    <p class="profile-copy reveal" data-reveal-delay="80">{profile}</p>
     <div class="profile-timeline">
       {
-        education.map((entry) => {
+        education.map((entry, index) => {
           const logo = educationLogos[entry.institution];
 
           return (
-            <article class="profile-timeline__entry">
+            <article
+              class="profile-timeline__entry reveal"
+              data-reveal-delay={String(140 + index * 120)}
+            >
               <p class="profile-timeline__period">{entry.period}</p>
               <span class="profile-timeline__dot" aria-hidden="true"></span>
               <div class="profile-timeline__institution">

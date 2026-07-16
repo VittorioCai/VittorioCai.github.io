@@ -33,24 +33,32 @@ const caseStudyPath =
   data-featured="true"
 >
   <div class="project-featured__body">
-    <p class="section-label">{project.kicker}</p>
-    <h3>{project.title}</h3>
-    <p class="project-summary">{project.summary}</p>
+    <p class="section-label reveal" data-reveal-delay="0">
+      {project.kicker}
+    </p>
+    <h3 class="reveal" data-reveal-delay="80">{project.title}</h3>
+    <p class="project-summary reveal" data-reveal-delay="140">
+      {project.summary}
+    </p>
     {
       project.contribution && (
-        <p>
+        <p class="reveal" data-reveal-delay="200">
           <strong>{sections.contribution}:</strong>{' '}
           {project.contribution}
         </p>
       )
     }
-    <ul class="project-details">
+    <ul class="project-details reveal" data-reveal-delay="260">
       {project.details.map((detail) => <li>{detail}</li>)}
     </ul>
-    <ul class="project-tags" aria-label={project.title}>
+    <ul
+      class="project-tags reveal"
+      aria-label={project.title}
+      data-reveal-delay="300"
+    >
       {project.tags.map((tag) => <li>{tag}</li>)}
     </ul>
-    <div class="text-actions">
+    <div class="text-actions reveal" data-reveal-delay="520">
       {
         demoUrl && (
           <a class="external" href={demoUrl} rel="noreferrer">
@@ -68,7 +76,7 @@ const caseStudyPath =
       }
     </div>
   </div>
-  <div class="project-featured__visual">
+  <div class="project-featured__visual reveal" data-reveal-delay="140">
     {
       project.id === 'patentpath' && caseStudyPath && (
         <a

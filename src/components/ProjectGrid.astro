@@ -42,7 +42,7 @@ function getCaseStudyPath(project: Project): string | undefined {
 ---
 
 <section id="work" aria-labelledby="work-heading">
-  <div class="section-heading">
+  <div class="section-heading reveal" data-reveal-delay="0">
     <Heading id="work-heading">{sections.work}</Heading>
   </div>
 
@@ -55,12 +55,16 @@ function getCaseStudyPath(project: Project): string | undefined {
 
   <div class="project-grid">
     {
-      supportingProjects.map((project) => {
+      supportingProjects.map((project, index) => {
         const caseStudyPath = getCaseStudyPath(project);
         const sourceUrl = getSafeProjectAction(project.actions, 'source');
 
         return (
-          <article class="project-card" data-project-id={project.id}>
+          <article
+            class="project-card reveal"
+            data-project-id={project.id}
+            data-reveal-delay={String(index * 120)}
+          >
             <p class="section-label">{project.kicker}</p>
             <h3>{project.title}</h3>
             <p class="project-summary">{project.summary}</p>

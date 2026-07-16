@@ -117,34 +117,6 @@ const personData = {
         import { initMotion } from '../scripts/motion';
 
         initMotion();
-
-        const reduceMotion = window.matchMedia(
-          '(prefers-reduced-motion: reduce)',
-        ).matches;
-        const automated = navigator.webdriver === true;
-
-        if (!reduceMotion && !automated && 'IntersectionObserver' in window) {
-          const observer = new IntersectionObserver(
-            (entries) => {
-              for (const entry of entries) {
-                if (entry.isIntersecting) {
-                  entry.target.classList.add('reveal--visible');
-                  observer.unobserve(entry.target);
-                }
-              }
-            },
-            { threshold: 0.08 },
-          );
-
-          for (const element of document.querySelectorAll('main > *')) {
-            if (element.classList.contains('hero')) continue;
-            if (element.getBoundingClientRect().top < window.innerHeight) {
-              continue;
-            }
-            element.classList.add('reveal');
-            observer.observe(element);
-          }
-        }
       </script>
       <footer class="site-footer">
         <p>{copy.footer}</p>

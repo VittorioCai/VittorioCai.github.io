@@ -14,16 +14,30 @@ const { heading, experience } = Astro.props;
   class="profile-content-section"
   aria-labelledby="experience-heading"
 >
-  <header class="profile-content-section__header">
+  <header
+    class="profile-content-section__header reveal"
+    data-reveal-delay="0"
+  >
     <h2 id="experience-heading">{heading}</h2>
   </header>
-  <div class="profile-content-section__body profile-timeline">
+  <div
+    class="profile-content-section__body profile-timeline timeline"
+    data-timeline
+  >
+    <div class="timeline__track" aria-hidden="true"></div>
+    <div class="timeline__fill" aria-hidden="true"></div>
     {
-      experience.map((entry) => (
-        <article class="profile-timeline__entry">
+      experience.map((entry, index) => (
+        <article class="profile-timeline__entry timeline__item">
           <p class="profile-timeline__period">{entry.period}</p>
-          <span class="profile-timeline__dot" aria-hidden="true"></span>
-          <div class="profile-timeline__content">
+          <span
+            class="profile-timeline__dot timeline__dot"
+            aria-hidden="true"
+          ></span>
+          <div
+            class="profile-timeline__content timeline__body reveal"
+            data-reveal-delay={index === 0 ? '200' : '450'}
+          >
             <h3>{entry.role}</h3>
             <p>{entry.organization}</p>
             <ul>

@@ -16,13 +16,19 @@ const { heading, skillGroups, languages, languageHeading } = Astro.props;
   class="profile-content-section"
   aria-labelledby="skills-heading"
 >
-  <header class="profile-content-section__header">
+  <header
+    class="profile-content-section__header reveal"
+    data-reveal-delay="0"
+  >
     <h2 id="skills-heading">{heading}</h2>
   </header>
   <div class="profile-content-section__body profile-skills">
     {
-      skillGroups.map((group) => (
-        <section class="profile-skill-group">
+      skillGroups.map((group, index) => (
+        <section
+          class="profile-skill-group reveal"
+          data-reveal-delay={String(index * 120)}
+        >
           <h3>{group.title}</h3>
           <ul>
             {group.items.map((item) => <li>{item}</li>)}
@@ -30,7 +36,11 @@ const { heading, skillGroups, languages, languageHeading } = Astro.props;
         </section>
       ))
     }
-    <section class="profile-skill-group" data-skill-group="languages">
+    <section
+      class="profile-skill-group reveal"
+      data-skill-group="languages"
+      data-reveal-delay={String(skillGroups.length * 120)}
+    >
       <h3>{languageHeading}</h3>
       <ul>
         {languages.map((language) => <li>{language}</li>)}
