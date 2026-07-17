@@ -15,6 +15,12 @@ const projectIds = [
 ];
 
 describe('localized portfolio content', () => {
+  it('defines one localized display name per language', () => {
+    expect(content.en.displayName).toBe('Vittorio Cai');
+    expect(content.de.displayName).toBe('Vittorio Cai');
+    expect(content.zh.displayName).toBe('蔡一贤');
+  });
+
   it('publishes the same four projects in every supported locale', () => {
     expect(locales).toEqual(['en', 'de', 'zh']);
 

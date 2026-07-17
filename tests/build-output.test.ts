@@ -19,34 +19,40 @@ import {
 const projectRoot = fileURLToPath(new URL('..', import.meta.url));
 const distRoot = fileURLToPath(new URL('../dist/', import.meta.url));
 const siteUrl = 'https://vittoriocai.github.io';
-const personData = {
+const personData = (name: string) => ({
   '@context': 'https://schema.org',
   '@type': 'Person',
-  name: 'Vittorio Cai',
+  name,
   url: 'https://vittoriocai.github.io',
   sameAs: [
     'https://github.com/VittorioCai',
     'https://www.linkedin.com/in/vittorio-cai-3ba0b7385',
   ],
   jobTitle: 'M.Sc. student, Management and Digital Technology (TUM)',
-};
+});
 
 const localizedHomepages = [
   {
     file: 'index.html',
     lang: 'en',
+    displayName: 'Vittorio Cai',
+    introWords: ['Vittorio', 'Cai'],
     workPath: '/work/',
     demoNote: 'Free-tier backend — first load may take up to 40 s to wake.',
   },
   {
     file: 'de/index.html',
     lang: 'de',
+    displayName: 'Vittorio Cai',
+    introWords: ['Vittorio', 'Cai'],
     workPath: '/de/work/',
     demoNote: 'Backend im Free-Tier — der erste Aufruf kann bis zu 40 s dauern.',
   },
   {
     file: 'zh/index.html',
     lang: 'zh-CN',
+    displayName: '蔡一贤',
+    introWords: ['蔡一贤'],
     workPath: '/zh/work/',
     demoNote: '演示后端为免费实例，首次打开约需 40 秒唤醒。',
   },
@@ -98,18 +104,21 @@ const profilePages = [
   {
     file: 'profile/index.html',
     lang: 'en',
+    displayName: 'Vittorio Cai',
     languageHeading: 'Languages',
     journeyStops: ['Florence', 'Wenzhou', 'Heilbronn'],
   },
   {
     file: 'de/profile/index.html',
     lang: 'de',
+    displayName: 'Vittorio Cai',
     languageHeading: 'Sprachen',
     journeyStops: ['Florenz', 'Wenzhou', 'Heilbronn'],
   },
   {
     file: 'zh/profile/index.html',
     lang: 'zh-CN',
+    displayName: '蔡一贤',
     languageHeading: '语言',
     journeyStops: ['佛罗伦萨', '温州', '海尔布隆'],
   },
@@ -248,6 +257,8 @@ describe.each(localizedHomepages)('$file', ({
   lang,
   workPath,
   demoNote,
+  displayName,
+  introWords,
 }) => {
   it(`renders the ${lang} homepage contract`, () => {
     const $ = loadHomepage(file);
@@ -259,6 +270,13 @@ describe.each(localizedHomepages)('$file', ({
       $('[data-project-id="patentpath"]').first().attr('data-featured'),
     ).toBe('true');
     expect($(`a[href="${workPath}"]`).length).toBeGreaterThan(0);
+    expect($('[data-wordmark]').text().trim()).toBe(displayName);
+    expect(
+      $('[data-intro-word]')
+        .map((_, element) => $(element).text().trim())
+        .get(),
+    ).toEqual(introWords);
+    expect($('.site-footer').text()).toContain(displayName);
 
     const demoNotes = $('.demo-note');
     const patentpathActions = $('[data-project-id="patentpath"]')
@@ -312,7 +330,7 @@ describe.each(localizedHomepages)('$file', ({
           '@type' in entry &&
           entry['@type'] === 'Person',
       ),
-    ).toEqual([personData]);
+    ).toEqual([personData(displayName)]);
   });
 });
 
@@ -363,6 +381,7 @@ describe.each(profilePages)('$file', ({
   lang,
   languageHeading,
   journeyStops,
+  displayName,
 }) => {
   it(`renders the ${lang} profile-page contract`, () => {
     const $ = loadHomepage(file);
@@ -380,6 +399,7 @@ describe.each(profilePages)('$file', ({
     expect(languageGroup.find('h3').text().trim()).toBe(languageHeading);
 
     expect($('[data-profile-identity]')).toHaveLength(1);
+    expect($('[data-profile-identity] h1').text().trim()).toBe(displayName);
     expect($('[data-profile-monogram]').text().trim()).toBe('VC');
     expect($('[data-profile-journey]')).toHaveLength(1);
     expect(
@@ -513,8 +533,11 @@ describe.each(caseStudyPages)('$file', ({
 
 describe('public assets and privacy', () => {
   it('publishes Person JSON-LD only on localized homepages', () => {
-    const homepageFiles = new Set<string>(
-      localizedHomepages.map(({ file }) => file),
+    const homepagePeople = new Map<string, ReturnType<typeof personData>>(
+      localizedHomepages.map(({ file, displayName }) => [
+        file,
+        personData(displayName),
+      ]),
     );
 
     for (const htmlPath of listHtmlFiles(distRoot)) {
@@ -528,7 +551,20 @@ describe('public assets and privacy', () => {
           entry['@type'] === 'Person',
       );
 
-      expect(people, file).toEqual(homepageFiles.has(file) ? [personData] : []);
+      const person = homepagePeople.get(file);
+
+      expect(people, file).toEqual(person ? [person] : []);
+    }
+  });
+
+  it('uses the Chinese display name throughout localized page text', () => {
+    for (const htmlPath of listHtmlFiles(join(distRoot, 'zh'))) {
+      const file = relative(distRoot, htmlPath);
+      const $ = load(readFileSync(htmlPath, 'utf8'));
+      const pageText = $.root().text();
+
+      expect(pageText, file).toContain('蔡一贤');
+      expect(pageText, file).not.toContain('Vittorio Cai');
     }
   });
 

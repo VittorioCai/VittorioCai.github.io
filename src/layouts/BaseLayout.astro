@@ -41,10 +41,11 @@ const htmlLanguage = locale === 'zh' ? 'zh-CN' : locale;
 const currentYear = new Date().getFullYear();
 const showIntro = route === 'home' && !noindex;
 const showPersonData = route === 'home' && !noindex;
+const introWords = copy.displayName.split(/\s+/);
 const personData = {
   '@context': 'https://schema.org',
   '@type': 'Person',
-  name: 'Vittorio Cai',
+  name: copy.displayName,
   url: site.origin,
   sameAs: [
     'https://github.com/VittorioCai',
@@ -109,12 +110,13 @@ const personData = {
       showIntro && (
         <div class="intro" data-intro aria-hidden="true">
           <div class="intro__name" data-intro-name>
-            <span class="intro__clip">
-              <span class="intro__word" data-intro-word>Vittorio</span>
-            </span>
-            <span class="intro__clip">
-              <span class="intro__word" data-intro-word>Cai</span>
-            </span>
+            {
+              introWords.map((word) => (
+                <span class="intro__clip">
+                  <span class="intro__word" data-intro-word>{word}</span>
+                </span>
+              ))
+            }
           </div>
         </div>
       )
@@ -130,7 +132,7 @@ const personData = {
       </script>
       <footer class="site-footer">
         <p>{copy.footer}</p>
-        <p>&copy; {currentYear} Vittorio Cai</p>
+        <p>&copy; {currentYear} {copy.displayName}</p>
       </footer>
     </div>
   </body>

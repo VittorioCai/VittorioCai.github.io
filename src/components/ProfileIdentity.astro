@@ -3,11 +3,12 @@ import type { SiteContent } from '../content';
 import JourneyMap from './JourneyMap.astro';
 
 interface Props {
+  displayName: string;
   profileRail: SiteContent['profileRail'];
   actions: SiteContent['actions'];
 }
 
-const { profileRail, actions } = Astro.props;
+const { displayName, profileRail, actions } = Astro.props;
 ---
 
 <aside class="profile-identity" data-profile-identity>
@@ -20,7 +21,7 @@ const { profileRail, actions } = Astro.props;
       VC
     </div>
     <div class="profile-identity__heading">
-      <h1>Vittorio Cai</h1>
+      <h1>{displayName}</h1>
       <p class="profile-identity__role">{profileRail.role}</p>
       <p class="profile-identity__location">{profileRail.currentLocation}</p>
     </div>

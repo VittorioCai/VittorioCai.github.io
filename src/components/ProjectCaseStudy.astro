@@ -72,7 +72,7 @@ const structuredData = {
   url: pageUrl.href,
   author: {
     '@type': 'Person',
-    name: 'Vittorio Cai',
+    name: copy.displayName,
     url: new URL('/', Astro.site).href,
   },
   ...(publicLink ? { sameAs: [publicLink] } : {}),
@@ -86,7 +86,7 @@ const serializedStructuredData = JSON.stringify(structuredData).replace(
 <BaseLayout
   locale={locale}
   route={route}
-  title={`${project.title} — ${copy.actions.caseStudy} | Vittorio Cai`}
+  title={`${project.title} — ${copy.actions.caseStudy} | ${copy.displayName}`}
   description={project.summary}
 >
   <article class="case-study">

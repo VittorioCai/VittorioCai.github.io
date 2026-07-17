@@ -34,6 +34,7 @@ interface CaseStudy {
 
 export interface SiteContent {
   locale: Locale;
+  displayName: string;
   meta: {
     title: string;
     description: string;

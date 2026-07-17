@@ -2,6 +2,7 @@ import type { SiteContent } from './types';
 
 export const de = {
   locale: 'de',
+  displayName: 'Vittorio Cai',
   meta: {
     title: 'Vittorio Cai — Wirtschaft, Daten & angewandte KI',
     description:

@@ -2,8 +2,9 @@ import type { SiteContent } from './types';
 
 export const zh = {
   locale: 'zh',
+  displayName: '蔡一贤',
   meta: {
-    title: 'Vittorio Cai — 业务、数据与应用 AI',
+    title: '蔡一贤 — 业务、数据与应用 AI',
     description: 'TUM MMDT 学生，财务背景出身，用数据分析与 AI 解决真实业务问题。',
   },
   nav: {
@@ -35,17 +36,17 @@ export const zh = {
   },
   pageMeta: {
     work: {
-      title: '项目 — Vittorio Cai',
-      description: 'Vittorio Cai 的数据、分析与应用 AI 代表项目。',
+      title: '项目 — 蔡一贤',
+      description: '蔡一贤的数据、分析与应用 AI 代表项目。',
     },
     profile: {
-      title: '背景与经历 — Vittorio Cai',
-      description: 'Vittorio Cai 的教育背景、实践经历、技能与语言。',
+      title: '背景与经历 — 蔡一贤',
+      description: '蔡一贤的教育背景、实践经历、技能与语言。',
     },
     contact: {
-      title: '联系 — Vittorio Cai',
+      title: '联系 — 蔡一贤',
       description:
-        '联系 Vittorio Cai，洽谈德国 Working Student 与实习机会。',
+        '联系蔡一贤，洽谈德国 Working Student 与实习机会。',
     },
   },
   sections: {
