@@ -115,7 +115,7 @@ expect(
     .get(),
 ).toHaveLength(3);
 expect($('a[href="mailto:vittorio.cai@tum.de"]')).toHaveLength(1);
-expect($('a[href="https://linkedin.com/in/vittorio-cai"]')).toHaveLength(1);
+expect($('a[href="https://www.linkedin.com/in/vittorio-cai-3ba0b7385"]')).toHaveLength(1);
 expect($('a[href="https://github.com/VittorioCai"]')).toHaveLength(1);
 expect($('a[href="/Vittorio-Cai-CV-English.pdf"]')).toHaveLength(1);
 ```
@@ -139,7 +139,7 @@ The component must accept `profileRail`, `actions`, and `locale`; render `Vittor
     <p class="profile-identity__location">{profileRail.currentLocation}</p>
     <nav aria-label={profileRail.linksHeading}>
       <a href="mailto:vittorio.cai@tum.de">{actions.email}</a>
-      <a href="https://linkedin.com/in/vittorio-cai" rel="noreferrer">LinkedIn</a>
+      <a href="https://www.linkedin.com/in/vittorio-cai-3ba0b7385" rel="noreferrer">LinkedIn</a>
       <a href="https://github.com/VittorioCai" rel="noreferrer">GitHub</a>
       <a href="/Vittorio-Cai-CV-English.pdf" download>{actions.cv}</a>
     </nav>

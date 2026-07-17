@@ -76,7 +76,7 @@ Use these exact verified links and labels:
 ```ts
 export const links = {
   email: 'mailto:vittorio.cai@tum.de',
-  linkedin: 'https://linkedin.com/in/vittorio-cai',
+  linkedin: 'https://www.linkedin.com/in/vittorio-cai-3ba0b7385',
   github: 'https://github.com/VittorioCai',
   patentPathDemo: 'https://new-patent-path.vercel.app',
   jobAgentRepo: 'https://github.com/VittorioCai/english-job-agent-germany',

@@ -148,7 +148,7 @@ Use grouped text, not decorative skill badges or progress bars.
 ### 4.7 Contact
 
 - Email: `vittorio.cai@tum.de`
-- LinkedIn: `https://linkedin.com/in/vittorio-cai`
+- LinkedIn: `https://www.linkedin.com/in/vittorio-cai-3ba0b7385`
 - GitHub: `https://github.com/VittorioCai`
 - English CV PDF download
 

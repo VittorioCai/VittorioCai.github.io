@@ -15,11 +15,31 @@ const headerSource = readFileSync(
   fileURLToPath(new URL('../src/components/Header.astro', import.meta.url)),
   'utf8',
 );
+const profileIdentitySource = readFileSync(
+  fileURLToPath(
+    new URL('../src/components/ProfileIdentity.astro', import.meta.url),
+  ),
+  'utf8',
+);
+const contactBlockSource = readFileSync(
+  fileURLToPath(
+    new URL('../src/components/ContactBlock.astro', import.meta.url),
+  ),
+  'utf8',
+);
+const linkedInUrl =
+  'https://www.linkedin.com/in/vittorio-cai-3ba0b7385';
 
 describe('editorial shell contract', () => {
   it('uses the approved LinkedIn profile URL', () => {
-    expect(baseLayout).toContain('https://linkedin.com/in/vittorio-cai');
-    expect(baseLayout).not.toContain('3ba0b7385');
+    for (const source of [
+      baseLayout,
+      profileIdentitySource,
+      contactBlockSource,
+    ]) {
+      expect(source).toContain(linkedInUrl);
+      expect(source).not.toContain('https://linkedin.com/in/vittorio-cai');
+    }
   });
 
   it('keeps the exact root and body color contract', () => {

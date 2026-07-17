@@ -26,7 +26,7 @@ const personData = {
   url: 'https://vittoriocai.github.io',
   sameAs: [
     'https://github.com/VittorioCai',
-    'https://linkedin.com/in/vittorio-cai',
+    'https://www.linkedin.com/in/vittorio-cai-3ba0b7385',
   ],
   jobTitle: 'M.Sc. student, Management and Digital Technology (TUM)',
 };
@@ -401,7 +401,7 @@ describe.each(profilePages)('$file', ({
     ).toHaveLength(0);
     expect($('a[href="mailto:vittorio.cai@tum.de"]')).toHaveLength(1);
     expect(
-      $('a[href="https://linkedin.com/in/vittorio-cai"]'),
+      $('a[href="https://www.linkedin.com/in/vittorio-cai-3ba0b7385"]'),
     ).toHaveLength(1);
     expect($('a[href="https://github.com/VittorioCai"]')).toHaveLength(1);
     const cvLink = $('a[href="/Vittorio-Cai-CV-English.pdf"]');
