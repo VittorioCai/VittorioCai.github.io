@@ -21,6 +21,40 @@ describe('localized portfolio content', () => {
     expect(content.zh.displayName).toBe('蔡一贤');
   });
 
+  it('defines the complete PatentPATH product story in every locale', () => {
+    const expectedScreenshotPaths = [
+      '/projects/patentpath/overview.png',
+      '/projects/patentpath/patents.png',
+      '/projects/patentpath/risk-check.png',
+    ];
+
+    for (const locale of locales) {
+      const story = content[locale].caseStudies.patentpath.story;
+
+      expect(story.context).toBeTruthy();
+      expect(story.workflowHeading).toBeTruthy();
+      expect(story.workflow).toHaveLength(4);
+      expect(
+        story.workflow.every(
+          (step) => Boolean(step.title) && Boolean(step.description),
+        ),
+      ).toBe(true);
+      expect(story.differentiatorsHeading).toBeTruthy();
+      expect(story.differentiators).toHaveLength(4);
+      expect(story.architectureHeading).toBeTruthy();
+      expect(story.architecture).toHaveLength(5);
+      expect(story.disclaimer).toBeTruthy();
+      expect(
+        Object.values(story.screenshots).map(({ src }) => src),
+      ).toEqual(expectedScreenshotPaths);
+      expect(
+        Object.values(story.screenshots).every(
+          ({ alt, caption }) => Boolean(alt) && Boolean(caption),
+        ),
+      ).toBe(true);
+    }
+  });
+
   it('publishes the same four projects in every supported locale', () => {
     expect(locales).toEqual(['en', 'de', 'zh']);
 

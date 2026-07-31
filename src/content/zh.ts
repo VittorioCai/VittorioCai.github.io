@@ -213,6 +213,73 @@ export const zh = {
         '公开的在线演示。',
         '通过 TUM GenAI Project 与 Fuyao 合作完成的团队项目。',
       ],
+      story: {
+        context: '团队项目 · TUM GenAI Project × Fuyao Europe',
+        workflowHeading: '从专利语料到设计决策',
+        workflow: [
+          {
+            title: '专利理解',
+            description:
+              '读取专利，提取技术特征与权利要求，并构建结构化语料。',
+          },
+          {
+            title: '风险识别',
+            description:
+              '将产品设计与专利语料比较，标记权利要求级的重叠。',
+          },
+          {
+            title: '设计改进',
+            description: '基于已保存的风险分析生成结构化初步建议。',
+          },
+          {
+            title: '创新机会',
+            description: '发现专利版图中的模式与潜在空白。',
+          },
+        ],
+        differentiatorsHeading: '这套工作流的特别之处',
+        differentiators: [
+          '语义检索按概念相似度排序专利，并以关键词重叠作为回退方式。',
+          '结果定位到权利要求级重叠，而不止停留在文档相似度。',
+          '设计改进建议只基于已保存的权利要求级风险分析生成。',
+          '同一套结构化语料既支持单项设计检查，也支持更广泛的专利版图洞察。',
+        ],
+        architectureHeading: '我的工作如何连接起来',
+        architecture: [
+          '设计描述或专利 PDF',
+          'Web 界面',
+          'FastAPI 服务',
+          'PostgreSQL + pgvector',
+          '重叠发现 + 有依据的建议',
+        ],
+        screenshots: {
+          overview: {
+            src: '/projects/patentpath/overview.png',
+            alt: 'PatentPATH 总览页，展示四个产品阶段。',
+            caption:
+              '总览页把专利理解、风险识别、设计改进与创新洞察连接成一套产品流程。',
+            width: 1440,
+            height: 960,
+          },
+          patents: {
+            src: '/projects/patentpath/patents.png',
+            alt: 'PatentPATH 专利页，包含 PDF 分析、语义检索与语料筛选。',
+            caption:
+              '专利工作区把文档导入、基于概念的检索和语料筛选放在同一界面中。',
+            width: 1440,
+            height: 960,
+          },
+          riskCheck: {
+            src: '/projects/patentpath/risk-check.png',
+            alt: 'PatentPATH 风险检查页，包含设计描述输入框与三步分析说明。',
+            caption:
+              '自然语言设计描述会被解析、与专利语料匹配，并评估权利要求重叠。',
+            width: 1440,
+            height: 960,
+          },
+        },
+        disclaimer:
+          'PatentPATH 用于初步专利筛查，不构成法律意见，也不能替代专业专利审查。',
+      },
     },
     'english-job-agent': {
       outcome: '每天生成岗位候选清单，减少重复的人工搜索。',

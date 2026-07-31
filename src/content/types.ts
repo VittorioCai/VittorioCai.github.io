@@ -32,6 +32,40 @@ interface CaseStudy {
   evidence: string[];
 }
 
+interface PatentPathStoryStep {
+  title: string;
+  description: string;
+}
+
+interface PatentPathScreenshot {
+  src: string;
+  alt: string;
+  caption: string;
+  width: 1440;
+  height: 960;
+}
+
+interface PatentPathStory {
+  context: string;
+  workflowHeading: string;
+  workflow: [
+    PatentPathStoryStep,
+    PatentPathStoryStep,
+    PatentPathStoryStep,
+    PatentPathStoryStep,
+  ];
+  differentiatorsHeading: string;
+  differentiators: [string, string, string, string];
+  architectureHeading: string;
+  architecture: [string, string, string, string, string];
+  screenshots: {
+    overview: PatentPathScreenshot;
+    patents: PatentPathScreenshot;
+    riskCheck: PatentPathScreenshot;
+  };
+  disclaimer: string;
+}
+
 export interface SiteContent {
   locale: Locale;
   displayName: string;
@@ -108,7 +142,12 @@ export interface SiteContent {
     items: string[];
   }>;
   languages: string[];
-  caseStudies: Record<ProjectId, CaseStudy>;
+  caseStudies: {
+    patentpath: CaseStudy & { story: PatentPathStory };
+    'english-job-agent': CaseStudy;
+    'news-sentiment': CaseStudy;
+    'water-quality': CaseStudy;
+  };
   caseStudyLabels: {
     problem: string;
     responsibility: string;

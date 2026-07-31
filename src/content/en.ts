@@ -223,6 +223,75 @@ export const en = {
         'Public live demo.',
         'Team project with Fuyao through the TUM GenAI Project.',
       ],
+      story: {
+        context: 'Team project · TUM GenAI Project × Fuyao Europe',
+        workflowHeading: 'From patent corpus to design decision',
+        workflow: [
+          {
+            title: 'Patent Understanding',
+            description:
+              'Read patents, extract features and claims, and structure the corpus.',
+          },
+          {
+            title: 'Risk Identification',
+            description:
+              'Compare a product design with the corpus and flag claim-level overlap.',
+          },
+          {
+            title: 'Design Improvement',
+            description:
+              'Generate structured preliminary suggestions from a stored risk analysis.',
+          },
+          {
+            title: 'Innovation Opportunities',
+            description:
+              'Surface patterns and potential gaps across the patent landscape.',
+          },
+        ],
+        differentiatorsHeading: 'What makes the workflow different',
+        differentiators: [
+          'Semantic retrieval ranks patents by conceptual similarity, with keyword overlap as a fallback.',
+          'Results identify overlap at claim level rather than stopping at document similarity.',
+          'Design-improvement suggestions are generated only from a stored claim-level risk analysis.',
+          'The same structured corpus supports individual design checks and wider landscape insights.',
+        ],
+        architectureHeading: 'How my work connects',
+        architecture: [
+          'Design description or patent PDF',
+          'Web interface',
+          'FastAPI services',
+          'PostgreSQL + pgvector',
+          'Overlap findings + grounded suggestions',
+        ],
+        screenshots: {
+          overview: {
+            src: '/projects/patentpath/overview.png',
+            alt: 'PatentPATH Overview showing the four product phases.',
+            caption:
+              'The Overview connects patent understanding, risk identification, design improvement and innovation insights in one product flow.',
+            width: 1440,
+            height: 960,
+          },
+          patents: {
+            src: '/projects/patentpath/patents.png',
+            alt: 'PatentPATH Patents screen with PDF analysis, semantic search and catalogue filters.',
+            caption:
+              'The patent workspace combines document intake, concept-based retrieval and corpus filtering.',
+            width: 1440,
+            height: 960,
+          },
+          riskCheck: {
+            src: '/projects/patentpath/risk-check.png',
+            alt: 'PatentPATH Risk Check screen with a design description field and a three-step analysis explanation.',
+            caption:
+              'A plain-language design description is parsed, matched against the patent corpus and scored for claim overlap.',
+            width: 1440,
+            height: 960,
+          },
+        },
+        disclaimer:
+          'PatentPATH supports preliminary patent screening. It does not provide a legal opinion or replace professional patent review.',
+      },
     },
     'english-job-agent': {
       outcome:

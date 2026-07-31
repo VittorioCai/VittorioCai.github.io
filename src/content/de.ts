@@ -228,6 +228,76 @@ export const de = {
         'Öffentlich zugängliche Live-Demo.',
         'Teamprojekt mit Fuyao im Rahmen des TUM GenAI Project.',
       ],
+      story: {
+        context: 'Teamprojekt · TUM GenAI Project × Fuyao Europe',
+        workflowHeading: 'Vom Patentkorpus zur Designentscheidung',
+        workflow: [
+          {
+            title: 'Patentverständnis',
+            description:
+              'Patente lesen, Merkmale und Ansprüche extrahieren und den Korpus strukturieren.',
+          },
+          {
+            title: 'Risikoerkennung',
+            description:
+              'Ein Produktdesign mit dem Korpus vergleichen und Überschneidungen auf Anspruchsebene kennzeichnen.',
+          },
+          {
+            title: 'Designverbesserung',
+            description:
+              'Strukturierte vorläufige Vorschläge aus einer gespeicherten Risikoanalyse erzeugen.',
+          },
+          {
+            title: 'Innovationsmöglichkeiten',
+            description:
+              'Muster und potenzielle Lücken in der Patentlandschaft sichtbar machen.',
+          },
+        ],
+        differentiatorsHeading:
+          'Was den Arbeitsablauf besonders macht',
+        differentiators: [
+          'Die semantische Suche ordnet Patente nach inhaltlicher Ähnlichkeit; Keyword-Überschneidung dient als Fallback.',
+          'Die Ergebnisse zeigen Überschneidungen auf Anspruchsebene, statt bei Dokumentähnlichkeit stehen zu bleiben.',
+          'Designverbesserungen entstehen nur auf Grundlage einer gespeicherten Risikoanalyse auf Anspruchsebene.',
+          'Derselbe strukturierte Korpus unterstützt einzelne Designprüfungen und übergreifende Landschaftsanalysen.',
+        ],
+        architectureHeading: 'Wie meine Arbeit zusammenwirkt',
+        architecture: [
+          'Designbeschreibung oder Patent-PDF',
+          'Web-Oberfläche',
+          'FastAPI-Services',
+          'PostgreSQL + pgvector',
+          'Überschneidungsbefunde + fundierte Vorschläge',
+        ],
+        screenshots: {
+          overview: {
+            src: '/projects/patentpath/overview.png',
+            alt: 'PatentPATH-Übersicht mit vier Produktphasen.',
+            caption:
+              'Die Übersicht verbindet Patentverständnis, Risikoerkennung, Designverbesserung und Innovationsanalysen in einem Produktablauf.',
+            width: 1440,
+            height: 960,
+          },
+          patents: {
+            src: '/projects/patentpath/patents.png',
+            alt: 'PatentPATH-Patentansicht mit PDF-Analyse, semantischer Suche und Katalogfiltern.',
+            caption:
+              'Der Patentarbeitsbereich kombiniert Dokumentaufnahme, konzeptbasierte Suche und Korpusfilterung.',
+            width: 1440,
+            height: 960,
+          },
+          riskCheck: {
+            src: '/projects/patentpath/risk-check.png',
+            alt: 'PatentPATH-Risikoprüfung mit Eingabefeld für eine Designbeschreibung und dreistufiger Analyseerklärung.',
+            caption:
+              'Eine frei formulierte Designbeschreibung wird zerlegt, mit dem Patentkorpus abgeglichen und auf Anspruchsüberschneidungen bewertet.',
+            width: 1440,
+            height: 960,
+          },
+        },
+        disclaimer:
+          'PatentPATH unterstützt die vorläufige Patentprüfung. Das Produkt liefert keine Rechtsberatung und ersetzt keine professionelle Patentprüfung.',
+      },
     },
     'english-job-agent': {
       outcome:
