@@ -1,5 +1,9 @@
 import { execFileSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
+import {
+  existsSync,
+  readFileSync,
+  statSync,
+} from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -30,12 +34,26 @@ const projectRoot = fileURLToPath(new URL('..', import.meta.url));
 const approvedPublicBinaries = new Set([
   'public/Vittorio-Cai-CV-English.pdf',
 ]);
+const patentPathScreenshots = [
+  'public/projects/patentpath/overview.png',
+  'public/projects/patentpath/patents.png',
+  'public/projects/patentpath/risk-check.png',
+];
 
 function readProjectFile(path: string): string {
   return readFileSync(`${projectRoot}/${path}`, 'utf8');
 }
 
 describe('repository maintenance contract', () => {
+  it('keeps the PatentPATH walkthrough screenshots local and nonempty', () => {
+    for (const screenshot of patentPathScreenshots) {
+      const path = join(projectRoot, screenshot);
+
+      expect(existsSync(path), screenshot).toBe(true);
+      expect(statSync(path).size, screenshot).toBeGreaterThan(20_000);
+    }
+  });
+
   it('documents the browser install required before local verification', () => {
     const readme = readProjectFile('README.md');
     const dependencyInstall = readme.indexOf('npm ci');
