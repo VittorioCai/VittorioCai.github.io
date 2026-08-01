@@ -48,6 +48,36 @@ test('the project language switcher preserves the PatentPATH route', async ({
   await expect(page.locator('html')).toHaveAttribute('lang', 'de');
 });
 
+test('/work/patentpath/ presents a loaded screenshot-led product story', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto('/work/patentpath/');
+
+  const story = page.locator('[data-patentpath-story]');
+  const screenshots = story.locator('[data-patentpath-screenshot]');
+
+  await expect(story).toBeVisible();
+  await expect(screenshots).toHaveCount(3);
+
+  for (const screenshot of await screenshots.all()) {
+    await expect(screenshot).toBeVisible();
+    await expect(screenshot).toHaveJSProperty('complete', true);
+    expect(
+      await screenshot.evaluate((image) =>
+        image instanceof HTMLImageElement ? image.naturalWidth : 0,
+      ),
+    ).toBeGreaterThan(1000);
+  }
+
+  const overview = page.locator(
+    '[data-patentpath-screenshot][src="/projects/patentpath/overview.png"]',
+  );
+  const overviewBox = await overview.boundingBox();
+
+  expect(overviewBox?.width).toBeGreaterThan(700);
+});
+
 test('the editorial typeface is self-hosted and applied to body and display text', async ({
   page,
 }) => {

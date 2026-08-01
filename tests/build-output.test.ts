@@ -496,12 +496,53 @@ describe.each(caseStudyPages)('$file', ({
 
     expect($('html').attr('lang')).toBe(lang);
     expect(article).toHaveLength(1);
-    expect(
-      article
-        .find('.case-study__body > section > h2')
-        .map((_, element) => $(element).text().trim())
-        .get(),
-    ).toEqual(caseStudySectionLabels[lang]);
+
+    if (project === 'patentpath') {
+      expect(article.find('[data-patentpath-story]')).toHaveLength(1);
+      expect(
+        article.find('[data-patentpath-workflow-step]'),
+      ).toHaveLength(4);
+      expect(
+        article.find('[data-patentpath-differentiator]'),
+      ).toHaveLength(4);
+      expect(
+        article.find('[data-patentpath-contribution]'),
+      ).toHaveLength(4);
+      expect(
+        article.find('[data-patentpath-architecture-node]'),
+      ).toHaveLength(5);
+      expect(article.find('[data-patentpath-screenshot]')).toHaveLength(3);
+      expect(article.find('[data-patentpath-disclaimer]')).toHaveLength(1);
+      expect(article.find('.demo-note')).toHaveLength(1);
+      expect(
+        article
+          .find('[data-patentpath-screenshot]')
+          .map((_, element) => $(element).attr('src'))
+          .get(),
+      ).toEqual([
+        '/projects/patentpath/overview.png',
+        '/projects/patentpath/patents.png',
+        '/projects/patentpath/risk-check.png',
+      ]);
+      article.find('[data-patentpath-screenshot]').each((_, element) => {
+        expect($(element).attr('alt')).toBeTruthy();
+        expect($(element).attr('width')).toBe('1440');
+        expect($(element).attr('height')).toBe('960');
+      });
+      expect(article.find('figure figcaption')).toHaveLength(3);
+      expect(
+        article.find('[data-case-section="responsibility"]'),
+      ).toHaveLength(1);
+    } else {
+      expect(article.find('[data-patentpath-story]')).toHaveLength(0);
+      expect(
+        article
+          .find('.case-study__body > section > h2')
+          .map((_, element) => $(element).text().trim())
+          .get(),
+      ).toEqual(caseStudySectionLabels[lang]);
+    }
+
     expect(
       article.find('[data-case-section="responsibility"]').text().trim()
         .length,
@@ -529,6 +570,23 @@ describe.each(caseStudyPages)('$file', ({
       expect(article.find('a[href*="vercel.app"]')).toHaveLength(0);
     }
   });
+});
+
+it('renders the PatentPATH walkthrough only on PatentPATH routes', () => {
+  const detailedPages = caseStudyPages.filter(
+    ({ project }) => project === 'patentpath',
+  );
+  const genericPages = caseStudyPages.filter(
+    ({ project }) => project !== 'patentpath',
+  );
+
+  for (const { file } of detailedPages) {
+    expect(loadHomepage(file)('[data-patentpath-story]')).toHaveLength(1);
+  }
+
+  for (const { file } of genericPages) {
+    expect(loadHomepage(file)('[data-patentpath-story]')).toHaveLength(0);
+  }
 });
 
 describe('public assets and privacy', () => {

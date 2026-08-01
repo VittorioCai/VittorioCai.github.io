@@ -6,6 +6,7 @@ import { getLocalizedPath } from '../i18n/routes';
 import type { RouteKey } from '../i18n/routes';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getSafeProjectAction } from '../utils/external-url';
+import PatentPathStory from './PatentPathStory.astro';
 import ProjectVisual from './ProjectVisual.astro';
 
 type CaseStudyProjectId = ProjectId;
@@ -56,6 +57,8 @@ if (!nextProject) {
 }
 
 const caseStudy = copy.caseStudies[projectId];
+const patentPathCaseStudy =
+  projectId === 'patentpath' ? copy.caseStudies.patentpath : null;
 const publicLink = getSafeProjectAction(
   project.actions,
   projectId === 'patentpath' ? 'demo' : 'source',
@@ -95,74 +98,85 @@ const serializedStructuredData = JSON.stringify(structuredData).replace(
       <p class="case-study__project-name">{project.title}</p>
 
       {
-        (projectId === 'patentpath' ||
-          projectId === 'english-job-agent') && (
+        projectId === 'english-job-agent' && (
           <div class="case-study__visual">
-            {projectId === 'patentpath' ? (
-              <ProjectVisual
-                projectId="patentpath"
-                label={`${project.title}: ${project.summary}`}
-              />
-            ) : (
-              <ProjectVisual
-                projectId="english-job-agent"
-                label={`${project.title}: ${project.summary}`}
-                stages={copy.visuals.jobAgentStages}
-              />
-            )}
+            <ProjectVisual
+              projectId="english-job-agent"
+              label={`${project.title}: ${project.summary}`}
+              stages={copy.visuals.jobAgentStages}
+            />
           </div>
         )
       }
 
       {
         publicLink && (
-          <div class="text-actions">
-            <a class="external" href={publicLink} rel="noreferrer">
-              {publicLinkLabel}
-            </a>
+          <div class="case-study__public-action">
+            <div class="text-actions">
+              <a class="external" href={publicLink} rel="noreferrer">
+                {publicLinkLabel}
+              </a>
+            </div>
+            {
+              projectId === 'patentpath' && project.demoNote ? (
+                <p class="demo-note">{project.demoNote}</p>
+              ) : null
+            }
           </div>
         )
       }
     </aside>
 
     <div class="case-study__body">
-      <header class="case-study__header">
-        <h1>{caseStudy.outcome}</h1>
-        <p class="case-study__intro">{project.summary}</p>
-      </header>
+      {
+        patentPathCaseStudy ? (
+          <PatentPathStory
+            caseStudy={patentPathCaseStudy}
+            summary={project.summary}
+            labels={copy.caseStudyLabels}
+          />
+        ) : (
+          <>
+            <header class="case-study__header">
+              <h1>{caseStudy.outcome}</h1>
+              <p class="case-study__intro">{project.summary}</p>
+            </header>
 
-      <section aria-labelledby="case-problem-heading">
-        <h2 id="case-problem-heading">
-          {copy.caseStudyLabels.problem}
-        </h2>
-        <p>{caseStudy.problem}</p>
-      </section>
+            <section aria-labelledby="case-problem-heading">
+              <h2 id="case-problem-heading">
+                {copy.caseStudyLabels.problem}
+              </h2>
+              <p>{caseStudy.problem}</p>
+            </section>
 
-      <section
-        aria-labelledby="case-responsibility-heading"
-        data-case-section="responsibility"
-      >
-        <h2 id="case-responsibility-heading">
-          {copy.caseStudyLabels.responsibility}
-        </h2>
-        <p>{caseStudy.responsibility}</p>
-      </section>
+            <section
+              aria-labelledby="case-responsibility-heading"
+              data-case-section="responsibility"
+            >
+              <h2 id="case-responsibility-heading">
+                {copy.caseStudyLabels.responsibility}
+              </h2>
+              <p>{caseStudy.responsibility}</p>
+            </section>
 
-      <section aria-labelledby="case-build-heading">
-        <h2 id="case-build-heading">{copy.caseStudyLabels.build}</h2>
-        <ul>
-          {caseStudy.build.map((item) => <li>{item}</li>)}
-        </ul>
-      </section>
+            <section aria-labelledby="case-build-heading">
+              <h2 id="case-build-heading">{copy.caseStudyLabels.build}</h2>
+              <ul>
+                {caseStudy.build.map((item) => <li>{item}</li>)}
+              </ul>
+            </section>
 
-      <section aria-labelledby="case-evidence-heading">
-        <h2 id="case-evidence-heading">
-          {copy.caseStudyLabels.evidence}
-        </h2>
-        <ul>
-          {caseStudy.evidence.map((item) => <li>{item}</li>)}
-        </ul>
-      </section>
+            <section aria-labelledby="case-evidence-heading">
+              <h2 id="case-evidence-heading">
+                {copy.caseStudyLabels.evidence}
+              </h2>
+              <ul>
+                {caseStudy.evidence.map((item) => <li>{item}</li>)}
+              </ul>
+            </section>
+          </>
+        )
+      }
 
       <nav
         class="case-study__navigation"
@@ -196,6 +210,18 @@ const serializedStructuredData = JSON.stringify(structuredData).replace(
 
   .case-study__visual {
     margin-top: clamp(2rem, 5vw, 4rem);
+  }
+
+  .case-study__public-action {
+    margin-top: 2rem;
+  }
+
+  .demo-note {
+    max-width: 28ch;
+    margin: 0.75rem 0 0;
+    color: var(--muted);
+    font-size: 0.78rem;
+    line-height: 1.45;
   }
 
   .case-study__header {

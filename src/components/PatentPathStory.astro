@@ -1,0 +1,371 @@
+---
+import type { SiteContent } from '../content';
+
+interface Props {
+  caseStudy: SiteContent['caseStudies']['patentpath'];
+  summary: string;
+  labels: SiteContent['caseStudyLabels'];
+}
+
+const { caseStudy, summary, labels } = Astro.props;
+const { story } = caseStudy;
+const screenshots = [
+  [story.screenshots.overview, 'eager'],
+  [story.screenshots.patents, 'lazy'],
+  [story.screenshots.riskCheck, 'lazy'],
+] as const;
+---
+
+<div class="patentpath-story" data-patentpath-story>
+  <header class="patentpath-story__header">
+    <p class="patentpath-story__context">{story.context}</p>
+    <h1>{caseStudy.outcome}</h1>
+    <p class="patentpath-story__intro">{summary}</p>
+  </header>
+
+  <figure class="patentpath-story__figure patentpath-story__figure--hero">
+    <img
+      data-patentpath-screenshot
+      src={screenshots[0][0].src}
+      alt={screenshots[0][0].alt}
+      width={screenshots[0][0].width}
+      height={screenshots[0][0].height}
+      loading={screenshots[0][1]}
+      decoding="async"
+    />
+    <figcaption>{screenshots[0][0].caption}</figcaption>
+  </figure>
+
+  <section aria-labelledby="patentpath-problem-heading">
+    <h2 id="patentpath-problem-heading">{labels.problem}</h2>
+    <p>{caseStudy.problem}</p>
+  </section>
+
+  <section aria-labelledby="patentpath-workflow-heading">
+    <h2 id="patentpath-workflow-heading">{story.workflowHeading}</h2>
+    <ol class="patentpath-story__workflow">
+      {
+        story.workflow.map((step, index) => (
+          <li data-patentpath-workflow-step>
+            <span aria-hidden="true">
+              {String(index + 1).padStart(2, '0')}
+            </span>
+            <h3>{step.title}</h3>
+            <p>{step.description}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <figure class="patentpath-story__figure">
+    <img
+      data-patentpath-screenshot
+      src={screenshots[1][0].src}
+      alt={screenshots[1][0].alt}
+      width={screenshots[1][0].width}
+      height={screenshots[1][0].height}
+      loading={screenshots[1][1]}
+      decoding="async"
+    />
+    <figcaption>{screenshots[1][0].caption}</figcaption>
+  </figure>
+
+  <section aria-labelledby="patentpath-differentiators-heading">
+    <h2 id="patentpath-differentiators-heading">
+      {story.differentiatorsHeading}
+    </h2>
+    <ol class="patentpath-story__differentiators">
+      {
+        story.differentiators.map((item, index) => (
+          <li data-patentpath-differentiator>
+            <span aria-hidden="true">
+              {String(index + 1).padStart(2, '0')}
+            </span>
+            <p>{item}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <figure class="patentpath-story__figure">
+    <img
+      data-patentpath-screenshot
+      src={screenshots[2][0].src}
+      alt={screenshots[2][0].alt}
+      width={screenshots[2][0].width}
+      height={screenshots[2][0].height}
+      loading={screenshots[2][1]}
+      decoding="async"
+    />
+    <figcaption>{screenshots[2][0].caption}</figcaption>
+  </figure>
+
+  <section
+    aria-labelledby="patentpath-responsibility-heading"
+    data-case-section="responsibility"
+  >
+    <h2 id="patentpath-responsibility-heading">
+      {labels.responsibility}
+    </h2>
+    <p>{caseStudy.responsibility}</p>
+    <h3>{labels.build}</h3>
+    <ol class="patentpath-story__contribution">
+      {
+        caseStudy.build.map((item, index) => (
+          <li data-patentpath-contribution>
+            <span aria-hidden="true">
+              {String(index + 1).padStart(2, '0')}
+            </span>
+            <p>{item}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section aria-labelledby="patentpath-architecture-heading">
+    <h2 id="patentpath-architecture-heading">
+      {story.architectureHeading}
+    </h2>
+    <ol class="patentpath-story__architecture">
+      {
+        story.architecture.map((node) => (
+          <li data-patentpath-architecture-node>{node}</li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section aria-labelledby="patentpath-evidence-heading">
+    <h2 id="patentpath-evidence-heading">{labels.evidence}</h2>
+    <ul>
+      {caseStudy.evidence.map((item) => <li>{item}</li>)}
+    </ul>
+    <p class="patentpath-story__disclaimer" data-patentpath-disclaimer>
+      {story.disclaimer}
+    </p>
+  </section>
+</div>
+
+<style>
+  .patentpath-story__header {
+    padding-bottom: clamp(2.5rem, 6vw, 5rem);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .patentpath-story__context {
+    margin-bottom: 1.25rem;
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .patentpath-story__header h1 {
+    max-width: 17ch;
+    margin-bottom: 1.5rem;
+    font-size: clamp(2.4rem, 6vw, 5.5rem);
+    letter-spacing: -0.055em;
+    line-height: 0.98;
+  }
+
+  .patentpath-story__intro {
+    max-width: 65ch;
+    margin-bottom: 0;
+    color: var(--muted);
+    font-size: clamp(1.05rem, 2vw, 1.3rem);
+  }
+
+  .patentpath-story > section,
+  .patentpath-story__figure {
+    padding: clamp(2.5rem, 6vw, 5rem) 0;
+    margin: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .patentpath-story__figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--line);
+    background: var(--surface);
+  }
+
+  .patentpath-story__figure figcaption {
+    max-width: 70ch;
+    padding-top: 1rem;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  .patentpath-story h2 {
+    max-width: 22ch;
+    margin-bottom: 1.5rem;
+    font-size: clamp(1.5rem, 3vw, 2.4rem);
+    letter-spacing: -0.035em;
+  }
+
+  .patentpath-story h3 {
+    font-size: 1rem;
+  }
+
+  .patentpath-story__workflow,
+  .patentpath-story__differentiators,
+  .patentpath-story__contribution,
+  .patentpath-story__architecture {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .patentpath-story__workflow {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .patentpath-story__workflow li {
+    min-width: 0;
+    padding: 1.5rem;
+  }
+
+  .patentpath-story__workflow li + li {
+    border-left: 1px solid var(--line);
+  }
+
+  .patentpath-story__workflow span,
+  .patentpath-story__differentiators span,
+  .patentpath-story__contribution span {
+    display: block;
+    margin-bottom: 1rem;
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .patentpath-story__workflow h3 {
+    margin-bottom: 0.75rem;
+  }
+
+  .patentpath-story__workflow p,
+  .patentpath-story__differentiators p,
+  .patentpath-story__contribution p {
+    margin: 0;
+  }
+
+  .patentpath-story__differentiators,
+  .patentpath-story__contribution {
+    border-top: 1px solid var(--line);
+  }
+
+  .patentpath-story__differentiators li,
+  .patentpath-story__contribution li {
+    display: grid;
+    grid-template-columns: 3rem minmax(0, 1fr);
+    gap: 1rem;
+    padding: 1.25rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .patentpath-story__differentiators span,
+  .patentpath-story__contribution span {
+    margin: 0;
+  }
+
+  .patentpath-story__contribution {
+    margin-top: 1.5rem;
+  }
+
+  .patentpath-story__architecture {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .patentpath-story__architecture li {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-height: 7rem;
+    padding: 1rem;
+    text-align: center;
+    font-weight: 700;
+  }
+
+  .patentpath-story__architecture li + li {
+    border-left: 1px solid var(--line);
+  }
+
+  .patentpath-story__architecture li + li::before {
+    position: absolute;
+    left: 0;
+    padding: 0.25rem;
+    color: var(--accent);
+    background: var(--paper);
+    content: '→';
+    transform: translateX(-50%);
+  }
+
+  .patentpath-story__disclaimer {
+    max-width: 65ch;
+    padding: 1rem;
+    margin: 1.5rem 0 0;
+    color: var(--muted);
+    border: 1px solid var(--line);
+    font-size: 0.9rem;
+  }
+
+  @media (max-width: 900px) {
+    .patentpath-story__workflow {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .patentpath-story__workflow li + li {
+      border-left: 0;
+    }
+
+    .patentpath-story__workflow li:nth-child(even) {
+      border-left: 1px solid var(--line);
+    }
+
+    .patentpath-story__workflow li:nth-child(n + 3) {
+      border-top: 1px solid var(--line);
+    }
+
+    .patentpath-story__architecture {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .patentpath-story__architecture li {
+      min-height: 0;
+      padding: 1.25rem;
+    }
+
+    .patentpath-story__architecture li + li {
+      border-top: 1px solid var(--line);
+      border-left: 0;
+    }
+
+    .patentpath-story__architecture li + li::before {
+      top: 0;
+      left: 50%;
+      content: '↓';
+      transform: translate(-50%, -50%);
+    }
+  }
+
+  @media (max-width: 560px) {
+    .patentpath-story__workflow {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .patentpath-story__workflow li:nth-child(even) {
+      border-left: 0;
+    }
+
+    .patentpath-story__workflow li + li {
+      border-top: 1px solid var(--line);
+    }
+  }
+</style>
