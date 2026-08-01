@@ -348,6 +348,24 @@ test('the featured project visual offers a pointer-follow case study cue', async
   expect(pillScale).toBeGreaterThan(0.8);
 });
 
+test('the PatentPATH product preview stays static with reduced motion', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/');
+
+  const preview = page.locator('[data-patent-preview]');
+  const overview = preview.locator('.patent-preview__screen--overview');
+  const animatedScreens = await preview
+    .locator('[data-patent-preview-screen]')
+    .evaluateAll((screens) =>
+      screens.map((screen) => getComputedStyle(screen).animationName),
+    );
+
+  await expect(overview).toHaveCSS('opacity', '1');
+  expect(animatedScreens).toEqual(['none', 'none', 'none']);
+});
+
 test('/profile/ presents a sticky identity rail and animated journey on desktop', async ({
   page,
 }) => {
