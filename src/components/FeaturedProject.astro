@@ -188,7 +188,7 @@ const caseStudyPath =
     transform: scale(1.025) rotate(0.4deg);
   }
 
-  .project-featured__visual-link :global(.patent-visual) {
+  .project-featured__visual-link :global(.patent-preview) {
     position: relative;
     z-index: 2;
     width: 88%;
@@ -277,7 +277,7 @@ const caseStudyPath =
   }
 
   @supports (animation-timeline: view()) {
-    .project-featured__visual-link :global(.patent-visual) {
+    .project-featured__visual-link :global(.patent-preview) {
       transform-origin: 50% 70%;
       animation-name: project-unfold;
       animation-timing-function: linear;
@@ -306,12 +306,12 @@ const caseStudyPath =
   @media (prefers-reduced-motion: reduce) {
     .project-featured__visual-link,
     .project-featured__motion-layer,
-    .project-featured__visual-link :global(.patent-visual) {
+    .project-featured__visual-link :global(.patent-preview) {
       animation: none;
     }
 
     .project-featured__visual-link,
-    .project-featured__visual-link :global(.patent-visual) {
+    .project-featured__visual-link :global(.patent-preview) {
       transform: none;
     }
 

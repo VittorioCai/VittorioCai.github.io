@@ -280,6 +280,28 @@ test('the featured project visual offers a pointer-follow case study cue', async
   );
   await expect(visualLink.locator('[data-project-motion-layer]')).toHaveCount(2);
 
+  const preview = visualLink.locator('[data-patent-preview]');
+  const screens = preview.locator('[data-patent-preview-screen]');
+
+  await expect(preview).toHaveCount(1);
+  await expect(screens).toHaveCount(3);
+  for (const screen of await screens.all()) {
+    await expect(screen).toHaveAttribute('alt', '');
+  }
+  await expect(screens.nth(0)).toHaveAttribute(
+    'src',
+    '/projects/patentpath/overview.png',
+  );
+  await expect(screens.nth(1)).toHaveAttribute(
+    'src',
+    '/projects/patentpath/patents.png',
+  );
+  await expect(screens.nth(2)).toHaveAttribute(
+    'src',
+    '/projects/patentpath/risk-check.png',
+  );
+  await expect(visualLink.locator('.patent-workspace')).toHaveCount(0);
+
   await visualLink.scrollIntoViewIfNeeded();
   const box = await visualLink.boundingBox();
   expect(box).not.toBeNull();
