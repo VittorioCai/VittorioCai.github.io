@@ -329,6 +329,26 @@ test('the featured project visual offers a pointer-follow case study cue', async
     iterations: 1,
   });
 
+  const previewTransform = await preview.evaluate((element) => {
+    const matrix = new DOMMatrixReadOnly(getComputedStyle(element).transform);
+
+    return {
+      scaleX: matrix.a,
+      skewY: matrix.b,
+      skewX: matrix.c,
+      scaleY: matrix.d,
+      translateX: matrix.e,
+      translateY: matrix.f,
+    };
+  });
+
+  expect(previewTransform.scaleX).toBeCloseTo(1, 3);
+  expect(previewTransform.skewY).toBeCloseTo(0, 3);
+  expect(previewTransform.skewX).toBeCloseTo(0, 3);
+  expect(previewTransform.scaleY).toBeCloseTo(1, 3);
+  expect(previewTransform.translateX).toBeCloseTo(0, 3);
+  expect(previewTransform.translateY).toBeCloseTo(0, 3);
+
   const box = await visualLink.boundingBox();
   expect(box).not.toBeNull();
   await page.mouse.move(box!.x + box!.width * 0.65, box!.y + box!.height * 0.45);

@@ -246,16 +246,6 @@ const caseStudyPath =
     }
   }
 
-  @keyframes project-unfold {
-    from {
-      transform: translate3d(0, 7rem, 0) rotate(-8deg) scale(0.82);
-    }
-
-    to {
-      transform: none;
-    }
-  }
-
   @keyframes project-layer-back-unfold {
     from {
       transform: translate3d(-16%, 14%, 0) rotate(-18deg) scale(0.82);
@@ -277,15 +267,6 @@ const caseStudyPath =
   }
 
   @supports (animation-timeline: view()) {
-    .project-featured__visual-link :global(.patent-preview) {
-      transform-origin: 50% 70%;
-      animation-name: project-unfold;
-      animation-timing-function: linear;
-      animation-fill-mode: both;
-      animation-timeline: view(block);
-      animation-range: entry 0% cover 45%;
-    }
-
     .project-featured__motion-layer--back {
       animation-name: project-layer-back-unfold;
       animation-timing-function: linear;
@@ -305,13 +286,11 @@ const caseStudyPath =
 
   @media (prefers-reduced-motion: reduce) {
     .project-featured__visual-link,
-    .project-featured__motion-layer,
-    .project-featured__visual-link :global(.patent-preview) {
+    .project-featured__motion-layer {
       animation: none;
     }
 
-    .project-featured__visual-link,
-    .project-featured__visual-link :global(.patent-preview) {
+    .project-featured__visual-link {
       transform: none;
     }
 
