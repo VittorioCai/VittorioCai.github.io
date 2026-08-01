@@ -303,6 +303,32 @@ test('the featured project visual offers a pointer-follow case study cue', async
   await expect(visualLink.locator('.patent-workspace')).toHaveCount(0);
 
   await visualLink.scrollIntoViewIfNeeded();
+  await expect(
+    visualLink.locator('.patent-preview__screen--risk'),
+  ).toHaveCSS('opacity', '1', { timeout: 6_000 });
+
+  const riskAnimation = await visualLink
+    .locator('.patent-preview__screen--risk')
+    .evaluate((element) => {
+      const animation = element.getAnimations()[0];
+      const timing =
+        animation?.effect instanceof KeyframeEffect
+          ? animation.effect.getComputedTiming()
+          : null;
+
+      return {
+        count: element.getAnimations().length,
+        duration: timing?.duration,
+        iterations: timing?.iterations,
+      };
+    });
+
+  expect(riskAnimation).toEqual({
+    count: 1,
+    duration: 4500,
+    iterations: 1,
+  });
+
   const box = await visualLink.boundingBox();
   expect(box).not.toBeNull();
   await page.mouse.move(box!.x + box!.width * 0.65, box!.y + box!.height * 0.45);
