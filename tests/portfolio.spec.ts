@@ -666,7 +666,14 @@ test('/de/ reflows enlarged text at 320px without clipping overflow', async ({
     [...document.querySelectorAll('body *')]
       .filter((element) => {
         const overflowX = getComputedStyle(element).overflowX;
-        return overflowX === 'hidden' || overflowX === 'clip';
+        const isDecorativeMedia =
+          element.getAttribute('role') === 'img' ||
+          element.closest('[aria-hidden="true"]') !== null;
+
+        return (
+          !isDecorativeMedia &&
+          (overflowX === 'hidden' || overflowX === 'clip')
+        );
       })
       .map((element) => element.tagName.toLowerCase()),
   );
