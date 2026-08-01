@@ -1,14 +1,16 @@
 ---
 import type { Locale, SiteContent } from '../content';
 import { getLocalizedPath } from '../i18n/routes';
+import JourneyMap from './JourneyMap.astro';
 
 interface Props {
   hero: SiteContent['hero'];
+  profileRail: SiteContent['profileRail'];
   actions: SiteContent['actions'];
   locale: Locale;
 }
 
-const { hero, actions, locale } = Astro.props;
+const { hero, profileRail, actions, locale } = Astro.props;
 const workPath = getLocalizedPath(locale, 'work');
 ---
 
@@ -32,28 +34,31 @@ const workPath = getLocalizedPath(locale, 'work');
   </div>
 
   <aside class="hero__aside">
-    <div class="hero__aside-enter">
-      <div
-        class="hero__aside-card hero__aside-card--status"
-        data-parallax-layer
-      >
-        <div class="hero__aside-content">
-          <p class="section-label hero__status-label">
-            <span class="status-dot" aria-hidden="true"></span>
-            {hero.availabilityLabel}
-          </p>
-          <p>{hero.availability}</p>
-        </div>
-      </div>
+    <div
+      class="hero__atlas hero__aside-enter"
+      data-hero-journey
+      data-parallax-layer
+    >
+      <JourneyMap
+        heading={profileRail.journeyHeading}
+        stops={profileRail.journeyStops}
+        variant="hero"
+      />
     </div>
-    <div class="hero__aside-enter hero__focus">
-      <div class="hero__aside-card" data-parallax-layer>
-        <div class="hero__aside-content">
-          <p class="section-label">{hero.focusLabel}</p>
-          <ul>
-            {hero.focus.map((item) => <li>{item}</li>)}
-          </ul>
-        </div>
+
+    <div class="hero__evidence hero__aside-enter">
+      <div class="hero__evidence-item">
+        <p class="section-label hero__status-label">
+          <span class="status-dot" aria-hidden="true"></span>
+          {hero.availabilityLabel}
+        </p>
+        <p>{hero.availability}</p>
+      </div>
+      <div class="hero__evidence-item hero__focus">
+        <p class="section-label">{hero.focusLabel}</p>
+        <ul>
+          {hero.focus.map((item) => <li>{item}</li>)}
+        </ul>
       </div>
     </div>
   </aside>
@@ -79,33 +84,78 @@ const workPath = getLocalizedPath(locale, 'work');
     overflow-wrap: anywhere;
   }
 
-  .hero__focus {
-    margin-top: 2.5rem;
-  }
-
-  .hero__aside-card {
+  .hero__atlas {
     transform: translate3d(
-      calc(var(--pointer-x, 0) * 10px),
-      calc(var(--pointer-y, 0) * 7px),
+      calc(var(--pointer-x, 0) * -4px),
+      calc(var(--pointer-y, 0) * -3px),
       0
     );
     transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  .hero__aside-card--status {
-    transform: translate3d(
-      calc(var(--pointer-x, 0) * -7px),
-      calc(var(--pointer-y, 0) * -5px),
-      0
-    );
+  .hero__evidence {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .hero__evidence-item {
+    min-width: 0;
+    padding: 0.9rem 0.9rem 0.95rem 0;
+  }
+
+  .hero__evidence-item + .hero__evidence-item {
+    padding-right: 0;
+    padding-left: 0.9rem;
+    border-left: 1px solid var(--line);
+  }
+
+  .hero__evidence-item p {
+    margin-bottom: 0;
+  }
+
+  .hero__evidence-item > p:last-child,
+  .hero__focus li {
+    color: var(--muted);
+    font-size: 0.78rem;
+    line-height: 1.4;
   }
 
   .hero__focus ul {
     margin-bottom: 0;
-    padding-left: 1.2rem;
+    padding-left: 1rem;
   }
 
   .hero__focus li + li {
-    margin-top: 0.35rem;
+    margin-top: 0.18rem;
+  }
+
+  @media (max-width: 960px) and (min-width: 761px) {
+    .hero__evidence {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .hero__evidence-item + .hero__evidence-item {
+      padding-left: 0;
+      border-top: 1px solid var(--line);
+      border-left: 0;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .hero__evidence {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .hero__evidence-item {
+      padding-right: 0;
+    }
+
+    .hero__evidence-item + .hero__evidence-item {
+      padding-left: 0;
+      border-top: 1px solid var(--line);
+      border-left: 0;
+    }
   }
 </style>

@@ -20,7 +20,12 @@ const [featured] = copy.projects;
   title={copy.meta.title}
   description={copy.meta.description}
 >
-  <Hero hero={copy.hero} actions={copy.actions} locale={locale} />
+  <Hero
+    hero={copy.hero}
+    profileRail={copy.profileRail}
+    actions={copy.actions}
+    locale={locale}
+  />
   <section id="work" aria-labelledby="work-heading">
     <div class="section-heading reveal" data-reveal-delay="0">
       <h2 id="work-heading">{copy.sections.work}</h2>

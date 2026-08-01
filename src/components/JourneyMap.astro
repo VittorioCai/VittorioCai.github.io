@@ -2,12 +2,17 @@
 interface Props {
   heading: string;
   stops: readonly string[];
+  variant?: 'profile' | 'hero';
 }
 
-const { heading, stops } = Astro.props;
+const { heading, stops, variant = 'profile' } = Astro.props;
 ---
 
-<figure class="journey-map" data-profile-journey>
+<figure
+  class:list={['journey-map', `journey-map--${variant}`]}
+  data-journey-variant={variant}
+  data-profile-journey={variant === 'profile' ? '' : undefined}
+>
   <figcaption>{heading}</figcaption>
   <div class="journey-map__frame">
     <svg viewBox="0 0 360 180" aria-hidden="true">
@@ -374,6 +379,46 @@ const { heading, stops } = Astro.props;
     font-size: 0.62rem;
     font-variant-numeric: tabular-nums;
     letter-spacing: 0.08em;
+  }
+
+  .journey-map--hero figcaption {
+    margin-bottom: 0.6rem;
+    color: var(--ink);
+    font-size: 0.7rem;
+  }
+
+  .journey-map--hero .journey-map__frame {
+    border-color: color-mix(in srgb, var(--accent) 38%, var(--line));
+  }
+
+  .journey-map--hero .journey-map__ocean {
+    fill: color-mix(in srgb, var(--accent) 5%, var(--paper));
+  }
+
+  .journey-map--hero .journey-map__graticule {
+    stroke: color-mix(in srgb, var(--accent) 18%, var(--line));
+  }
+
+  .journey-map--hero .journey-map__land {
+    fill: color-mix(in srgb, var(--accent) 20%, var(--paper));
+    stroke: color-mix(in srgb, var(--accent) 46%, var(--line));
+  }
+
+  .journey-map--hero .journey-map__route {
+    stroke-width: 2.1;
+  }
+
+  .journey-map--hero .journey-map__legend {
+    border-color: color-mix(in srgb, var(--accent) 24%, var(--line));
+  }
+
+  .journey-map--hero .journey-map__legend li {
+    padding-block: 0.62rem;
+    font-size: 0.68rem;
+  }
+
+  .journey-map--hero .journey-map__legend-number {
+    margin-bottom: 0.18rem;
   }
 
   @keyframes journey-route-in {

@@ -35,6 +35,118 @@ async function expectNoHorizontalOverflow(page: Page) {
   );
 }
 
+test('Precision Atlas brings the journey and Selected Work into the desktop first viewport', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 800 });
+  await page.goto('/');
+
+  const journey = page.locator('[data-hero-journey]');
+  await expect(journey).toBeVisible();
+  await expect(journey.locator('[data-journey-route-leg]')).toHaveCount(2);
+  await expect(journey.locator('[data-journey-map-stop]')).toHaveCount(3);
+
+  const geometry = await page.evaluate(() => ({
+    heroBottom: document.querySelector('.hero')!.getBoundingClientRect().bottom,
+    workHeadingTop: document
+      .querySelector('#work .section-heading')!
+      .getBoundingClientRect().top,
+  }));
+
+  expect(geometry.heroBottom).toBeLessThan(800);
+  expect(geometry.workHeadingTop).toBeLessThanOrEqual(800);
+});
+
+test('the mobile first-paint headline is visible before intro motion completes', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.addInitScript(() => {
+    window.sessionStorage.removeItem('vc-intro-played');
+    window.sessionStorage.removeItem('vittorio-portfolio-visited');
+  });
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+
+  const headline = await page.locator('.hero__title').evaluate((title) => {
+    const titleBox = title.getBoundingClientRect();
+    const style = getComputedStyle(title);
+    const lineStates = [
+      ...title.querySelectorAll<HTMLElement>('.hero__title-line'),
+    ].map((line) => {
+      const range = document.createRange();
+      range.selectNodeContents(line);
+      const clip = line.parentElement!.getBoundingClientRect();
+      const lineBox = line.getBoundingClientRect();
+      const lineStyle = getComputedStyle(line);
+      const visibleTextRectangles = [...range.getClientRects()].filter(
+        (rect) => {
+          const visibleHeight =
+            Math.min(window.innerHeight, clip.bottom, rect.bottom) -
+            Math.max(0, clip.top, rect.top);
+
+          return (
+            rect.width > 0 &&
+            rect.height > 0 &&
+            visibleHeight >= rect.height * 0.5 &&
+            rect.right > Math.max(0, clip.left) &&
+            rect.left < Math.min(window.innerWidth, clip.right)
+          );
+        },
+      ).length;
+
+      return {
+        height: lineBox.height,
+        opacity: lineStyle.opacity,
+        visibleTextRectangles,
+      };
+    });
+
+    return {
+      height: titleBox.height,
+      lineStates,
+      opacity: style.opacity,
+    };
+  });
+
+  expect(headline.height).toBeGreaterThan(0);
+  expect(headline.opacity).toBe('1');
+  expect(headline.lineStates).toHaveLength(3);
+  for (const line of headline.lineStates) {
+    expect(line.height).toBeGreaterThan(0);
+    expect(line.opacity).toBe('1');
+    expect(line.visibleTextRectangles).toBeGreaterThan(0);
+  }
+});
+
+test('the PatentPATH responsibility chapter clears the sticky header offset', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 800 });
+  await page.goto('/work/patentpath/');
+
+  await page
+    .locator(
+      '[data-case-rail-link][href="#patentpath-responsibility-heading"]',
+    )
+    .click();
+  await expect(page).toHaveURL(/#patentpath-responsibility-heading$/);
+  const target = page.locator('#patentpath-responsibility-heading');
+  await expect(target).toBeInViewport();
+
+  const geometry = await page.evaluate(() => ({
+    headerBottom: document
+      .querySelector('.site-header')!
+      .getBoundingClientRect().bottom,
+    targetTop: document
+      .querySelector('#patentpath-responsibility-heading')!
+      .getBoundingClientRect().top,
+  }));
+
+  expect(geometry.targetTop).toBeGreaterThanOrEqual(
+    geometry.headerBottom + 16,
+  );
+});
+
 test('the project language switcher preserves the PatentPATH route', async ({
   page,
 }) => {
@@ -189,6 +301,9 @@ test('the Chinese desktop hero preserves its three authored headline lines', asy
 
 test('the hero title entrance keeps text fully opaque', async ({ page }) => {
   await page.goto('/');
+  await expect(page.locator('[data-hero-motion]')).toHaveClass(
+    /hero--animate/,
+  );
 
   const animatedOpacityKeyframes = await page
     .locator('.hero__title-line')
@@ -273,6 +388,9 @@ test('the homepage stages its hero through masked kinetic lines', async ({
   page,
 }) => {
   await page.goto('/');
+  await expect(page.locator('[data-hero-motion]')).toHaveClass(
+    /hero--animate/,
+  );
 
   const titleClips = page.locator('.hero__title-clip');
   await expect(titleClips).toHaveCount(3);
@@ -652,13 +770,38 @@ test('/profile/ keeps the desktop identity panel anchored within the viewport', 
   expect(initial.scrollHeight).toBeLessThanOrEqual(initial.clientHeight);
   expect(initial.overflowY).toBe('visible');
 
-  await page.evaluate(() => window.scrollTo(0, 600));
+  await page.evaluate(() => window.scrollTo(0, 700));
 
-  const scrolledTop = await panel.evaluate(
-    (element) => element.getBoundingClientRect().top,
-  );
+  const scrolled = await panel.evaluate((element) => {
+    const panelBox = element.getBoundingClientRect();
+    const selectors = [
+      '.profile-identity__monogram',
+      '.profile-identity__heading h1',
+      '.profile-identity__links',
+      '[data-profile-journey]',
+    ];
 
-  expect(scrolledTop).toBeCloseTo(initial.top, 0);
+    return {
+      panelTop: panelBox.top,
+      items: selectors.map((selector) => {
+        const item = element.querySelector(selector);
+        const box = item?.getBoundingClientRect();
+
+        return {
+          contained: item ? element.contains(item) : false,
+          height: box?.height ?? 0,
+          top: box?.top ?? Number.NaN,
+        };
+      }),
+    };
+  });
+
+  expect(scrolled.panelTop).toBeCloseTo(initial.top, 0);
+  for (const item of scrolled.items) {
+    expect(item.contained).toBe(true);
+    expect(item.top).toBeGreaterThanOrEqual(headerBottom);
+    expect(item.top + item.height).toBeLessThanOrEqual(760);
+  }
   await expect(header).toHaveCSS('position', 'sticky');
 });
 

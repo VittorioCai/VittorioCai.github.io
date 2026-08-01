@@ -147,7 +147,7 @@ ul {
   transform: translateY(112%) rotate(1.5deg);
 }
 
-[data-intro-wait] * {
+[data-intro-wait] :not(.hero__title-line) {
   animation-play-state: paused !important;
 }
 
@@ -298,7 +298,7 @@ ul {
 
 .hero {
   display: grid;
-  grid-template-columns: minmax(0, 2.1fr) minmax(0, 0.9fr);
+  grid-template-columns: minmax(0, 1.75fr) minmax(21rem, 1fr);
   border-bottom: 1px solid var(--line);
 }
 
@@ -312,15 +312,15 @@ ul {
   }
 }
 
-.hero__title-line {
+.hero--animate .hero__title-line {
   animation: rise-in var(--motion-slow) var(--ease-out) both;
 }
 
-.hero__title-clip:nth-child(2) .hero__title-line {
+.hero--animate .hero__title-clip:nth-child(2) .hero__title-line {
   animation-delay: 60ms;
 }
 
-.hero__title-clip:nth-child(3) .hero__title-line {
+.hero--animate .hero__title-clip:nth-child(3) .hero__title-line {
   animation-delay: 120ms;
 }
 
@@ -442,7 +442,7 @@ html[data-motion='ready'] .timeline--visible .timeline__dot {
 .hero__main,
 .hero__aside {
   min-width: 0;
-  padding: clamp(2.5rem, 7vw, 6rem) var(--pad);
+  padding: clamp(2rem, 5vw, 3.75rem) var(--pad);
 }
 
 .hero__main {
@@ -450,15 +450,15 @@ html[data-motion='ready'] .timeline--visible .timeline__dot {
 }
 
 .hero__main h1 {
-  margin-bottom: clamp(1.5rem, 4vw, 3rem);
-  font-size: clamp(2.4rem, 5.2vw, 4.75rem);
+  margin-bottom: clamp(1.25rem, 3vw, 2.25rem);
+  font-size: clamp(2.4rem, 4.7vw, 4.4rem);
   font-weight: 700;
   letter-spacing: -0.045em;
   line-height: 1.02;
 }
 
 :lang(zh-CN) .hero__main h1 {
-  font-size: clamp(2.2rem, 4.8vw, 4.25rem);
+  font-size: clamp(2.2rem, 4.35vw, 4rem);
   letter-spacing: -0.025em;
   line-height: 1.15;
 }
@@ -472,8 +472,8 @@ html[data-motion='ready'] .timeline--visible .timeline__dot {
 .hero__aside {
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  gap: 2.5rem;
+  justify-content: center;
+  gap: clamp(1.25rem, 2vw, 1.75rem);
   background: var(--surface);
 }
 
@@ -492,7 +492,7 @@ html[data-motion='ready'] .timeline--visible .timeline__dot {
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem 1rem;
-  margin-top: 2rem;
+  margin-top: clamp(1.25rem, 2.5vw, 2rem);
 }
 
 .btn {
@@ -676,7 +676,7 @@ html[data-motion='ready'] .timeline--visible .timeline__dot {
 
 @media (min-width: 761px) {
   .hero {
-    min-height: calc(100svh - 76px);
+    min-height: clamp(36rem, 80svh, 42rem);
   }
 
   .hero__main {

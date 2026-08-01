@@ -89,6 +89,19 @@ function initVisitedState() {
   }
 }
 
+function initHeroTitleMotion(reduceMotion: boolean) {
+  if (reduceMotion) return;
+
+  const hero = document.querySelector<HTMLElement>('[data-hero-motion]');
+  if (!hero) return;
+
+  const timer = window.setTimeout(() => {
+    hero.classList.add('hero--animate');
+  }, 120);
+
+  return () => window.clearTimeout(timer);
+}
+
 function initScrollProgress(
   accentRule: HTMLElement,
   reduceMotion: boolean,
@@ -386,6 +399,8 @@ export function initMotion() {
   const accentRule = document.querySelector<HTMLElement>('.accent-rule');
 
   initVisitedState();
+  const heroTitleCleanup = initHeroTitleMotion(reduceMotion);
+  if (heroTitleCleanup) activeCleanups.push(heroTitleCleanup);
   document.documentElement.dataset.motion = 'ready';
 
   const revealCleanup = initReveals(
