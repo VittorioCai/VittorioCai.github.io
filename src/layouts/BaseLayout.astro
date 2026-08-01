@@ -1,5 +1,6 @@
 ---
 import Header from '../components/Header.astro';
+import { ClientRouter } from 'astro:transitions';
 import { getContent } from '../content';
 import type { Locale } from '../content';
 import {
@@ -88,6 +89,7 @@ const personData = {
     <meta property="og:url" content={pageUrl} />
     <meta property="og:image" content={ogImageUrl} />
     <meta name="twitter:card" content="summary_large_image" />
+    <ClientRouter fallback="animate" />
     {noindex && <meta name="robots" content="noindex,nofollow" />}
     {
       showPersonData && (
@@ -128,7 +130,9 @@ const personData = {
       <script>
         import { initMotion } from '../scripts/motion';
 
-        initMotion();
+        document.addEventListener('astro:page-load', () => {
+          initMotion();
+        });
       </script>
       <footer class="site-footer">
         <p>{copy.footer}</p>

@@ -33,52 +33,56 @@ const caseStudyPath =
   data-featured="true"
 >
   <div class="project-featured__body">
-    <p class="section-label reveal" data-reveal-delay="0">
-      {project.kicker}
-    </p>
-    <h3 class="reveal" data-reveal-delay="80">{project.title}</h3>
-    <p class="project-summary reveal" data-reveal-delay="140">
-      {project.summary}
-    </p>
-    {
-      project.contribution && (
-        <p class="reveal" data-reveal-delay="200">
-          <strong>{sections.contribution}:</strong>{' '}
-          {project.contribution}
-        </p>
-      )
-    }
-    <ul class="project-details reveal" data-reveal-delay="260">
-      {project.details.map((detail) => <li>{detail}</li>)}
-    </ul>
-    <ul
-      class="project-tags reveal"
-      aria-label={project.title}
-      data-reveal-delay="300"
-    >
-      {project.tags.map((tag) => <li>{tag}</li>)}
-    </ul>
-    <div class="text-actions reveal" data-reveal-delay="520">
+    <div class="project-featured__lead">
+      <p class="section-label reveal" data-reveal-delay="0">
+        {project.kicker}
+      </p>
+      <h3 class="reveal" data-reveal-delay="70">{project.title}</h3>
+      <p class="project-summary reveal" data-reveal-delay="120">
+        {project.summary}
+      </p>
+    </div>
+    <div class="project-featured__proof">
       {
-        demoUrl && (
-          <a class="external" href={demoUrl} rel="noreferrer">
-            {actions.demo}
-          </a>
+        project.contribution && (
+          <p class="reveal" data-reveal-delay="140">
+            <strong>{sections.contribution}:</strong>{' '}
+            {project.contribution}
+          </p>
         )
       }
-      {
-        demoUrl && project.demoNote ? (
-          <p class="demo-note">{project.demoNote}</p>
-        ) : null
-      }
-      {caseStudyPath && <a href={caseStudyPath}>{actions.caseStudy}</a>}
-      {
-        allProjectsLink && (
-          <a href={getLocalizedPath(locale, 'work')}>
-            {actions.allProjects} →
-          </a>
-        )
-      }
+      <ul class="project-details reveal" data-reveal-delay="160">
+        {project.details.map((detail) => <li>{detail}</li>)}
+      </ul>
+      <ul
+        class="project-tags reveal"
+        aria-label={project.title}
+        data-reveal-delay="180"
+      >
+        {project.tags.map((tag) => <li>{tag}</li>)}
+      </ul>
+      <div class="text-actions reveal" data-reveal-delay="180">
+        {
+          demoUrl && (
+            <a class="external" href={demoUrl} rel="noreferrer">
+              {actions.demo}
+            </a>
+          )
+        }
+        {
+          demoUrl && project.demoNote ? (
+            <p class="demo-note">{project.demoNote}</p>
+          ) : null
+        }
+        {caseStudyPath && <a href={caseStudyPath}>{actions.caseStudy}</a>}
+        {
+          allProjectsLink && (
+            <a href={getLocalizedPath(locale, 'work')}>
+              {actions.allProjects} →
+            </a>
+          )
+        }
+      </div>
     </div>
   </div>
   <div class="project-featured__visual reveal" data-reveal-delay="140">
@@ -171,6 +175,11 @@ const caseStudyPath =
     overflow-wrap: anywhere;
   }
 
+  .project-featured__lead,
+  .project-featured__proof {
+    min-width: 0;
+  }
+
   .project-featured__visual-link {
     --pointer-x: 50%;
     --pointer-y: 50%;
@@ -181,11 +190,11 @@ const caseStudyPath =
     text-decoration: none;
     isolation: isolate;
     contain: paint;
-    transition: transform 360ms cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform var(--motion-base) var(--ease-out);
   }
 
   .project-featured__visual-link:hover {
-    transform: scale(1.025) rotate(0.4deg);
+    transform: scale(1.01);
   }
 
   .project-featured__visual-link :global(.patent-preview) {
@@ -224,7 +233,7 @@ const caseStudyPath =
     z-index: 2;
     display: grid;
     place-items: center;
-    width: 6.5rem;
+    width: 4.75rem;
     aspect-ratio: 1;
     padding: 0.75rem;
     border-radius: 50%;
@@ -236,7 +245,7 @@ const caseStudyPath =
     text-align: center;
     pointer-events: none;
     transform: translate3d(-50%, -50%, 0) scale(0);
-    transition: transform 260ms cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform var(--motion-fast) var(--ease-out);
   }
 
   @media (hover: hover) and (pointer: fine) {

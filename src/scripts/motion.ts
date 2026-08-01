@@ -5,6 +5,8 @@ const INTRO_KEY = 'vc-intro-played';
 const EASE_OUT = 'cubic-bezier(0.16, 1, 0.3, 1)';
 const EASE_SETTLE = 'cubic-bezier(0.22, 1, 0.36, 1)';
 
+let activeCleanups: Array<() => void> = [];
+
 function skipIntro(intro: HTMLElement, shell: HTMLElement) {
   intro.remove();
   shell.removeAttribute('data-intro-wait');
@@ -48,7 +50,7 @@ function initIntro(reduceMotion: boolean) {
     window.requestAnimationFrame(() => {
       words.forEach((word, index) => {
         word.style.transition =
-          `transform 700ms ${EASE_OUT} ${index * 90}ms`;
+          `transform 420ms ${EASE_OUT} ${index * 60}ms`;
         word.style.transform = 'none';
       });
     });
@@ -57,21 +59,21 @@ function initIntro(reduceMotion: boolean) {
   window.setTimeout(() => {
     const from = name.getBoundingClientRect();
     const to = wordmark.getBoundingClientRect();
-    name.style.transition = `transform 650ms ${EASE_SETTLE}`;
+    name.style.transition = `transform 440ms ${EASE_SETTLE}`;
     name.style.transform = `translate(${to.left - from.left}px, ${
       to.top - from.top
     }px) scale(${to.width / from.width})`;
-    intro.style.transition = 'background-color 450ms ease 180ms';
+    intro.style.transition = 'background-color 300ms ease 80ms';
     intro.style.backgroundColor = 'transparent';
 
     window.setTimeout(() => {
       shell.removeAttribute('data-intro-wait');
-    }, 430);
+    }, 260);
     window.setTimeout(() => {
       wordmark.style.opacity = '1';
       intro.remove();
-    }, 700);
-  }, 1200);
+    }, 500);
+  }, 520);
 }
 
 function initVisitedState() {
@@ -87,7 +89,10 @@ function initVisitedState() {
   }
 }
 
-function initScrollProgress(accentRule: HTMLElement, reduceMotion: boolean) {
+function initScrollProgress(
+  accentRule: HTMLElement,
+  reduceMotion: boolean,
+) {
   if (reduceMotion) {
     accentRule.style.setProperty('--scroll-progress', '1');
     return;
@@ -117,6 +122,12 @@ function initScrollProgress(accentRule: HTMLElement, reduceMotion: boolean) {
   update();
   window.addEventListener('scroll', requestUpdate, { passive: true });
   window.addEventListener('resize', requestUpdate, { passive: true });
+
+  return () => {
+    window.removeEventListener('scroll', requestUpdate);
+    window.removeEventListener('resize', requestUpdate);
+    if (frame) window.cancelAnimationFrame(frame);
+  };
 }
 
 function initHeroParallax(hero: HTMLElement) {
@@ -174,6 +185,7 @@ function initTimeline(timeline: HTMLElement) {
   );
 
   observer.observe(timeline);
+  return () => observer.disconnect();
 }
 
 function initReveals(reduceMotion: boolean) {
@@ -192,7 +204,11 @@ function initReveals(reduceMotion: boolean) {
         if (!entry.isIntersecting) continue;
 
         const element = entry.target as HTMLElement;
-        element.style.transitionDelay = `${element.dataset.revealDelay ?? 0}ms`;
+        const requestedDelay = Number.parseInt(
+          element.dataset.revealDelay ?? '0',
+          10,
+        );
+        element.style.transitionDelay = `${Math.min(requestedDelay, 180)}ms`;
         element.classList.add('reveal--visible');
         element.addEventListener(
           'transitionend',
@@ -208,11 +224,162 @@ function initReveals(reduceMotion: boolean) {
   );
 
   for (const element of targets) observer.observe(element);
+  return () => observer.disconnect();
+}
+
+function initCaseStudyNavigation() {
+  const navigation =
+    document.querySelector<HTMLElement>('[data-case-rail-nav]');
+  if (!navigation) return;
+
+  const links = Array.from(
+    navigation.querySelectorAll<HTMLAnchorElement>('[data-case-rail-link]'),
+  );
+  const locations = links
+    .map((link) => {
+      const id = link.hash.slice(1);
+      const heading = document.getElementById(id);
+      return heading ? { heading, link } : null;
+    })
+    .filter(
+      (
+        location,
+      ): location is { heading: HTMLElement; link: HTMLAnchorElement } =>
+        location !== null,
+    );
+  if (locations.length === 0) return;
+
+  let frame = 0;
+  const update = () => {
+    frame = 0;
+    const readingLine = window.innerHeight * 0.55;
+    let activeIndex = 0;
+
+    locations.forEach(({ heading }, index) => {
+      if (heading.getBoundingClientRect().top <= readingLine) {
+        activeIndex = index;
+      }
+    });
+
+    locations.forEach(({ link }, index) => {
+      if (index === activeIndex) {
+        link.setAttribute('aria-current', 'location');
+      } else {
+        link.removeAttribute('aria-current');
+      }
+    });
+  };
+
+  const requestUpdate = () => {
+    if (frame) return;
+    frame = window.requestAnimationFrame(update);
+  };
+
+  update();
+  window.addEventListener('scroll', requestUpdate, { passive: true });
+  window.addEventListener('resize', requestUpdate, { passive: true });
+
+  return () => {
+    window.removeEventListener('scroll', requestUpdate);
+    window.removeEventListener('resize', requestUpdate);
+    if (frame) window.cancelAnimationFrame(frame);
+  };
+}
+
+function initPatentPathWalkthrough(reduceMotion: boolean) {
+  const walkthrough = document.querySelector<HTMLElement>(
+    '[data-patentpath-walkthrough]',
+  );
+  if (!walkthrough) return;
+
+  const scenes = Array.from(
+    walkthrough.querySelectorAll<HTMLElement>('[data-patentpath-scene]'),
+  );
+  const figures = Array.from(
+    walkthrough.querySelectorAll<HTMLElement>(
+      '[data-patentpath-stage-figure]',
+    ),
+  );
+  const buttons = Array.from(
+    walkthrough.querySelectorAll<HTMLButtonElement>(
+      '[data-patentpath-stage-button]',
+    ),
+  );
+
+  const setActive = (screenIndex: number, activeScene?: HTMLElement) => {
+    figures.forEach((figure, index) => {
+      const isActive = index === screenIndex;
+      figure.classList.toggle('is-active', isActive);
+      figure.setAttribute('aria-hidden', String(!isActive));
+    });
+
+    buttons.forEach((button, index) => {
+      button.setAttribute('aria-pressed', String(index === screenIndex));
+    });
+
+    scenes.forEach((scene) => {
+      const isActive = activeScene
+        ? scene === activeScene
+        : Number.parseInt(scene.dataset.screenIndex ?? '-1', 10) ===
+          screenIndex;
+      scene.classList.toggle('is-active', isActive);
+    });
+  };
+
+  buttons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const screenIndex = Number.parseInt(
+        button.dataset.screenIndex ?? '0',
+        10,
+      );
+      const scene = scenes.find(
+        (entry) =>
+          Number.parseInt(entry.dataset.screenIndex ?? '-1', 10) ===
+          screenIndex,
+      );
+      setActive(screenIndex, scene);
+      scene?.scrollIntoView({
+        behavior: reduceMotion ? 'auto' : 'smooth',
+        block: 'center',
+      });
+    });
+  });
+
+  if (reduceMotion || !('IntersectionObserver' in window)) return;
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      const activeEntry = entries
+        .filter((entry) => entry.isIntersecting)
+        .sort(
+          (left, right) =>
+            Math.abs(left.boundingClientRect.top - window.innerHeight / 2) -
+            Math.abs(right.boundingClientRect.top - window.innerHeight / 2),
+        )[0];
+      if (!activeEntry) return;
+
+      const scene = activeEntry.target as HTMLElement;
+      const screenIndex = Number.parseInt(
+        scene.dataset.screenIndex ?? '0',
+        10,
+      );
+      setActive(screenIndex, scene);
+    },
+    {
+      rootMargin: '-40% 0px -40% 0px',
+      threshold: 0,
+    },
+  );
+
+  scenes.forEach((scene) => observer.observe(scene));
+  return () => observer.disconnect();
 }
 
 export function initMotion() {
-  const reduceMotion = window.matchMedia(reducedMotionQuery).matches;
+  activeCleanups.forEach((cleanup) => cleanup());
+  activeCleanups = [];
 
+  const reduceMotion = window.matchMedia(reducedMotionQuery).matches;
   initIntro(reduceMotion);
 
   const finePointer = window.matchMedia(finePointerQuery).matches;
@@ -220,7 +387,11 @@ export function initMotion() {
 
   initVisitedState();
   document.documentElement.dataset.motion = 'ready';
-  initReveals(reduceMotion || navigator.webdriver === true);
+
+  const revealCleanup = initReveals(
+    reduceMotion || navigator.webdriver === true,
+  );
+  if (revealCleanup) activeCleanups.push(revealCleanup);
 
   for (const timeline of document.querySelectorAll<HTMLElement>(
     '[data-timeline]',
@@ -228,11 +399,19 @@ export function initMotion() {
     if (reduceMotion || !('IntersectionObserver' in window)) {
       timeline.classList.add('timeline--visible');
     } else {
-      initTimeline(timeline);
+      activeCleanups.push(initTimeline(timeline));
     }
   }
 
-  if (accentRule) initScrollProgress(accentRule, reduceMotion);
+  const navigationCleanup = initCaseStudyNavigation();
+  if (navigationCleanup) activeCleanups.push(navigationCleanup);
+
+  const walkthroughCleanup = initPatentPathWalkthrough(reduceMotion);
+  if (walkthroughCleanup) activeCleanups.push(walkthroughCleanup);
+
+  const progressCleanup =
+    accentRule && initScrollProgress(accentRule, reduceMotion);
+  if (progressCleanup) activeCleanups.push(progressCleanup);
   if (reduceMotion || !finePointer) return;
 
   const hero = document.querySelector<HTMLElement>('[data-hero-motion]');

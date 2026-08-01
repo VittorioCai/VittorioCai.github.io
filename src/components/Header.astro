@@ -36,6 +36,14 @@ const navigationLabels = {
   },
 } satisfies Record<Locale, { primary: string; language: string }>;
 const navigationLabel = navigationLabels[locale];
+const workRoutes: RouteKey[] = [
+  'work',
+  'patentpath',
+  'jobAgent',
+  'newsSentiment',
+  'waterQuality',
+];
+const workIsCurrent = workRoutes.includes(route);
 ---
 
 <header class="site-header" data-site-header>
@@ -55,12 +63,27 @@ const navigationLabel = navigationLabels[locale];
     class="site-nav"
     aria-label={navigationLabel.primary}
   >
-    <a href={getLocalizedPath(locale, 'work')}>{copy.nav.work}</a>
-    <a href={getLocalizedPath(locale, 'profile')}>{copy.nav.profile}</a>
+    <a
+      href={getLocalizedPath(locale, 'work')}
+      aria-current={workIsCurrent ? 'page' : undefined}
+    >
+      {copy.nav.work}
+    </a>
+    <a
+      href={getLocalizedPath(locale, 'profile')}
+      aria-current={route === 'profile' ? 'page' : undefined}
+    >
+      {copy.nav.profile}
+    </a>
     <a href={`${getLocalizedPath(locale, 'profile')}#experience`}>
       {copy.nav.experience}
     </a>
-    <a href={getLocalizedPath(locale, 'contact')}>{copy.nav.contact}</a>
+    <a
+      href={getLocalizedPath(locale, 'contact')}
+      aria-current={route === 'contact' ? 'page' : undefined}
+    >
+      {copy.nav.contact}
+    </a>
   </nav>
 
   <nav class="language-nav" aria-label={navigationLabel.language}>
@@ -78,7 +101,7 @@ const navigationLabel = navigationLabels[locale];
   </nav>
 </header>
 
-<script is:inline>
+<script is:inline data-astro-rerun>
   document.querySelectorAll('[data-site-header]').forEach((header) => {
     const button = header.querySelector('.menu-button');
 

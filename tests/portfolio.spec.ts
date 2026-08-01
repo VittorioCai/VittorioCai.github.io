@@ -48,6 +48,70 @@ test('the project language switcher preserves the PatentPATH route', async ({
   await expect(page.locator('html')).toHaveAttribute('lang', 'de');
 });
 
+test('case navigation stays visible and follows the PatentPATH reading position', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/work/patentpath/');
+
+  const rail = page.locator('[data-case-rail-inner]');
+  const navigation = page.locator('[data-case-rail-nav]');
+  const links = navigation.locator('[data-case-rail-link]');
+
+  await expect(rail).toHaveCSS('position', 'sticky');
+  await expect(links).toHaveCount(6);
+  await expect(links.first()).toHaveAttribute('aria-current', 'location');
+
+  await page
+    .locator('#patentpath-architecture-heading')
+    .evaluate((heading) => heading.scrollIntoView({ block: 'center' }));
+
+  await expect(
+    navigation.locator(
+      '[data-case-rail-link][href="#patentpath-architecture-heading"]',
+    ),
+  ).toHaveAttribute('aria-current', 'location');
+});
+
+test('the PatentPATH scroll walkthrough switches real product screens', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/work/patentpath/');
+
+  const walkthrough = page.locator('[data-patentpath-walkthrough]');
+  const scenes = walkthrough.locator('[data-patentpath-scene]');
+  const figures = walkthrough.locator('[data-patentpath-stage-figure]');
+  const controls = walkthrough.locator('[data-patentpath-stage-button]');
+
+  await expect(walkthrough).toBeVisible();
+  await expect(scenes).toHaveCount(4);
+  await expect(figures).toHaveCount(3);
+  await expect(controls).toHaveCount(3);
+  await expect(figures.first()).toHaveAttribute('aria-hidden', 'false');
+
+  await scenes
+    .nth(1)
+    .evaluate((scene) => scene.scrollIntoView({ block: 'center' }));
+  await expect(figures.nth(1)).toHaveAttribute('aria-hidden', 'false');
+
+  const stickyGeometry = await page.evaluate(() => ({
+    headerBottom: document
+      .querySelector('.site-header')!
+      .getBoundingClientRect().bottom,
+    stageTop: document
+      .querySelector('.patentpath-story__stage')!
+      .getBoundingClientRect().top,
+  }));
+  expect(stickyGeometry.stageTop).toBeGreaterThan(
+    stickyGeometry.headerBottom + 16,
+  );
+
+  await controls.nth(2).click();
+  await expect(controls.nth(2)).toHaveAttribute('aria-pressed', 'true');
+  await expect(figures.nth(2)).toHaveAttribute('aria-hidden', 'false');
+});
+
 test('/work/patentpath/ presents a loaded screenshot-led product story', async ({
   page,
 }) => {
@@ -75,7 +139,7 @@ test('/work/patentpath/ presents a loaded screenshot-led product story', async (
   );
   const overviewBox = await overview.boundingBox();
 
-  expect(overviewBox?.width).toBeGreaterThan(700);
+  expect(overviewBox?.width).toBeGreaterThan(450);
 });
 
 test('the editorial typeface is self-hosted and applied to body and display text', async ({
@@ -366,6 +430,103 @@ test('the featured project visual offers a pointer-follow case study cue', async
         new DOMMatrixReadOnly(getComputedStyle(element).transform).a,
     );
   expect(pillScale).toBeGreaterThan(0.8);
+
+  const pillBox = await visualLink
+    .locator('[data-project-pointer-pill]')
+    .boundingBox();
+  expect(pillBox?.width).toBeLessThanOrEqual(80);
+});
+
+test('the mobile featured project places the product between lead and proof', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+
+  const lead = page.locator('.project-featured__lead');
+  const visual = page.locator('.project-featured__visual');
+  const proof = page.locator('.project-featured__proof');
+  const geometry = await Promise.all([
+    lead.boundingBox(),
+    visual.boundingBox(),
+    proof.boundingBox(),
+  ]);
+
+  expect(geometry.every(Boolean)).toBe(true);
+  expect(geometry[0]!.y + geometry[0]!.height).toBeLessThanOrEqual(
+    geometry[1]!.y,
+  );
+  expect(geometry[1]!.y + geometry[1]!.height).toBeLessThanOrEqual(
+    geometry[2]!.y,
+  );
+});
+
+test('ambient motion settles instead of looping forever', async ({ page }) => {
+  await page.goto('/');
+
+  await expect(page.locator('.status-dot')).toHaveCSS(
+    'animation-iteration-count',
+    '2',
+  );
+
+  await page.goto('/profile/');
+  await expect(page.locator('.journey-map__current-ring')).toHaveCSS(
+    'animation-iteration-count',
+    '3',
+  );
+});
+
+test('the compact header uses a deliberate language row at 320px', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 320, height: 900 });
+  await page.goto('/');
+  await expect(page.locator('[data-intro]')).toHaveCount(0);
+
+  const header = page.locator('[data-site-header]');
+  const wordmark = await header.locator('[data-wordmark]').boundingBox();
+  const menu = await header.getByRole('button', { name: 'Menu' }).boundingBox();
+  const languages = await header
+    .getByRole('navigation', { name: 'Language selection' })
+    .boundingBox();
+
+  expect(wordmark).not.toBeNull();
+  expect(menu).not.toBeNull();
+  expect(languages).not.toBeNull();
+  expect(
+    Math.abs(
+      wordmark!.y +
+        wordmark!.height / 2 -
+        (menu!.y + menu!.height / 2),
+    ),
+  ).toBeLessThan(2);
+  expect(languages!.y).toBeGreaterThanOrEqual(
+    wordmark!.y + wordmark!.height,
+  );
+  await expectNoHorizontalOverflow(page);
+});
+
+test('the current primary route is exposed and visually addressable', async ({
+  page,
+}) => {
+  await page.goto('/work/patentpath/');
+
+  await expect(
+    page
+      .getByRole('navigation', { name: 'Primary navigation' })
+      .getByRole('link', { name: 'Work', exact: true }),
+  ).toHaveAttribute('aria-current', 'page');
+});
+
+test('internal navigation uses reduced-motion-safe Astro view transitions', async ({
+  page,
+}) => {
+  await page.goto('/');
+
+  await expect(
+    page.locator('meta[name="astro-view-transitions-enabled"]'),
+  ).toHaveCount(1);
+  await expect(page.locator('html')).toHaveAttribute('data-motion', 'ready');
 });
 
 test('the PatentPATH product preview stays static with reduced motion', async ({

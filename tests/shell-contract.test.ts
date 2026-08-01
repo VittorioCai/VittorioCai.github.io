@@ -78,6 +78,19 @@ describe('editorial shell contract', () => {
     expect(baseLayout).not.toContain('fonts.gstatic.com');
   });
 
+  it('publishes one coordinated motion scale and page-load lifecycle', () => {
+    const rootBlock = globalCss.match(/:root\s*\{([\s\S]*?)\}/)?.[1];
+
+    expect(rootBlock).toContain('--motion-fast: 160ms;');
+    expect(rootBlock).toContain('--motion-base: 360ms;');
+    expect(rootBlock).toContain('--motion-slow: 620ms;');
+    expect(rootBlock).toContain(
+      '--ease-out: cubic-bezier(0.16, 1, 0.3, 1);',
+    );
+    expect(baseLayout).toContain('<ClientRouter');
+    expect(baseLayout).toContain("'astro:page-load'");
+  });
+
   it('publishes the approved component selector interface', () => {
     const requiredSelectors = [
       '.rule',

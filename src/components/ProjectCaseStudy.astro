@@ -59,6 +59,51 @@ if (!nextProject) {
 const caseStudy = copy.caseStudies[projectId];
 const patentPathCaseStudy =
   projectId === 'patentpath' ? copy.caseStudies.patentpath : null;
+const railSections = patentPathCaseStudy
+  ? [
+      {
+        href: '#patentpath-problem-heading',
+        label: copy.caseStudyLabels.problem,
+      },
+      {
+        href: '#patentpath-workflow-heading',
+        label: patentPathCaseStudy.story.workflowHeading,
+      },
+      {
+        href: '#patentpath-differentiators-heading',
+        label: patentPathCaseStudy.story.differentiatorsHeading,
+      },
+      {
+        href: '#patentpath-responsibility-heading',
+        label: copy.caseStudyLabels.responsibility,
+      },
+      {
+        href: '#patentpath-architecture-heading',
+        label: patentPathCaseStudy.story.architectureHeading,
+      },
+      {
+        href: '#patentpath-evidence-heading',
+        label: copy.caseStudyLabels.evidence,
+      },
+    ]
+  : [
+      {
+        href: '#case-problem-heading',
+        label: copy.caseStudyLabels.problem,
+      },
+      {
+        href: '#case-responsibility-heading',
+        label: copy.caseStudyLabels.responsibility,
+      },
+      {
+        href: '#case-build-heading',
+        label: copy.caseStudyLabels.build,
+      },
+      {
+        href: '#case-evidence-heading',
+        label: copy.caseStudyLabels.evidence,
+      },
+    ];
 const publicLink = getSafeProjectAction(
   project.actions,
   projectId === 'patentpath' ? 'demo' : 'source',
@@ -94,37 +139,64 @@ const serializedStructuredData = JSON.stringify(structuredData).replace(
 >
   <article class="case-study">
     <aside class="case-study__rail">
-      <p class="section-label">{project.kicker}</p>
-      <p class="case-study__project-name">{project.title}</p>
+      <div class="case-study__rail-inner" data-case-rail-inner>
+        <p class="section-label">{project.kicker}</p>
+        <p class="case-study__project-name">{project.title}</p>
 
-      {
-        projectId === 'english-job-agent' && (
-          <div class="case-study__visual">
-            <ProjectVisual
-              projectId="english-job-agent"
-              label={`${project.title}: ${project.summary}`}
-              stages={copy.visuals.jobAgentStages}
-            />
-          </div>
-        )
-      }
-
-      {
-        publicLink && (
-          <div class="case-study__public-action">
-            <div class="text-actions">
-              <a class="external" href={publicLink} rel="noreferrer">
-                {publicLinkLabel}
-              </a>
+        {
+          projectId === 'english-job-agent' && (
+            <div class="case-study__visual">
+              <ProjectVisual
+                projectId="english-job-agent"
+                label={`${project.title}: ${project.summary}`}
+                stages={copy.visuals.jobAgentStages}
+              />
             </div>
+          )
+        }
+
+        {
+          publicLink && (
+            <div class="case-study__public-action">
+              <div class="text-actions">
+                <a class="external" href={publicLink} rel="noreferrer">
+                  {publicLinkLabel}
+                </a>
+              </div>
+              {
+                projectId === 'patentpath' && project.demoNote ? (
+                  <p class="demo-note">{project.demoNote}</p>
+                ) : null
+              }
+            </div>
+          )
+        }
+
+        <nav
+          class="case-study__rail-nav"
+          data-case-rail-nav
+          aria-label={copy.sections.work}
+        >
+          <ol>
             {
-              projectId === 'patentpath' && project.demoNote ? (
-                <p class="demo-note">{project.demoNote}</p>
-              ) : null
+              railSections.map((section, index) => (
+                <li>
+                  <a
+                    href={section.href}
+                    data-case-rail-link
+                    aria-current={index === 0 ? 'location' : undefined}
+                  >
+                    <span aria-hidden="true">
+                      {String(index + 1).padStart(2, '0')}
+                    </span>
+                    {section.label}
+                  </a>
+                </li>
+              ))
             }
-          </div>
-        )
-      }
+          </ol>
+        </nav>
+      </div>
     </aside>
 
     <div class="case-study__body">
@@ -208,6 +280,14 @@ const serializedStructuredData = JSON.stringify(structuredData).replace(
     line-height: 1.1;
   }
 
+  .case-study__rail-inner {
+    position: sticky;
+    top: calc(75px + clamp(1rem, 3vw, 2rem));
+    max-height: calc(100svh - 75px - clamp(2rem, 6vw, 4rem));
+    overflow-y: auto;
+    scrollbar-width: thin;
+  }
+
   .case-study__visual {
     margin-top: clamp(2rem, 5vw, 4rem);
   }
@@ -222,6 +302,59 @@ const serializedStructuredData = JSON.stringify(structuredData).replace(
     color: var(--muted);
     font-size: 0.78rem;
     line-height: 1.45;
+  }
+
+  .case-study__rail-nav {
+    margin-top: clamp(2rem, 5vw, 3.5rem);
+    border-top: 1px solid var(--line);
+  }
+
+  .case-study__rail-nav ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .case-study__rail-nav a {
+    display: grid;
+    grid-template-columns: 2rem minmax(0, 1fr);
+    gap: 0.6rem;
+    align-items: baseline;
+    min-height: 44px;
+    padding: 0.65rem 0;
+    color: var(--muted);
+    font-size: 0.78rem;
+    line-height: 1.3;
+    text-decoration: none;
+    border-bottom: 1px solid var(--line);
+    transition:
+      color var(--motion-fast) var(--ease-settle),
+      transform var(--motion-fast) var(--ease-out);
+  }
+
+  .case-study__rail-nav a span {
+    color: var(--accent);
+    font-size: 0.65rem;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.08em;
+  }
+
+  .case-study__rail-nav a:hover,
+  .case-study__rail-nav a[aria-current='location'] {
+    color: var(--ink);
+    transform: translateX(3px);
+  }
+
+  @media (max-width: 760px) {
+    .case-study__rail-inner {
+      position: static;
+      max-height: none;
+      overflow-y: visible;
+    }
+
+    .case-study__rail-nav {
+      display: none;
+    }
   }
 
   .case-study__header {
