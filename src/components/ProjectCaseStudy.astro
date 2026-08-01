@@ -282,8 +282,10 @@ const serializedStructuredData = JSON.stringify(structuredData).replace(
 
   .case-study__rail-inner {
     position: sticky;
-    top: calc(75px + clamp(1rem, 3vw, 2rem));
-    max-height: calc(100svh - 75px - clamp(2rem, 6vw, 4rem));
+    top: calc(var(--header-height, 75px) + clamp(1rem, 3vw, 2rem));
+    max-height: calc(
+      100svh - var(--header-height, 75px) - clamp(2rem, 6vw, 4rem)
+    );
     overflow-y: auto;
     scrollbar-width: thin;
   }
@@ -317,8 +319,8 @@ const serializedStructuredData = JSON.stringify(structuredData).replace(
 
   .case-study__rail-nav a {
     display: grid;
-    grid-template-columns: 2rem minmax(0, 1fr);
-    gap: 0.6rem;
+    grid-template-columns: 1.75rem minmax(0, 1fr);
+    gap: 0.75rem;
     align-items: baseline;
     min-height: 44px;
     padding: 0.65rem 0;
@@ -343,6 +345,10 @@ const serializedStructuredData = JSON.stringify(structuredData).replace(
   .case-study__rail-nav a[aria-current='location'] {
     color: var(--ink);
     transform: translateX(3px);
+  }
+
+  .case-study__rail-nav a[aria-current='location'] span {
+    font-weight: 800;
   }
 
   @media (max-width: 760px) {
@@ -379,8 +385,13 @@ const serializedStructuredData = JSON.stringify(structuredData).replace(
   }
 
   .case-study__body h2 {
+    scroll-margin-top: calc(var(--header-height, 75px) + 1.25rem);
     margin-bottom: 1rem;
     font-size: clamp(1.25rem, 2vw, 1.6rem);
+  }
+
+  .case-study__body section {
+    scroll-margin-top: calc(var(--header-height, 75px) + 1.25rem);
   }
 
   .case-study__body section > :last-child {

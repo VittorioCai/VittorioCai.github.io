@@ -196,6 +196,7 @@ const screenshots = [
   }
 
   .patentpath-story > section {
+    scroll-margin-top: calc(var(--header-height, 75px) + 1.25rem);
     padding: clamp(2.5rem, 6vw, 5rem) 0;
     margin: 0;
     border-bottom: 1px solid var(--line);
@@ -217,7 +218,9 @@ const screenshots = [
 
   .patentpath-story__stage {
     position: sticky;
-    top: calc(75px + clamp(1.5rem, 4vw, 3rem));
+    top: calc(
+      var(--header-height, 75px) + clamp(1.5rem, 4vw, 3rem)
+    );
   }
 
   .patentpath-story__stage-controls {
@@ -248,7 +251,7 @@ const screenshots = [
     right: 0;
     bottom: 0.35rem;
     left: 0;
-    height: 2px;
+    height: 1px;
     background: var(--line);
     content: '';
     transform: scaleX(0.45);
@@ -315,6 +318,7 @@ const screenshots = [
   }
 
   .patentpath-story h2 {
+    scroll-margin-top: calc(var(--header-height, 75px) + 1.25rem);
     max-width: 22ch;
     margin-bottom: 1.5rem;
     font-size: clamp(1.5rem, 3vw, 2.4rem);
@@ -370,7 +374,10 @@ const screenshots = [
     display: block;
     margin-bottom: 1rem;
     color: var(--accent);
+    font-size: 0.65rem;
+    font-variant-numeric: tabular-nums;
     font-weight: 700;
+    letter-spacing: 0.08em;
   }
 
   .patentpath-story__workflow h3 {

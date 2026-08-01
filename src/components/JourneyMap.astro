@@ -14,7 +14,7 @@ const { heading, stops, variant = 'profile' } = Astro.props;
   data-profile-journey={variant === 'profile' ? '' : undefined}
 >
   <figcaption>{heading}</figcaption>
-  <div class="journey-map__frame">
+  <div class="journey-map__frame" aria-hidden="true">
     <svg viewBox="0 0 360 180" aria-hidden="true">
       <rect class="journey-map__ocean" width="360" height="180" />
       <g class="journey-map__graticule" data-journey-graticule>
@@ -419,6 +419,31 @@ const { heading, stops, variant = 'profile' } = Astro.props;
 
   .journey-map--hero .journey-map__legend-number {
     margin-bottom: 0.18rem;
+  }
+
+  .journey-map--profile .journey-map__frame {
+    border-color: color-mix(in srgb, var(--accent) 30%, var(--line));
+  }
+
+  .journey-map--profile .journey-map__ocean {
+    fill: color-mix(in srgb, var(--accent) 3.5%, var(--paper));
+  }
+
+  .journey-map--profile .journey-map__land {
+    fill: color-mix(in srgb, var(--accent) 16%, var(--paper));
+    stroke: color-mix(in srgb, var(--accent) 38%, var(--line));
+  }
+
+  .journey-map--profile .journey-map__route {
+    stroke-width: 1.85;
+  }
+
+  .journey-map--profile .journey-map__leader {
+    stroke-width: 0.9;
+  }
+
+  .journey-map--profile .journey-map__badge {
+    stroke-width: 1.1;
   }
 
   @keyframes journey-route-in {

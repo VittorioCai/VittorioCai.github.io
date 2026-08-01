@@ -147,6 +147,30 @@ test('the PatentPATH responsibility chapter clears the sticky header offset', as
   );
 });
 
+test('PatentPATH chapter and screen indicators share the Atlas line weight', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 800 });
+  await page.goto('/work/patentpath/');
+
+  const indicators = await page.evaluate(() => {
+    const chapter = document.querySelector<HTMLElement>(
+      '[data-case-rail-link]',
+    )!;
+    const screen = document.querySelector<HTMLButtonElement>(
+      '[data-patentpath-stage-button]',
+    )!;
+
+    return {
+      chapterLine: getComputedStyle(chapter).borderBottomWidth,
+      screenLine: getComputedStyle(screen, '::after').height,
+    };
+  });
+
+  expect(indicators.chapterLine).toBe('1px');
+  expect(indicators.screenLine).toBe('1px');
+});
+
 test('the project language switcher preserves the PatentPATH route', async ({
   page,
 }) => {
@@ -665,6 +689,76 @@ test('the PatentPATH product preview stays static with reduced motion', async ({
   expect(animatedScreens).toEqual(['none', 'none', 'none']);
 });
 
+test('reduced motion exposes the Atlas route, headline, and PatentPATH controls immediately', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.setViewportSize({ width: 1440, height: 800 });
+  await page.goto('/');
+
+  const route = await page
+    .locator('[data-hero-journey] [data-journey-route-leg]')
+    .evaluateAll((legs) =>
+      legs.map((leg) => {
+        const style = getComputedStyle(leg);
+
+        return {
+          animationName: style.animationName,
+          strokeDashoffset: style.strokeDashoffset,
+        };
+      }),
+    );
+  const stops = await page
+    .locator('[data-hero-journey] [data-journey-map-stop]')
+    .evaluateAll((markers) =>
+      markers.map((marker) => ({
+        opacity: getComputedStyle(marker).opacity,
+        visible: marker.getBoundingClientRect().width > 0,
+      })),
+    );
+  const headlineLines = await page
+    .locator('.hero__title-line')
+    .evaluateAll((lines) =>
+      lines.map((line) => ({
+        animationName: getComputedStyle(line).animationName,
+        opacity: getComputedStyle(line).opacity,
+        visible: line.getBoundingClientRect().height > 0,
+      })),
+    );
+
+  expect(route).toHaveLength(2);
+  expect(
+    route.every(
+      (leg) =>
+        leg.animationName === 'none' &&
+        Number.parseFloat(leg.strokeDashoffset) === 0,
+    ),
+  ).toBe(true);
+  expect(stops).toHaveLength(3);
+  expect(
+    stops.every((stop) => stop.opacity === '1' && stop.visible),
+  ).toBe(true);
+  expect(headlineLines).toHaveLength(3);
+  expect(
+    headlineLines.every(
+      (line) =>
+        line.animationName === 'none' &&
+        line.opacity === '1' &&
+        line.visible,
+    ),
+  ).toBe(true);
+
+  await page.goto('/work/patentpath/');
+  const finalControl = page
+    .locator('[data-patentpath-stage-button]')
+    .last();
+  await finalControl.click();
+  await expect(finalControl).toHaveAttribute('aria-pressed', 'true');
+  await expect(
+    page.locator('[data-patentpath-stage-figure]').last(),
+  ).toHaveAttribute('aria-hidden', 'false');
+});
+
 test('/profile/ presents a sticky identity rail and animated journey on desktop', async ({
   page,
 }) => {
@@ -739,6 +833,20 @@ test('/profile/ presents its contact actions as one aligned icon row', async ({
   expect(Math.max(...geometry.map(({ top }) => top)) - Math.min(...geometry.map(({ top }) => top))).toBeLessThan(1);
   expect(Math.max(...geometry.map(({ width }) => width)) - Math.min(...geometry.map(({ width }) => width))).toBeLessThan(1);
   expect(geometry.every(({ height }) => height >= 44)).toBe(true);
+});
+
+test('/profile/ gives the Atlas route map full rail authority on desktop', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 760 });
+  await page.goto('/profile/');
+
+  const journey = page.locator('[data-profile-journey]');
+  await expect(journey).toHaveAttribute('data-journey-variant', 'profile');
+
+  const frame = await journey.locator('.journey-map__frame').boundingBox();
+  expect(frame).not.toBeNull();
+  expect(frame!.width).toBeGreaterThanOrEqual(280);
 });
 
 test('/profile/ keeps the desktop identity panel anchored within the viewport', async ({

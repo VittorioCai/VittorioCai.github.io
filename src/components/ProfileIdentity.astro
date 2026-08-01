@@ -117,26 +117,30 @@ const { displayName, profileRail, actions } = Astro.props;
 <style>
   .profile-identity {
     min-width: 0;
+    min-height: 100%;
+    align-self: start;
     background: var(--surface);
   }
 
   .profile-identity__sticky {
     position: sticky;
-    top: 75px;
+    top: var(--header-height, 75px);
     display: flex;
     flex-direction: column;
     justify-content: center;
-    height: calc(100svh - 75px);
-    padding: clamp(2rem, 5vw, 4rem) var(--pad);
+    height: calc(100svh - var(--header-height, 75px));
+    padding:
+      clamp(1rem, 3vh, 2rem)
+      clamp(1.25rem, 2vw, 1.5rem);
     overflow-y: visible;
   }
 
   .profile-identity__monogram {
     display: grid;
     place-items: center;
-    width: clamp(8.5rem, 15vw, 11rem);
+    width: clamp(8rem, 13vw, 10rem);
     aspect-ratio: 1;
-    margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+    margin-bottom: clamp(1.25rem, 3vw, 2rem);
     border: 1px solid var(--accent);
     border-radius: 50%;
     color: var(--paper);
@@ -170,7 +174,7 @@ const { displayName, profileRail, actions } = Astro.props;
   .profile-identity__links {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    margin-block: clamp(1.5rem, 4vw, 2.5rem);
+    margin-block: clamp(1.25rem, 3vw, 2rem);
     border-top: 1px solid var(--line);
     border-bottom: 1px solid var(--line);
   }
@@ -231,8 +235,8 @@ const { displayName, profileRail, actions } = Astro.props;
     }
 
     .profile-identity__monogram {
-      width: clamp(6.5rem, 11vw, 8rem);
-      margin-bottom: 1rem;
+      width: 7rem;
+      margin-bottom: 0.8rem;
       font-size: clamp(2.25rem, 4vw, 3rem);
     }
 
@@ -242,11 +246,20 @@ const { displayName, profileRail, actions } = Astro.props;
     }
 
     .profile-identity__links {
-      margin-block: 1rem;
+      margin-block: 0.8rem;
+    }
+
+    .profile-identity__links a {
+      min-height: 64px;
     }
   }
 
   @media (max-width: 760px) {
+    .profile-identity {
+      min-height: 0;
+      align-self: stretch;
+    }
+
     .profile-identity__sticky {
       position: static;
       display: block;
