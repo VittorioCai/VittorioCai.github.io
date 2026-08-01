@@ -118,6 +118,45 @@ test('the mobile first-paint headline is visible before intro motion completes',
   }
 });
 
+test('the hero headline never retreats into its clips after first paint', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 800 });
+  await page.addInitScript(() => {
+    window.sessionStorage.removeItem('vc-intro-played');
+    window.sessionStorage.removeItem('vittorio-portfolio-visited');
+  });
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.waitForTimeout(160);
+
+  const visibleFractions = await page
+    .locator('.hero__title-line')
+    .evaluateAll((lines) =>
+      lines.map((line) => {
+        const range = document.createRange();
+        range.selectNodeContents(line);
+        const clip = line.parentElement!.getBoundingClientRect();
+
+        return Math.max(
+          ...[...range.getClientRects()].map((rect) => {
+            const visibleHeight = Math.max(
+              0,
+              Math.min(clip.bottom, rect.bottom) -
+                Math.max(clip.top, rect.top),
+            );
+
+            return rect.height > 0 ? visibleHeight / rect.height : 0;
+          }),
+        );
+      }),
+    );
+
+  expect(visibleFractions).toHaveLength(3);
+  expect(
+    visibleFractions.every((visibleFraction) => visibleFraction >= 0.5),
+  ).toBe(true);
+});
+
 test('the PatentPATH responsibility chapter clears the sticky header offset', async ({
   page,
 }) => {
@@ -325,9 +364,6 @@ test('the Chinese desktop hero preserves its three authored headline lines', asy
 
 test('the hero title entrance keeps text fully opaque', async ({ page }) => {
   await page.goto('/');
-  await expect(page.locator('[data-hero-motion]')).toHaveClass(
-    /hero--animate/,
-  );
 
   const animatedOpacityKeyframes = await page
     .locator('.hero__title-line')
@@ -412,9 +448,6 @@ test('the homepage stages its hero through masked kinetic lines', async ({
   page,
 }) => {
   await page.goto('/');
-  await expect(page.locator('[data-hero-motion]')).toHaveClass(
-    /hero--animate/,
-  );
 
   const titleClips = page.locator('.hero__title-clip');
   await expect(titleClips).toHaveCount(3);
@@ -436,7 +469,7 @@ test('the homepage stages its hero through masked kinetic lines', async ({
   });
 
   expect(motion.clipPath).toContain('inset');
-  expect(motion.firstTransform).toContain('110%');
+  expect(motion.firstTransform).toContain('35%');
 });
 
 test('the homepage motion controller responds to scroll and pointer position', async ({
@@ -806,6 +839,35 @@ test('/profile/ presents a sticky identity rail and animated journey on desktop'
 
   expect(markersContained).toBe(true);
 });
+
+for (const viewport of [
+  { width: 1440, height: 760 },
+  { width: 390, height: 844 },
+] as const) {
+  test(`/profile/#experience clears the sticky header offset at ${viewport.width}px`, async ({
+    page,
+  }) => {
+    await page.setViewportSize(viewport);
+    await page.goto('/profile/#experience');
+    await expect(page).toHaveURL(/\/profile\/#experience$/);
+    const target = page.locator('#experience');
+    await expect(target).toBeInViewport();
+    await page.waitForTimeout(600);
+
+    const geometry = await page.evaluate(() => ({
+      headerBottom: document
+        .querySelector('.site-header')!
+        .getBoundingClientRect().bottom,
+      targetTop: document
+        .querySelector('#experience')!
+        .getBoundingClientRect().top,
+    }));
+
+    expect(geometry.targetTop).toBeGreaterThanOrEqual(
+      geometry.headerBottom + 16,
+    );
+  });
+}
 
 test('/profile/ presents its contact actions as one aligned icon row', async ({
   page,

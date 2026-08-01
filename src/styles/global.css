@@ -305,7 +305,7 @@ ul {
 
 @keyframes rise-in {
   from {
-    transform: translateY(110%) rotate(1.5deg);
+    transform: translateY(35%) rotate(1deg);
   }
 
   to {
@@ -313,15 +313,15 @@ ul {
   }
 }
 
-.hero--animate .hero__title-line {
+.hero__title-line {
   animation: rise-in var(--motion-slow) var(--ease-out) both;
 }
 
-.hero--animate .hero__title-clip:nth-child(2) .hero__title-line {
+.hero__title-clip:nth-child(2) .hero__title-line {
   animation-delay: 60ms;
 }
 
-.hero--animate .hero__title-clip:nth-child(3) .hero__title-line {
+.hero__title-clip:nth-child(3) .hero__title-line {
   animation-delay: 120ms;
 }
 
@@ -878,6 +878,11 @@ html[data-motion='ready'] .timeline--visible .timeline__dot {
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  .hero__title-line {
+    animation: none;
+    transform: none;
   }
 
   *,
