@@ -21,6 +21,16 @@ describe('localized portfolio content', () => {
     expect(content.zh.displayName).toBe('蔡一贤');
   });
 
+  it('defines a complete localized Floating Studio introduction', () => {
+    for (const locale of locales) {
+      const intro = content[locale].workIntro;
+
+      expect(intro.eyebrow).toBeTruthy();
+      expect(intro.title).toBeTruthy();
+      expect(intro.summary).toBeTruthy();
+    }
+  });
+
   it('defines the complete PatentPATH product story in every locale', () => {
     const expectedScreenshotPaths = [
       '/projects/patentpath/overview.png',

@@ -30,6 +30,12 @@ export const en = {
       'Applied AI',
     ],
   },
+  workIntro: {
+    eyebrow: 'Selected work · 2024–2026',
+    title: 'From a hard question to something useful.',
+    summary:
+      'Products, automations and evidence-led analyses. Each project shows the problem, my role and the proof — not just a technology list.',
+  },
   actions: {
     viewProjects: 'View projects',
     allProjects: 'All projects',

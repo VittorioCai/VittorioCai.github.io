@@ -25,6 +25,12 @@ export const zh = {
     focusLabel: '方向',
     focus: ['数据与商业智能', '供应链分析', '应用 AI'],
   },
+  workIntro: {
+    eyebrow: '代表项目 · 2024–2026',
+    title: '从难题出发，做成真正可用的成果。',
+    summary:
+      '这里有产品、自动化工具和以证据为基础的分析。每个项目都说明问题、我的职责与成果依据，而不只是罗列技术。',
+  },
   actions: {
     viewProjects: '查看项目',
     allProjects: '全部项目',

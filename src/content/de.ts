@@ -30,6 +30,12 @@ export const de = {
       'Angewandte KI',
     ],
   },
+  workIntro: {
+    eyebrow: 'Ausgewählte Projekte · 2024–2026',
+    title: 'Von einer schwierigen Frage zu etwas Nutzbarem.',
+    summary:
+      'Produkte, Automatisierungen und evidenzbasierte Analysen. Jedes Projekt zeigt die Aufgabe, meinen Beitrag und die Belege — nicht nur eine Technologieliste.',
+  },
   actions: {
     viewProjects: 'Projekte ansehen',
     allProjects: 'Alle Projekte',

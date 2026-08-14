@@ -89,6 +89,11 @@ export interface SiteContent {
     focusLabel: string;
     focus: string[];
   };
+  workIntro: {
+    eyebrow: string;
+    title: string;
+    summary: string;
+  };
   actions: {
     viewProjects: string;
     allProjects: string;
