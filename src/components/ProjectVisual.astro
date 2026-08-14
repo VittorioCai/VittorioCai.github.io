@@ -10,6 +10,10 @@ type Props =
       projectId: 'english-job-agent';
       label: string;
       stages: SiteContent['visuals']['jobAgentStages'];
+    }
+  | {
+      projectId: 'news-sentiment' | 'water-quality';
+      label: string;
     };
 
 const props = Astro.props;
@@ -19,6 +23,7 @@ const props = Astro.props;
   props.projectId === 'patentpath' && (
     <div
       class="project-visual patent-preview"
+      data-project-visual="patentpath"
       data-patent-preview
       role="img"
       aria-label={props.label}
@@ -63,6 +68,50 @@ const props = Astro.props;
           decoding="async"
         />
       </div>
+    </div>
+  )
+}
+
+{
+  props.projectId === 'news-sentiment' && (
+    <div
+      class="project-visual sentiment-visual"
+      data-project-visual="news-sentiment"
+      role="img"
+      aria-label={props.label}
+    >
+      <span class="sentiment-stage sentiment-stage--prompt" data-sentiment-step>
+        <i></i><i></i><i></i>
+      </span>
+      <b aria-hidden="true">→</b>
+      <span class="sentiment-stage sentiment-stage--panel" data-sentiment-step>
+        <i></i><i></i><i></i><i></i>
+      </span>
+      <b aria-hidden="true">→</b>
+      <span class="sentiment-stage sentiment-stage--evidence" data-sentiment-step>
+        <i></i><i></i>
+      </span>
+    </div>
+  )
+}
+
+{
+  props.projectId === 'water-quality' && (
+    <div
+      class="project-visual model-visual"
+      data-project-visual="water-quality"
+      role="img"
+      aria-label={props.label}
+    >
+      {Array.from({ length: 6 }, (_, index) => (
+        <span
+          data-model-mark
+          style={`--model-index:${index + 1}`}
+          aria-hidden="true"
+        >
+          <i></i>
+        </span>
+      ))}
     </div>
   )
 }
@@ -356,6 +405,84 @@ const props = Astro.props;
 
   .job-visual b {
     font-weight: 400;
+  }
+
+  .sentiment-visual {
+    display: grid;
+    grid-template-columns: 1fr auto 1.25fr auto 1fr;
+    align-items: center;
+    gap: 0.45rem;
+    min-height: 8rem;
+    padding: 1rem;
+    background: color-mix(in srgb, var(--accent) 7%, var(--surface));
+  }
+
+  .sentiment-stage {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 0.22rem;
+    min-height: 4.5rem;
+    padding: 0.65rem;
+    border-radius: 0.65rem;
+    background: var(--paper);
+    box-shadow: 0 0.6rem 1.25rem rgb(23 23 23 / 6%);
+  }
+
+  .sentiment-stage i {
+    display: block;
+    width: 0.3rem;
+    height: 45%;
+    border-radius: 999px;
+    background: var(--accent);
+    opacity: 0.45;
+  }
+
+  .sentiment-stage i:nth-child(2n) {
+    height: 75%;
+    opacity: 0.85;
+  }
+
+  .sentiment-stage--evidence i:first-child {
+    height: 90%;
+    opacity: 1;
+  }
+
+  .sentiment-visual b {
+    font-weight: 400;
+  }
+
+  .model-visual {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.45rem;
+    min-height: 8rem;
+    padding: 1.2rem 1rem 1rem;
+    background:
+      linear-gradient(var(--line), var(--line)) 1rem calc(100% - 1rem) /
+        calc(100% - 2rem) 1px no-repeat,
+      color-mix(in srgb, var(--accent) 5%, var(--surface));
+  }
+
+  .model-visual span {
+    display: flex;
+    flex: 1;
+    align-items: flex-end;
+    height: calc(2.6rem + var(--model-index) * 0.36rem);
+  }
+
+  .model-visual i {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 0.45rem 0.45rem 0 0;
+    border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--line));
+    background: color-mix(in srgb, var(--accent) 10%, var(--paper));
+  }
+
+  .model-visual span:nth-child(4) i,
+  .model-visual span:nth-child(6) i {
+    background: color-mix(in srgb, var(--accent) 32%, var(--paper));
   }
 
 </style>

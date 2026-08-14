@@ -27,6 +27,12 @@ const contactBlockSource = readFileSync(
   ),
   'utf8',
 );
+const projectVisualSource = readFileSync(
+  fileURLToPath(
+    new URL('../src/components/ProjectVisual.astro', import.meta.url),
+  ),
+  'utf8',
+);
 const linkedInUrl =
   'https://www.linkedin.com/in/vittorio-cai-3ba0b7385';
 
@@ -40,6 +46,22 @@ describe('editorial shell contract', () => {
       expect(source).toContain(linkedInUrl);
       expect(source).not.toContain('https://linkedin.com/in/vittorio-cai');
     }
+  });
+
+  it('defines evidence-shaped visuals for every project type', () => {
+    for (const projectId of [
+      'patentpath',
+      'english-job-agent',
+      'news-sentiment',
+      'water-quality',
+    ]) {
+      expect(projectVisualSource).toContain(
+        `data-project-visual="${projectId}"`,
+      );
+    }
+
+    expect(projectVisualSource).toContain('data-sentiment-step');
+    expect(projectVisualSource).toContain('data-model-mark');
   });
 
   it('keeps the exact root and body color contract', () => {
