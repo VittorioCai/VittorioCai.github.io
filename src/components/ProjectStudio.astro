@@ -1,0 +1,117 @@
+---
+import type { Locale, SiteContent } from '../content';
+import { getLocalizedPath } from '../i18n/routes';
+import StudioProjectCard from './StudioProjectCard.astro';
+
+interface Props {
+  locale: Locale;
+  projects: SiteContent['projects'];
+  sections: SiteContent['sections'];
+  visuals: SiteContent['visuals'];
+  actions: SiteContent['actions'];
+  mode: 'teaser' | 'full';
+  workIntro?: SiteContent['workIntro'];
+  headingTag?: 'h1' | 'h2';
+}
+
+const {
+  locale,
+  projects,
+  sections,
+  visuals,
+  actions,
+  mode,
+  workIntro,
+  headingTag = 'h2',
+} = Astro.props;
+const [featured, ...supportingProjects] = projects;
+const Heading = headingTag;
+---
+
+<section
+  id="work"
+  aria-labelledby="work-heading"
+  data-project-studio
+  data-studio-mode={mode}
+>
+  <div class="section-heading reveal" data-reveal-delay="0">
+    <Heading id="work-heading">{sections.work}</Heading>
+  </div>
+
+  {
+    mode === 'full' && workIntro && (
+      <header class="work-intro reveal" data-work-intro>
+        <p class="section-label">{workIntro.eyebrow}</p>
+        <h2>{workIntro.title}</h2>
+        <p>{workIntro.summary}</p>
+      </header>
+    )
+  }
+
+  <div class="studio-field" data-studio-field>
+    <StudioProjectCard
+      locale={locale}
+      project={featured}
+      sections={sections}
+      visuals={visuals}
+      actions={actions}
+      variant="featured"
+      revealDelay={0}
+    />
+    {
+      mode === 'full' && (
+        <div class="studio-supporting">
+          {supportingProjects.map((project, index) => (
+            <StudioProjectCard
+              locale={locale}
+              project={project}
+              sections={sections}
+              visuals={visuals}
+              actions={actions}
+              variant="supporting"
+              revealDelay={(index + 1) * 70}
+            />
+          ))}
+        </div>
+      )
+    }
+  </div>
+
+  {
+    mode === 'teaser' && (
+      <div class="studio-all-projects reveal" data-reveal-delay="120">
+        <a href={getLocalizedPath(locale, 'work')}>
+          {actions.allProjects} →
+        </a>
+      </div>
+    )
+  }
+</section>
+
+<style>
+  h1,
+  h2 {
+    margin-bottom: 0;
+  }
+
+  .work-intro h2 {
+    max-width: 17ch;
+    margin-bottom: 1.25rem;
+    font-size: clamp(2.35rem, 6vw, 5rem);
+    letter-spacing: -0.055em;
+    line-height: 0.98;
+  }
+
+  :global(:lang(zh-CN)) .work-intro h2 {
+    max-width: 14ch;
+    letter-spacing: -0.025em;
+    line-height: 1.12;
+  }
+
+  .work-intro > p:last-child {
+    max-width: 62ch;
+    margin-bottom: 0;
+    color: var(--muted);
+    font-size: clamp(1rem, 2vw, 1.2rem);
+  }
+</style>

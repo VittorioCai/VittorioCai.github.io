@@ -2,8 +2,8 @@
 import { getContent } from '../content';
 import type { Locale } from '../content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import FeaturedProject from './FeaturedProject.astro';
 import Hero from './Hero.astro';
+import ProjectStudio from './ProjectStudio.astro';
 
 interface Props {
   locale: Locale;
@@ -11,7 +11,6 @@ interface Props {
 
 const { locale } = Astro.props;
 const copy = getContent(locale);
-const [featured] = copy.projects;
 ---
 
 <BaseLayout
@@ -26,22 +25,12 @@ const [featured] = copy.projects;
     actions={copy.actions}
     locale={locale}
   />
-  <section id="work" aria-labelledby="work-heading">
-    <div class="section-heading reveal" data-reveal-delay="0">
-      <h2 id="work-heading">{copy.sections.work}</h2>
-    </div>
-    <FeaturedProject
-      locale={locale}
-      project={featured}
-      sections={copy.sections}
-      actions={copy.actions}
-      allProjectsLink
-    />
-  </section>
+  <ProjectStudio
+    locale={locale}
+    projects={copy.projects}
+    sections={copy.sections}
+    visuals={copy.visuals}
+    actions={copy.actions}
+    mode="teaser"
+  />
 </BaseLayout>
-
-<style>
-  h2 {
-    margin-bottom: 0;
-  }
-</style>

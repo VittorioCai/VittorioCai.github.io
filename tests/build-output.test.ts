@@ -267,6 +267,11 @@ describe.each(localizedHomepages)('$file', ({
     expect($('main')).toHaveLength(1);
     expect($('#work')).toHaveLength(1);
     expect(
+      $('[data-project-studio][data-studio-mode="teaser"]'),
+    ).toHaveLength(1);
+    expect($('[data-studio-project]')).toHaveLength(1);
+    expect($('[data-studio-project="patentpath"]')).toHaveLength(1);
+    expect(
       $('[data-project-id="patentpath"]').first().attr('data-featured'),
     ).toBe('true');
     expect($(`a[href="${workPath}"]`).length).toBeGreaterThan(0);
@@ -341,6 +346,17 @@ describe.each(workPages)('$file', ({ file, lang, pipelineStages }) => {
     expect($('html').attr('lang')).toBe(lang);
     expect($('#work')).toHaveLength(1);
     expect($('main h1')).toHaveLength(1);
+    expect(
+      $('[data-project-studio][data-studio-mode="full"]'),
+    ).toHaveLength(1);
+    expect($('[data-work-intro]')).toHaveLength(1);
+    expect($('[data-studio-project]')).toHaveLength(4);
+    expect(
+      $('[data-studio-project][data-studio-variant="featured"]'),
+    ).toHaveLength(1);
+    expect(
+      $('[data-studio-project][data-studio-variant="supporting"]'),
+    ).toHaveLength(3);
     expect($('[data-project-id]')).toHaveLength(4);
     expect(
       $('[data-project-id="patentpath"]').first().attr('data-featured'),
@@ -357,6 +373,19 @@ describe.each(workPages)('$file', ({ file, lang, pipelineStages }) => {
       expect(caseStudyLink).toHaveLength(1);
       expect(caseStudyLink.text().trim()).toBe(caseStudyActionLabels[lang]);
     }
+
+    expect($('[data-project-visual="patentpath"]')).toHaveLength(1);
+    expect(
+      $('[data-project-visual="english-job-agent"]'),
+    ).toHaveLength(1);
+    expect($('[data-project-visual="news-sentiment"]')).toHaveLength(1);
+    expect($('[data-project-visual="water-quality"]')).toHaveLength(1);
+    expect(
+      $('[data-project-visual="news-sentiment"] [data-sentiment-step]'),
+    ).toHaveLength(3);
+    expect(
+      $('[data-project-visual="water-quality"] [data-model-mark]'),
+    ).toHaveLength(6);
   });
 
   it(`renders the ${lang} job-agent pipeline labels`, () => {

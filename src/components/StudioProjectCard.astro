@@ -1,0 +1,176 @@
+---
+import type { Locale, SiteContent } from '../content';
+import type { Project } from '../content/types';
+import { getProjectCaseStudyPath } from '../utils/project-route';
+import { getSafeProjectAction } from '../utils/external-url';
+import ProjectVisual from './ProjectVisual.astro';
+
+interface Props {
+  locale: Locale;
+  project: Project;
+  sections: SiteContent['sections'];
+  visuals: SiteContent['visuals'];
+  actions: SiteContent['actions'];
+  variant: 'featured' | 'supporting';
+  revealDelay: number;
+}
+
+const {
+  locale,
+  project,
+  sections,
+  visuals,
+  actions,
+  variant,
+  revealDelay,
+} = Astro.props;
+const demoUrl = getSafeProjectAction(project.actions, 'demo');
+const sourceUrl = getSafeProjectAction(project.actions, 'source');
+const caseStudyPath = project.actions.caseStudy
+  ? getProjectCaseStudyPath(locale, project.id)
+  : undefined;
+const visualLabel = `${project.title}: ${project.summary}`;
+---
+
+<article
+  class:list={[
+    'studio-project',
+    `studio-project--${variant}`,
+    'reveal',
+  ]}
+  data-studio-project={project.id}
+  data-studio-variant={variant}
+  data-project-id={project.id}
+  data-featured={variant === 'featured' ? 'true' : undefined}
+  data-reveal-delay={String(revealDelay)}
+>
+  <div class="studio-project__copy">
+    <p class="section-label">{project.kicker}</p>
+    <h3>{project.title}</h3>
+    <p class="studio-project__summary">{project.summary}</p>
+    {
+      project.contribution && (
+        <p class="studio-project__role">
+          <strong>{sections.contribution}</strong>
+          <span>{project.contribution}</span>
+        </p>
+      )
+    }
+    <ul class="studio-project__evidence">
+      {project.details.map((detail) => <li>{detail}</li>)}
+    </ul>
+    <ul class="studio-project__tags" aria-label={project.title}>
+      {project.tags.map((tag) => <li>{tag}</li>)}
+    </ul>
+    {
+      (demoUrl || sourceUrl || caseStudyPath) && (
+        <div class="text-actions">
+          {demoUrl && (
+            <a class="external" href={demoUrl} rel="noreferrer">
+              {actions.demo}
+            </a>
+          )}
+          {demoUrl && project.demoNote && (
+            <p class="demo-note">{project.demoNote}</p>
+          )}
+          {sourceUrl && (
+            <a class="external" href={sourceUrl} rel="noreferrer">
+              {actions.source}
+            </a>
+          )}
+          {caseStudyPath && <a href={caseStudyPath}>{actions.caseStudy}</a>}
+        </div>
+      )
+    }
+  </div>
+
+  <div class="studio-project__visual">
+    {
+      caseStudyPath ? (
+        <a
+          class="studio-project__visual-link"
+          href={caseStudyPath}
+          aria-label={`${actions.caseStudy}: ${project.title}`}
+        >
+          {project.id === 'english-job-agent' ? (
+            <ProjectVisual
+              projectId="english-job-agent"
+              label={visualLabel}
+              stages={visuals.jobAgentStages}
+            />
+          ) : (
+            <ProjectVisual projectId={project.id} label={visualLabel} />
+          )}
+        </a>
+      ) : project.id === 'english-job-agent' ? (
+        <ProjectVisual
+          projectId="english-job-agent"
+          label={visualLabel}
+          stages={visuals.jobAgentStages}
+        />
+      ) : (
+        <ProjectVisual projectId={project.id} label={visualLabel} />
+      )
+    }
+  </div>
+</article>
+
+<style>
+  h3 {
+    margin-bottom: 1rem;
+    font-size: clamp(1.4rem, 2.8vw, 2.25rem);
+    line-height: 1.08;
+  }
+
+  .studio-project__summary {
+    color: var(--muted);
+    font-size: 1.05rem;
+  }
+
+  .studio-project__role {
+    display: grid;
+    gap: 0.3rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .studio-project__role span {
+    color: var(--muted);
+  }
+
+  .studio-project__evidence {
+    padding-left: 1.2rem;
+  }
+
+  .studio-project__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin-bottom: 0;
+    padding-left: 0;
+    list-style: none;
+  }
+
+  .studio-project__tags li {
+    padding: 0.2rem 0.7rem;
+    border-radius: 999px;
+    color: var(--muted);
+    background: color-mix(in srgb, var(--accent) 6%, var(--surface));
+    font-size: 0.78rem;
+    font-weight: 550;
+  }
+
+  .demo-note {
+    flex-basis: 100%;
+    margin: -0.3rem 0 0;
+    color: var(--muted);
+    font-size: 0.78rem;
+    line-height: 1.4;
+  }
+
+  .studio-project__visual-link {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+  }
+</style>
