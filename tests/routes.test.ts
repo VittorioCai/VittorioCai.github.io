@@ -4,6 +4,7 @@ import {
   getLanguageLinks,
   getLocalizedPath,
 } from '../src/i18n/routes';
+import { getProjectCaseStudyPath } from '../src/utils/project-route';
 
 describe('localized routes', () => {
   it('maps the home route to each locale root', () => {
@@ -43,5 +44,20 @@ describe('localized routes', () => {
       { locale: 'de', href: '/de/work/english-job-agent/' },
       { locale: 'zh', href: '/zh/work/english-job-agent/' },
     ]);
+  });
+
+  it('maps every project ID to its localized case-study route', () => {
+    expect(getProjectCaseStudyPath('en', 'patentpath')).toBe(
+      '/work/patentpath/',
+    );
+    expect(getProjectCaseStudyPath('de', 'english-job-agent')).toBe(
+      '/de/work/english-job-agent/',
+    );
+    expect(getProjectCaseStudyPath('zh', 'news-sentiment')).toBe(
+      '/zh/work/news-sentiment/',
+    );
+    expect(getProjectCaseStudyPath('en', 'water-quality')).toBe(
+      '/work/water-quality/',
+    );
   });
 });
