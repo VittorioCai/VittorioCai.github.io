@@ -136,6 +136,8 @@ const props = Astro.props;
 <style>
   .project-visual {
     width: 100%;
+    min-width: 0;
+    max-width: 100%;
     color: var(--accent);
   }
 
@@ -201,10 +203,10 @@ const props = Astro.props;
   }
 
   :global(html[data-motion='ready'])
-    :global(.project-featured__visual.reveal--visible)
+    :global(.studio-project.reveal--visible)
     .patent-preview__screen,
   :global(html[data-motion='ready'])
-    :global(.project-featured__visual.reveal--visible)
+    :global(.studio-project.reveal--visible)
     .patent-preview__mark {
     animation-duration: 4500ms;
     animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
@@ -213,48 +215,48 @@ const props = Astro.props;
   }
 
   :global(html[data-motion='ready'])
-    :global(.project-featured__visual.reveal--visible)
+    :global(.studio-project.reveal--visible)
     .patent-preview__screen--overview {
     animation-name: patent-overview-sequence;
   }
 
   :global(html[data-motion='ready'])
-    :global(.project-featured__visual.reveal--visible)
+    :global(.studio-project.reveal--visible)
     .patent-preview__screen--patents {
     animation-name: patent-patents-sequence;
   }
 
   :global(html[data-motion='ready'])
-    :global(.project-featured__visual.reveal--visible)
+    :global(.studio-project.reveal--visible)
     .patent-preview__screen--risk {
     animation-name: patent-risk-sequence;
   }
 
   :global(html[data-motion='ready'])
-    :global(.project-featured__visual.reveal--visible)
+    :global(.studio-project.reveal--visible)
     .patent-preview__mark--overview {
     animation-name: patent-overview-mark;
   }
 
   :global(html[data-motion='ready'])
-    :global(.project-featured__visual.reveal--visible)
+    :global(.studio-project.reveal--visible)
     .patent-preview__mark--patents {
     animation-name: patent-patents-mark;
   }
 
   :global(html[data-motion='ready'])
-    :global(.project-featured__visual.reveal--visible)
+    :global(.studio-project.reveal--visible)
     .patent-preview__mark--risk {
     animation-name: patent-risk-mark;
   }
 
-  :global(.project-featured__visual-link:hover)
+  :global(.studio-project__visual-link:hover)
     .patent-preview__screen,
-  :global(.project-featured__visual-link:hover)
+  :global(.studio-project__visual-link:hover)
     .patent-preview__mark,
-  :global(.project-featured__visual-link:focus-visible)
+  :global(.studio-project__visual-link:focus-visible)
     .patent-preview__screen,
-  :global(.project-featured__visual-link:focus-visible)
+  :global(.studio-project__visual-link:focus-visible)
     .patent-preview__mark {
     animation-play-state: paused;
   }

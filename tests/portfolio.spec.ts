@@ -506,18 +506,17 @@ test('the homepage motion controller responds to scroll and pointer position', a
   );
 });
 
-test('the featured project visual offers a pointer-follow case study cue', async ({
+test('the featured studio project presents a linked real product sequence', async ({
   page,
 }) => {
   await page.goto('/');
 
-  const visualLink = page.locator('[data-project-pointer-link]');
+  const visualLink = page.locator(
+    '[data-studio-project="patentpath"] .studio-project__visual-link',
+  );
   await expect(visualLink).toHaveCount(1);
   await expect(visualLink).toHaveAttribute('href', '/work/patentpath/');
-  await expect(visualLink.locator('[data-project-pointer-pill]')).toHaveText(
-    'Case study',
-  );
-  await expect(visualLink.locator('[data-project-motion-layer]')).toHaveCount(2);
+  await expect(visualLink.locator('[data-project-pointer-pill]')).toHaveCount(0);
 
   const preview = visualLink.locator('[data-patent-preview]');
   const screens = preview.locator('[data-patent-preview-screen]');
@@ -587,53 +586,53 @@ test('the featured project visual offers a pointer-follow case study cue', async
   expect(previewTransform.scaleY).toBeCloseTo(1, 3);
   expect(previewTransform.translateX).toBeCloseTo(0, 3);
   expect(previewTransform.translateY).toBeCloseTo(0, 3);
-
-  const box = await visualLink.boundingBox();
-  expect(box).not.toBeNull();
-  await page.mouse.move(box!.x + box!.width * 0.65, box!.y + box!.height * 0.45);
-  await page.waitForTimeout(80);
-
-  const pointerX = await visualLink.evaluate((element) =>
-    Number.parseFloat(element.style.getPropertyValue('--pointer-x')),
-  );
-  expect(pointerX).toBeGreaterThan(box!.width * 0.5);
-
-  const pillScale = await visualLink
-    .locator('[data-project-pointer-pill]')
-    .evaluate(
-      (element) =>
-        new DOMMatrixReadOnly(getComputedStyle(element).transform).a,
-    );
-  expect(pillScale).toBeGreaterThan(0.8);
-
-  const pillBox = await visualLink
-    .locator('[data-project-pointer-pill]')
-    .boundingBox();
-  expect(pillBox?.width).toBeLessThanOrEqual(80);
 });
 
-test('the mobile featured project places the product between lead and proof', async ({
+test('/work/ uses one featured and three supporting studio projects', async ({
   page,
 }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto('/');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/work/');
 
-  const lead = page.locator('.project-featured__lead');
-  const visual = page.locator('.project-featured__visual');
-  const proof = page.locator('.project-featured__proof');
-  const geometry = await Promise.all([
-    lead.boundingBox(),
-    visual.boundingBox(),
-    proof.boundingBox(),
-  ]);
+  await expect(page.locator('[data-studio-project]')).toHaveCount(4);
+  await expect(page.locator('[data-studio-variant="featured"]')).toHaveCount(1);
+  await expect(page.locator('[data-studio-variant="supporting"]')).toHaveCount(3);
+  await expect(page.locator('.studio-project--featured')).toHaveCSS(
+    'display',
+    'grid',
+  );
+  await expect(page.locator('.studio-supporting')).toHaveCSS(
+    'display',
+    'grid',
+  );
+});
 
-  expect(geometry.every(Boolean)).toBe(true);
-  expect(geometry[0]!.y + geometry[0]!.height).toBeLessThanOrEqual(
-    geometry[1]!.y,
+test('/work/ removes studio distortion on mobile', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 320, height: 900 });
+  await page.goto('/work/');
+
+  for (const card of await page.locator('[data-studio-project]').all()) {
+    await expect(card).toHaveCSS('transform', 'none');
+  }
+  await expect(page.locator('.studio-supporting')).toHaveCSS(
+    'grid-template-columns',
+    '288px',
   );
-  expect(geometry[1]!.y + geometry[1]!.height).toBeLessThanOrEqual(
-    geometry[2]!.y,
-  );
+  await expectNoHorizontalOverflow(page);
+});
+
+test('reduced motion renders the Work studio in its final state', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/work/');
+
+  for (const card of await page.locator('[data-studio-project]').all()) {
+    await expect(card).toHaveCSS('animation-name', 'none');
+    await expect(card).toHaveCSS('opacity', '1');
+  }
 });
 
 test('ambient motion settles instead of looping forever', async ({ page }) => {
