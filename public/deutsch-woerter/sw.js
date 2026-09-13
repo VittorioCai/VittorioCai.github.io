@@ -1,5 +1,5 @@
-const CACHE="deutsch-woerter-v4";
-const ASSETS=["./index.html","./app.webmanifest","./icon.svg","./cards.json?v=1"];
+const CACHE="deutsch-woerter-v6";
+const ASSETS=["./index.html","./app.webmanifest","./icon.svg","./cards.json?v=1","./learn.css?v=1","./learn.js?v=1","./zh-a1-k1.json?v=1"];
 
 self.addEventListener("install",e=>{
   e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting()));
@@ -12,7 +12,10 @@ self.addEventListener("activate",e=>{
 self.addEventListener("fetch",e=>{
   if(e.request.method!=="GET")return;
   if(e.request.mode==="navigate"){
-    e.respondWith(fetch(e.request,{cache:"no-store"}).catch(()=>caches.match("./index.html")));
+    e.respondWith(fetch(e.request,{cache:"no-store"}).then(r=>{
+      if(r&&r.ok){const copy=r.clone();caches.open(CACHE).then(c=>c.put("./index.html",copy));}
+      return r;
+    }).catch(()=>caches.match("./index.html")));
     return;
   }
   e.respondWith(caches.match(e.request).then(cached=>cached||fetch(e.request).then(r=>{
