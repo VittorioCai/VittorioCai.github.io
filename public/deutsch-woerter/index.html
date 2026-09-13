@@ -9,6 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="Deutsch Wörter">
 <link rel="manifest" href="./app.webmanifest">
 <link rel="icon" href="./icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="./learn.css?v=1">
 <title>Netzwerk neu A1–B1 单词检测</title>
 <style>
 :root{--bg:#f6f7fb;--card:#fff;--ink:#172033;--muted:#697386;--line:#e5e8ef;--accent:#315efb;--good:#0a8f55;--bad:#c73737;--soft:#eef2ff;--shadow:0 14px 40px rgba(30,42,70,.10)}
@@ -75,7 +76,7 @@ const $=id=>document.getElementById(id);
 const norm=s=>(s||"").toLowerCase().trim().replace(/[|·.,;:!?()[\]{}“”„"']/g," ").replace(/\s+/g," ").replace(/ß/g,"ss");
 const withoutArticle=s=>norm(s).replace(/^(der|die|das)\s+/,"");
 const isNoun=c=>/^(der|die|das)\s/i.test(c.de);
-const cleanGloss=s=>norm((s||"").replace(/^[_\-–—\s]+/,"")).replace(/\s*\([^)]*\)\s*$/,"").trim();
+const cleanGloss=s=>norm((s||"").replace(/^[_\-–—\s]+/,"")).replace(/\s*\([^)]*\)\s*$/," ").trim();
 const esc=s=>String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]));
 function state(c){return progress[c.id]||{seen:0,correct:0,wrong:0,mastery:0,last:0}}
 function save(c,ok){const s=state(c);s.seen++;s.last=Date.now();if(ok){s.correct++;s.mastery=Math.min(5,(s.mastery||0)+1)}else{s.wrong++;s.mastery=Math.max(0,(s.mastery||0)-1)}progress[c.id]=s;localStorage.setItem(STORE_KEY,JSON.stringify(progress))}
@@ -99,4 +100,5 @@ function dl(name,obj){const b=new Blob([JSON.stringify(obj,null,2)],{type:"appli
 if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").then(()=>$("appStatus").textContent="离线模式已启用。").catch(()=>{}));
 loadCards();
 </script>
+<script src="./learn.js?v=1"></script>
 </body></html>
