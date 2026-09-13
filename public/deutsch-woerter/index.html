@@ -100,5 +100,5 @@ function dl(name,obj){const b=new Blob([JSON.stringify(obj,null,2)],{type:"appli
 if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").then(()=>$("appStatus").textContent="离线模式已启用。").catch(()=>{}));
 loadCards();
 </script>
-<script src="./learn.js?v=1"></script>
+<script src="./learn.js?v=2"></script>
 </body></html>
