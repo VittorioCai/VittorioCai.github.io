@@ -1,5 +1,5 @@
-const CACHE="deutsch-woerter-v1";
-const PARTS=Array.from({length:17},(_,i)=>`./cards-chunk-${String(i).padStart(2,"0")}.txt`);
+const CACHE="deutsch-woerter-v2";
+const PARTS=Array.from({length:8},(_,i)=>`./cards-mini-${String(i).padStart(2,"0")}.txt`);
 const ASSETS=["./","./index.html","./app.webmanifest","./icon.svg",...PARTS];
 self.addEventListener("install",e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting())));
 self.addEventListener("activate",e=>e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
