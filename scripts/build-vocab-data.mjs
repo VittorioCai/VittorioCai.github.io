@@ -1,0 +1,14 @@
+import { readFileSync, writeFileSync } from 'node:fs';
+import { gunzipSync } from 'node:zlib';
+
+const dir = new URL('./public/deutsch-woerter/', `file://${process.cwd()}/`);
+const parts = Array.from({ length: 8 }, (_, i) =>
+  readFileSync(new URL(`cards-mini-${String(i).padStart(2, '0')}.txt`, dir), 'utf8'),
+);
+const compressed = Buffer.from(parts.join('').trim(), 'base64');
+const rows = JSON.parse(gunzipSync(compressed).toString('utf8'));
+if (!Array.isArray(rows) || rows.length !== 5452) {
+  throw new Error(`Vocabulary build failed: expected 5452 rows, got ${Array.isArray(rows) ? rows.length : 'invalid data'}`);
+}
+writeFileSync(new URL('cards.json', dir), JSON.stringify(rows));
+console.log(`Generated public/deutsch-woerter/cards.json with ${rows.length} rows.`);
