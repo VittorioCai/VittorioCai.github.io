@@ -1,161 +1,100 @@
 import { readFileSync, writeFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { gunzipSync } from 'node:zlib';
 
-const dir = new URL('./public/deutsch-woerter/', `file://${process.cwd()}/`);
+const src = new URL('../src/vocab/', import.meta.url);
+const data = new URL('./data/', src);
+const out = new URL('../public/deutsch-woerter/', import.meta.url);
+
+// A floor, not a fixed size. The per-chapter gloss checks below are what actually
+// guarantee the data lines up, and they name the file to fix when it does not —
+// so adding a word no longer means hunting down 21 hardcoded counts.
+const MIN_TOTAL = 4000;
+const ZH_PARTS = [
+  { file: 'zh-a1-1-6.json', level: 'A1', chapters: [1, 6], count: 1076 },
+  { file: 'zh-a1-7-12.json', level: 'A1', chapters: [7, 12], count: 888 },
+  { file: 'zh-a2-1-6.json', level: 'A2', chapters: [1, 6], count: 685 },
+  { file: 'zh-a2-7-12.json', level: 'A2', chapters: [7, 12], count: 797 },
+];
+
+// ---- card rows -------------------------------------------------------------
 const parts = Array.from({ length: 8 }, (_, i) =>
-  readFileSync(new URL(`cards-mini-${String(i).padStart(2, '0')}.txt`, dir), 'utf8').trim(),
+  readFileSync(new URL(`cards-mini-${String(i).padStart(2, '0')}.txt`, data), 'utf8').trim(),
 );
-const compressed = Buffer.from(parts.join(''), 'base64');
-const rows = JSON.parse(gunzipSync(compressed).toString('utf8'));
-if (!Array.isArray(rows) || rows.length !== 5452) {
-  throw new Error(`Vocabulary build failed: expected 5452 rows, got ${Array.isArray(rows) ? rows.length : 'invalid data'}`);
-}
-writeFileSync(new URL('cards.json', dir), JSON.stringify(rows));
-console.log(`Generated public/deutsch-woerter/cards.json with ${rows.length} rows.`);
-
-const learnUrl = new URL('learn.js', dir);
-let learn = readFileSync(learnUrl, 'utf8');
-const replaceOnce = (source, from, to, label) => {
-  if (!source.includes(from)) throw new Error(`Vocabulary learning patch failed: ${label}`);
-  return source.replace(from, to);
-};
-const replaceAllChecked = (source, from, to, expected, label) => {
-  const count = source.split(from).length - 1;
-  if (count !== expected) throw new Error(`Vocabulary learning patch failed: ${label} (expected ${expected}, got ${count})`);
-  return source.split(from).join(to);
-};
-
-// Inject the spelling wrong-book feature at build time so the source learning module
-// stays readable and the deployed PWA receives the feature as one same-origin script.
-if (!learn.includes('WRONGBOOK_ADDON_V1')) {
-  const addon = readFileSync(new URL('wrongbook-addon.js', dir), 'utf8').trim();
-  learn = replaceOnce(
-    learn,
-    'const ok=!show&&LspellAccepted(c,v);Lrecord(c,ok,"spell")',
-    'const ok=!show&&LspellAccepted(c,v);LwrongSpellResult(c,v,show,ok);Lrecord(c,ok,"spell")',
-    'spelling hook',
-  );
-  learn = replaceOnce(
-    learn,
-    '{version:3,exportedAt:new Date().toISOString(),quizProgress:progress,learnProgress}',
-    '{version:4,exportedAt:new Date().toISOString(),quizProgress:progress,learnProgress,spellingWrongBook:wrongBook}',
-    'backup export',
-  );
-  learn = replaceOnce(
-    learn,
-    'learnProgress=d.learnProgress||{}}else{',
-    'learnProgress=d.learnProgress||{};if(d.spellingWrongBook&&typeof d.spellingWrongBook==="object")wrongBook=d.spellingWrongBook}else{',
-    'backup import',
-  );
-  learn = replaceOnce(
-    learn,
-    'localStorage.setItem(LEARN_KEY,JSON.stringify(learnProgress));stats();',
-    'localStorage.setItem(LEARN_KEY,JSON.stringify(learnProgress));localStorage.setItem(WRONG_KEY,JSON.stringify(wrongBook));stats();',
-    'wrong-book persistence after import',
-  );
-  learn = replaceOnce(
-    learn,
-    'LbuildShell();Lready();',
-    `${addon}\nLbuildShell();LinitWrongBookUI();Lready();`,
-    'module initialization',
-  );
+const rows = JSON.parse(gunzipSync(Buffer.from(parts.join(''), 'base64')).toString('utf8'));
+if (!Array.isArray(rows) || rows.length < MIN_TOTAL) {
+  throw new Error(`Vocabulary build failed: expected at least ${MIN_TOTAL} rows, got ${Array.isArray(rows) ? rows.length : 'invalid data'}`);
 }
 
-// Extend zero-base learning from A1+A2 to the complete A1+A2+B1 bank.
-// A1/A2 keep their Chinese helper glosses; B1 uses the official Klett English gloss
-// until a vetted Chinese helper layer is added, without altering German/source fields.
-if (!learn.includes('B1_LEARNING_V1')) {
-  learn = replaceOnce(
-    learn,
-    'function Lmeaning(c){return ZH[c.id]||Lclean(c.en)}\nfunction Lenglish(c){return Lclean(c.en)}\nfunction LallLearningCards(){return CARDS.filter(c=>(c.level==="A1"||c.level==="A2")&&ZH[c.id])}',
-    'function Lmeaning(c){return ZH[c.id]||Lclean(c.en)}\nfunction Lenglish(c){return Lclean(c.en)}\nfunction LhasZh(c){return !!ZH[c.id]}\nfunction LmeaningMeta(c){return LhasZh(c)?`Klett English: ${Lenglish(c)}`:"B1 · Klett English 主释义"}\nfunction LallLearningCards(){return CARDS.filter(c=>c.level==="A1"||c.level==="A2"||c.level==="B1")}',
-    'A1-A2-B1 card scope',
-  );
-  learn = replaceOnce(
-    learn,
-    'message||`当前章节 ${cs.length} 个词。每 5 个新词做一次小复习：认识 → 看德语选中文 → 看中文选德语 → 最后才拼写。`',
-    'message||`当前章节 ${cs.length} 个词。每 5 个新词做一次小复习：认识 → 看德语认意思 → 看意思认德语 → 最后才拼写。${Lscope().level==="B1"?" B1 已完整加入；当前先使用 Klett English 作为主释义。":""}`',
-    'learning landing copy',
-  );
-  learn = replaceOnce(
-    learn,
-    '<div class="learnEn">Klett English: ${Lesc(Lenglish(c))}</div>',
-    '<div class="learnEn">${Lesc(LmeaningMeta(c))}</div>',
-    'intro meaning meta',
-  );
-  learn = replaceOnce(
-    learn,
-    '${Lesc(Lmeaning(x))}<div class="small">${Lesc(Lenglish(x))}</div>',
-    '${Lesc(Lmeaning(x))}${LhasZh(x)?`<div class="small">${Lesc(Lenglish(x))}</div>`:""}',
-    'recognition choice meaning',
-  );
-  learn = replaceAllChecked(
-    learn,
-    '<div class="learnEn">${Lesc(Lenglish(c))}</div>',
-    '<div class="learnEn">${LhasZh(c)?Lesc(Lenglish(c)):"Klett English"}</div>',
-    2,
-    'reverse/spell English meta',
-  );
-  learn = replaceOnce(learn, 'A1 + A2 全章节：先认识意思，再做选择，最后才进入主动回忆与拼写。', 'A1 + A2 + B1 全章节：先认识意思，再做选择，最后才进入主动回忆与拼写。', 'home learning scope copy');
-  learn = replaceOnce(learn, '学习进度 · A1 + A2', '学习进度 · A1 + A2 + B1', 'home stats title');
-  learn = replaceOnce(learn, '<option value="A2">A2</option></select>', '<option value="A2">A2</option><option value="B1">B1</option></select>', 'B1 level option');
-  learn = replaceOnce(
-    learn,
-    '<b>A1 + A2 已全部加入学习模式，共 3446 个词条。</b> 中文主释义根据 Klett English 释义整理为学习辅助；德语词形、语法信息和 Glossar 原句继续保留原资料。章节之间的学习进度彼此独立，原来 A1 Kapitel 1 的进度也会保留。',
-    '<b>A1 + A2 + B1 已全部加入学习模式，共 5452 个词条。</b> A1/A2 保留中文主释义 + Klett English；B1 现已完整加入，并先以 Klett English 作为主释义。德语词形、语法信息和 Glossar 原句继续保留原资料。章节之间的学习进度彼此独立。',
-    'coverage copy',
-  );
-  learn = replaceOnce(learn, '正在准备 A1 + A2', '正在准备 A1 + A2 + B1', 'loading copy');
+// Stable, content-derived card ids. Progress is keyed by these, so an id must
+// depend only on the word itself — never on its position in the file. Adding or
+// removing a word must not renumber anything else.
+const idFor = (level, chapter, de) =>
+  createHash('sha256').update(`${level}|${chapter}|${de}`).digest('hex').slice(0, 10);
 
-  const readyStart = learn.indexOf('async function Lready()');
-  const readyEnd = learn.indexOf('/* WRONGBOOK_ADDON_V1 */');
-  if (readyStart < 0 || readyEnd < readyStart) throw new Error('Vocabulary learning patch failed: Lready boundaries');
-  const ready = 'async function Lready(){let meanings;try{const files=["./zh-a1-1-6.json?v=1","./zh-a1-7-12.json?v=1","./zh-a2-1-6.json?v=1","./zh-a2-7-12.json?v=1"];const parts=await Promise.all(files.map(async u=>{const r=await fetch(u,{cache:"no-store"});if(!r.ok)throw new Error(`${u}: HTTP ${r.status}`);return r.json()}));const expected=[1076,888,685,797];parts.forEach((p,i)=>{if(!Array.isArray(p)||p.length!==expected[i])throw new Error(`unexpected meanings in part ${i+1}: ${Array.isArray(p)?p.length:"invalid"}`)});meanings=parts.flat();if(meanings.length!==3446)throw new Error(`unexpected meanings total: ${meanings.length}`)}catch(e){console.error("Chinese gloss load failed",e);return}let n=0;const timer=setInterval(()=>{n++;if(typeof CARDS!=="undefined"&&CARDS.length===5452){clearInterval(timer);const a12=CARDS.filter(c=>c.level==="A1"||c.level==="A2"),b1=CARDS.filter(c=>c.level==="B1");if(a12.length===3446&&b1.length===2006){ZH={};a12.forEach((c,i)=>ZH[c.id]=meanings[i]);LsyncChapters();L$("learnStartBtn").disabled=false;L$("learnStartBtn").textContent="开始学新词";L$("learnReviewBtn").disabled=false;Lstats();LhomeStats()}else{L$("learnStartBtn").textContent=`学习词库未就绪 (${a12.length+b1.length}/5452)`}}else if(n>80){clearInterval(timer);L$("learnStartBtn").textContent="词库未就绪"}},100)}\n';
-  learn = learn.slice(0, readyStart) + ready + learn.slice(readyEnd);
+const seen = new Map();
+const cards = rows.map(([level, chapter, de, en, grammar = '', example = '']) => {
+  const base = idFor(level, chapter, de);
+  // Exact duplicates do exist in the Glossar (e.g. A1 K1 lists "Deutsch" twice).
+  // They get a stable ordinal suffix, which stays put as long as the duplicate
+  // count for that word does.
+  const n = (seen.get(base) || 0) + 1;
+  seen.set(base, n);
+  return [n === 1 ? base : `${base}-${n}`, level, chapter, de, en, grammar, example];
+});
 
-  // Keep B1 spelling wrong-book cards readable without duplicating English twice.
-  learn = replaceOnce(learn, 'zh:Lmeaning(c),en:Lenglish(c)', 'zh:LhasZh(c)?Lmeaning(c):"",en:Lenglish(c)', 'wrong-book B1 stored meaning');
-  learn = replaceOnce(learn, '<div>${Lesc(e.zh)} <span class="wrongMeta">· ${Lesc(e.en)}</span></div>', '<div>${e.zh?`${Lesc(e.zh)} <span class="wrongMeta">· ${Lesc(e.en)}</span>`:Lesc(e.en)}</div>', 'wrong-book B1 list meaning');
-  learn = replaceOnce(learn, '<div class="wrongPracticeMeaning">${Lesc(e.zh)}</div><div class="learnEn">${Lesc(e.en)}</div>', '<div class="wrongPracticeMeaning">${Lesc(e.zh||e.en)}</div>${e.zh?`<div class="learnEn">${Lesc(e.en)}</div>`:""}', 'wrong-book B1 practice meaning');
+const ids = new Set(cards.map((c) => c[0]));
+if (ids.size !== cards.length) throw new Error('Vocabulary build failed: card id collision');
 
-  learn = learn.replace('(()=>{', '(()=>{\n/* B1_LEARNING_V1 */', 1);
+// ---- Chinese helper glosses ------------------------------------------------
+// The gloss files are positional arrays. Resolving them against the deck happens
+// HERE, once, where a mismatch throws — instead of at runtime, where a silent
+// off-by-one would mislabel every remaining word.
+const zh = {};
+let cursor = 0;
+for (const part of ZH_PARTS) {
+  const list = JSON.parse(readFileSync(new URL(part.file, data), 'utf8'));
+  if (!Array.isArray(list) || list.length !== part.count) {
+    throw new Error(`Vocabulary build failed: ${part.file} expected ${part.count} glosses, got ${Array.isArray(list) ? list.length : 'invalid data'}`);
+  }
+  const slice = cards.filter(
+    (c) => c[1] === part.level && +c[2] >= part.chapters[0] && +c[2] <= part.chapters[1],
+  );
+  if (slice.length !== part.count) {
+    throw new Error(`Vocabulary build failed: ${part.file} covers ${part.count} glosses but the deck has ${slice.length} ${part.level} K${part.chapters.join('-')} words`);
+  }
+  slice.forEach((c, i) => { zh[c[0]] = list[i]; });
+  cursor += part.count;
+}
+if (Object.keys(zh).length !== cursor) {
+  throw new Error(`Vocabulary build failed: ${cursor} glosses read but ${Object.keys(zh).length} mapped — duplicate ids?`);
 }
 
-// Mastered words are an archive: once mastered they never enter automatic review again.
-// The archive UI lets the learner explicitly move a word back into active review.
-if (!learn.includes('MASTERED_ADDON_V1')) {
-  learn = replaceOnce(
-    learn,
-    'function LwrongEntries(){return Object.values(wrongBook).sort((a,b)=>(b.lastAt||0)-(a.lastAt||0))}',
-    'function LwrongEntries(){return Object.values(wrongBook).filter(e=>{const c=CARDS.find(x=>x.id===e.id);return !c||!Lmastered(Lstate(c))}).sort((a,b)=>(b.lastAt||0)-(a.lastAt||0))}',
-    'exclude mastered words from spelling wrong-book review',
-  );
-  learn = replaceOnce(
-    learn,
-    'function LupdateWrongBadge(){const n=Object.keys(wrongBook).length;',
-    'function LupdateWrongBadge(){const n=LwrongEntries().length;',
-    'active spelling wrong-book count',
-  );
-  learn = replaceOnce(
-    learn,
-    '<h3>目前没有拼写错题</h3><p>只有在“主动拼写”阶段真正输入错误的单词才会收录；点“不会 / 看答案”不会计入。</p>',
-    '<h3>目前没有需要复习的拼写错题</h3><p>只有在“主动拼写”阶段真正输入错误的单词才会收录；已掌握的词会自动退出错题复习。</p>',
-    'wrong-book empty copy',
-  );
-  learn = replaceOnce(
-    learn,
-    '<b>共 ${entries.length} 个拼写错词。</b> 按最近出错时间排序；错题会一直保留，直到你手动移出。',
-    '<b>当前有 ${entries.length} 个待复习拼写错词。</b> 按最近出错时间排序；已掌握的词不会再进入错题复习。',
-    'wrong-book active copy',
-  );
-  const addon = readFileSync(new URL('mastered-addon.js', dir), 'utf8').trim();
-  learn = replaceOnce(
-    learn,
-    'LbuildShell();LinitWrongBookUI();Lready();',
-    `${addon}\nLbuildShell();LinitWrongBookUI();LinitMasteredUI();Lready();`,
-    'mastered archive initialization',
-  );
-}
+writeFileSync(new URL('cards.json', out), JSON.stringify(cards));
+writeFileSync(new URL('zh.json', out), JSON.stringify(zh));
 
-writeFileSync(learnUrl, learn);
-console.log('Prepared public/deutsch-woerter/learn.js with wrong-book, B1 learning, and mastered archive.');
+// ---- learning module -------------------------------------------------------
+// Plain concatenation. The previous build rewrote its own source file through 23
+// exact-string replacements, so editing a UI string broke the deploy.
+const read = (name) => readFileSync(new URL(name, src), 'utf8').trim();
+const learn = `(()=>{\n${read('learn.core.js')}\n${read('wrongbook-addon.js')}\n${read('mastered-addon.js')}\nLboot();\n})();\n`;
+writeFileSync(new URL('learn.js', out), learn);
+writeFileSync(new URL('store.js', out), read('store.js') + '\n');
+
+// ---- service worker --------------------------------------------------------
+// The cache name is derived from the content it caches, so a deploy can never
+// leave a returning visitor pinned to stale JS. Nothing here is bumped by hand.
+const shipped = ['index.html', 'learn.css', 'store.js', 'learn.js', 'cards.json', 'zh.json', 'app.webmanifest', 'icon.svg'];
+const fingerprint = createHash('sha256');
+for (const name of shipped) fingerprint.update(readFileSync(new URL(name, out)));
+const buildId = fingerprint.digest('hex').slice(0, 12);
+
+const sw = read('sw.source.js')
+  .replace('__BUILD_ID__', buildId)
+  .replace('__ASSETS__', JSON.stringify(shipped.map((n) => `./${n}`)));
+if (sw.includes('__BUILD_ID__') || sw.includes('__ASSETS__')) {
+  throw new Error('Service worker build failed: placeholders not substituted');
+}
+writeFileSync(new URL('sw.js', out), sw);
+
+console.log(`Built ${cards.length} cards, ${Object.keys(zh).length} glosses, learn.js, sw.js (build ${buildId}).`);

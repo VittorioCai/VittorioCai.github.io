@@ -4,13 +4,19 @@ on:
   push:
     branches:
       - main
+  # Without this the quality gate only ran after a merge, so a broken change was
+  # found on main rather than on the pull request that introduced it.
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
   contents: read
 
+# Scoped per ref so a pull-request run cannot cancel an in-flight deploy of main.
 concurrency:
-  group: pages
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -33,17 +39,13 @@ jobs:
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
 
-      - name: Account for standalone vocabulary PWA page
-        run: |
-          sed -i 's/builds the complete 25-page localized site/builds the complete 26-page site including vocabulary PWA/' tests/build-output.test.ts
-          sed -i 's/toHaveLength(25);/toHaveLength(26);/' tests/build-output.test.ts
-
       - name: Verify site
         run: npm run verify
 
   build:
     name: Build Pages artifact
     needs: quality
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -57,7 +59,11 @@ jobs:
   deploy:
     name: Deploy to GitHub Pages
     needs: build
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
+    concurrency:
+      group: pages
+      cancel-in-progress: false
     permissions:
       contents: read
       pages: write

@@ -2,8 +2,8 @@
 // CACHE is stamped with a hash of the files it caches, so every deploy that
 // changes an asset also changes this file, which is what makes the browser pick
 // the update up. Nothing in here is version-bumped by hand.
-const CACHE = "deutsch-woerter-f31c65eaf402";
-const ASSETS = ["./index.html","./learn.css","./store.js","./learn.js","./cards.json","./zh.json","./app.webmanifest","./icon.svg"];
+const CACHE = "deutsch-woerter-__BUILD_ID__";
+const ASSETS = __ASSETS__;
 
 self.addEventListener("install", e => {
   e.waitUntil((async () => {

@@ -8,9 +8,11 @@
   },
   "scripts": {
     "dev": "astro dev",
+    "predev": "node scripts/build-vocab-data.mjs",
     "build": "node scripts/build-vocab-data.mjs && astro build",
     "preview": "astro preview",
     "check": "astro check",
+    "pretest": "node scripts/build-vocab-data.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
