@@ -1,4 +1,4 @@
-const CACHE="deutsch-woerter-v9";
+const CACHE="deutsch-woerter-v10";
 const ASSETS=[
   "./index.html",
   "./app.webmanifest",
