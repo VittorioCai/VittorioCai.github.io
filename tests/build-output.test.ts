@@ -655,8 +655,8 @@ describe('public assets and privacy', () => {
     }
   });
 
-  it('builds the complete 26-page site including the vocabulary PWA', () => {
-    expect(listHtmlFiles(distRoot)).toHaveLength(26);
+  it('builds the complete 25-page localized site', () => {
+    expect(listHtmlFiles(distRoot)).toHaveLength(25);
   });
 
   it('emits the branded assets, crawler policy, and English CV', () => {
