@@ -121,5 +121,41 @@ if (!learn.includes('B1_LEARNING_V1')) {
   learn = learn.replace('(()=>{', '(()=>{\n/* B1_LEARNING_V1 */', 1);
 }
 
+// Mastered words are an archive: once mastered they never enter automatic review again.
+// The archive UI lets the learner explicitly move a word back into active review.
+if (!learn.includes('MASTERED_ADDON_V1')) {
+  learn = replaceOnce(
+    learn,
+    'function LwrongEntries(){return Object.values(wrongBook).sort((a,b)=>(b.lastAt||0)-(a.lastAt||0))}',
+    'function LwrongEntries(){return Object.values(wrongBook).filter(e=>{const c=CARDS.find(x=>x.id===e.id);return !c||!Lmastered(Lstate(c))}).sort((a,b)=>(b.lastAt||0)-(a.lastAt||0))}',
+    'exclude mastered words from spelling wrong-book review',
+  );
+  learn = replaceOnce(
+    learn,
+    'function LupdateWrongBadge(){const n=Object.keys(wrongBook).length;',
+    'function LupdateWrongBadge(){const n=LwrongEntries().length;',
+    'active spelling wrong-book count',
+  );
+  learn = replaceOnce(
+    learn,
+    '<h3>目前没有拼写错题</h3><p>只有在“主动拼写”阶段真正输入错误的单词才会收录；点“不会 / 看答案”不会计入。</p>',
+    '<h3>目前没有需要复习的拼写错题</h3><p>只有在“主动拼写”阶段真正输入错误的单词才会收录；已掌握的词会自动退出错题复习。</p>',
+    'wrong-book empty copy',
+  );
+  learn = replaceOnce(
+    learn,
+    '<b>共 ${entries.length} 个拼写错词。</b> 按最近出错时间排序；错题会一直保留，直到你手动移出。',
+    '<b>当前有 ${entries.length} 个待复习拼写错词。</b> 按最近出错时间排序；已掌握的词不会再进入错题复习。',
+    'wrong-book active copy',
+  );
+  const addon = readFileSync(new URL('mastered-addon.js', dir), 'utf8').trim();
+  learn = replaceOnce(
+    learn,
+    'LbuildShell();LinitWrongBookUI();Lready();',
+    `${addon}\nLbuildShell();LinitWrongBookUI();LinitMasteredUI();Lready();`,
+    'mastered archive initialization',
+  );
+}
+
 writeFileSync(learnUrl, learn);
-console.log('Prepared public/deutsch-woerter/learn.js with wrong-book and A1-A2-B1 learning mode.');
+console.log('Prepared public/deutsch-woerter/learn.js with wrong-book, B1 learning, and mastered archive.');
