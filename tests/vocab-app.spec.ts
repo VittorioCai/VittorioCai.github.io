@@ -14,10 +14,10 @@ const SCHEMA_KEY = 'netzwerk_vocab_schema';
 
 // The page keeps its deck in a `let` binding, which is deliberately not a window
 // property. Read the same static file it reads instead of reaching into its scope.
-const deck = async (page: Page): Promise<Array<{ id: string; level: string; chapter: string }>> =>
+const deck = async (page: Page): Promise<Array<{ id: string; level: string; chapter: string; de: string }>> =>
   page.evaluate(async () => {
     const rows = await (await fetch('./cards.json')).json();
-    return rows.map((r: string[]) => ({ id: r[0], level: r[1], chapter: r[2] }));
+    return rows.map((r: string[]) => ({ id: r[0], level: r[1], chapter: r[2], de: r[3] }));
   });
 
 const ready = async (page: Page) => {
@@ -181,14 +181,17 @@ test('a missed word comes back this session instead of in two weeks', async ({ p
   await expect(page.locator('#learnBody .choice').first()).toBeVisible();
 
   const before = await page.evaluate((k) => JSON.parse(localStorage.getItem(k) || '{}'), LEARN_KEY);
-  const choices = page.locator('#learnBody .choice');
-  const count = await choices.count();
-  for (let i = 0; i < count; i++) {
-    if (!(await choices.nth(i).getAttribute('class'))!.includes('correct')) {
-      await choices.nth(i).click();
-      break;
-    }
-  }
+  const byId = new Map((await deck(page)).map((c) => [c.id, c]));
+  const shown = ((await page.locator('#learnBody .learnWord').innerText()) || '').trim();
+  const optionIds = await page.locator('#learnBody .choice').evaluateAll((els) =>
+    els.map((el) => (el as HTMLElement).dataset.id ?? ''),
+  );
+  // A card with a different German form necessarily has a different id, which is
+  // what Lchoice() compares, so this click is deterministically a miss.
+  const wrongIndex = optionIds.findIndex((id) => (byId.get(id)?.de ?? '').trim() !== shown);
+  expect(wrongIndex, `no option distinguishable from "${shown}" in ${JSON.stringify(optionIds)}`).toBeGreaterThanOrEqual(0);
+  await page.locator('#learnBody .choice').nth(wrongIndex).click();
+  await expect(page.locator('#learnBody .choice.wrong')).toHaveCount(1);
   await expect(page.locator('#learnNextBtn')).toBeVisible();
 
   const after = await page.evaluate((k) => {
