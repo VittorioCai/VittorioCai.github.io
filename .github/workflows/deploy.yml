@@ -33,11 +33,6 @@ jobs:
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
 
-      - name: Account for standalone vocabulary PWA page
-        run: |
-          sed -i 's/builds the complete 25-page localized site/builds the complete 26-page site including vocabulary PWA/' tests/build-output.test.ts
-          sed -i 's/toHaveLength(25);/toHaveLength(26);/' tests/build-output.test.ts
-
       - name: Verify site
         run: npm run verify
 
