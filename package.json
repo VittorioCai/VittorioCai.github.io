@@ -8,16 +8,15 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "predev": "node scripts/build-vocab-data.mjs",
+    "build": "node scripts/build-vocab-data.mjs && astro build",
     "preview": "astro preview",
     "check": "astro check",
+    "pretest": "node scripts/build-vocab-data.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "verify": "npm run check && npm run test && npm run build && npm run test:e2e",
-    "predev": "node scripts/build-vocab-data.mjs",
-    "prebuild": "node scripts/build-vocab-data.mjs",
-    "pretest": "node scripts/build-vocab-data.mjs"
+    "verify": "npm run check && npm run test && npm run build && npm run test:e2e"
   },
   "dependencies": {
     "@astrojs/sitemap": "3.7.3",

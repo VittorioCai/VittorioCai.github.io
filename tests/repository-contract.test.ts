@@ -20,6 +20,7 @@ type WorkflowStep = {
 
 type WorkflowJob = {
   needs?: string;
+  if?: string;
   permissions?: Record<string, string>;
   steps: WorkflowStep[];
 };
@@ -77,9 +78,19 @@ describe('repository maintenance contract', () => {
 
     expect(workflow.on).toEqual({
       push: { branches: ['main'] },
+      pull_request: { branches: ['main'] },
       workflow_dispatch: null,
     });
+    // pull_request runs with a read-only token and no secrets; pull_request_target
+    // would run fork code with the base repository's privileges.
+    expect(workflow.on).not.toHaveProperty('pull_request_target');
     expect(workflow.permissions).toEqual({ contents: 'read' });
+
+    // A pull request may run the quality gate but must never reach Pages.
+    for (const job of [build, deploy]) {
+      expect(job.if).toBe("github.event_name != 'pull_request'");
+    }
+    expect(quality.if).toBeUndefined();
 
     for (const job of [quality, build]) {
       expect(job.permissions?.pages).not.toBe('write');

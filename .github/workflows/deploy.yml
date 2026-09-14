@@ -4,13 +4,19 @@ on:
   push:
     branches:
       - main
+  # Without this the quality gate only ran after a merge, so a broken change was
+  # found on main rather than on the pull request that introduced it.
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
   contents: read
 
+# Scoped per ref so a pull-request run cannot cancel an in-flight deploy of main.
 concurrency:
-  group: pages
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -39,6 +45,7 @@ jobs:
   build:
     name: Build Pages artifact
     needs: quality
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -52,7 +59,11 @@ jobs:
   deploy:
     name: Deploy to GitHub Pages
     needs: build
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
+    concurrency:
+      group: pages
+      cancel-in-progress: false
     permissions:
       contents: read
       pages: write
